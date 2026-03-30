@@ -1,0 +1,10 @@
+.env
+venv/
+__pycache__/
+*.pyc
+state.json
+stock_checker.log
+stock_log.csv
+screenshots/*.png
+launchd_stdout.log
+launchd_stderr.log

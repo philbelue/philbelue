@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.bestbuy.stockchecker</string>
+
+    <key>ProgramArguments</key>
+    <array>
+        <!-- UPDATE THIS PATH to your actual Python / venv path -->
+        <string>/usr/local/bin/python3</string>
+        <string>/Users/YOURUSERNAME/IXON/bestbuy-stock-checker/stock_checker.py</string>
+        <string>--loop</string>
+    </array>
+
+    <key>WorkingDirectory</key>
+    <!-- UPDATE THIS PATH -->
+    <string>/Users/YOURUSERNAME/IXON/bestbuy-stock-checker</string>
+
+    <key>RunAtLoad</key>
+    <true/>
+
+    <key>KeepAlive</key>
+    <true/>
+
+    <key>StandardOutPath</key>
+    <string>/Users/YOURUSERNAME/IXON/bestbuy-stock-checker/launchd_stdout.log</string>
+
+    <key>StandardErrorPath</key>
+    <string>/Users/YOURUSERNAME/IXON/bestbuy-stock-checker/launchd_stderr.log</string>
+
+    <key>EnvironmentVariables</key>
+    <dict>
+        <key>PATH</key>
+        <string>/usr/local/bin:/usr/bin:/bin</string>
+    </dict>
+</dict>
+</plist>
