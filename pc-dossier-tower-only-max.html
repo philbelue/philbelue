@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>System Dossier — Tower Package for Max</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Inter', system-ui, -apple-system, sans-serif; background: #f1f1ef; min-height: 100vh; color: #1a1a1a; -webkit-font-smoothing: antialiased; }
+  .page { max-width: 860px; margin: 0 auto; padding: 48px 32px 64px; }
+
+  /* --- HEADER --- */
+  .masthead { padding: 48px 0 40px; border-bottom: 1px solid #e0e0e0; margin-bottom: 40px; }
+  .masthead-label { font-size: 10px; font-weight: 700; letter-spacing: 2.5px; text-transform: uppercase; color: #888; margin-bottom: 12px; }
+  .masthead h1 { font-size: 32px; font-weight: 800; color: #111; letter-spacing: -0.5px; line-height: 1.15; margin-bottom: 8px; }
+  .masthead-specs { font-size: 14px; color: #666; font-weight: 400; letter-spacing: 0.3px; margin-bottom: 20px; }
+  .masthead-statement { font-size: 14px; line-height: 1.7; color: #444; max-width: 640px; }
+
+  .masthead-meta { display: flex; gap: 32px; margin-top: 28px; padding-top: 24px; border-top: 1px solid #eee; flex-wrap: wrap; }
+  .meta-item { }
+  .meta-label { font-size: 10px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; color: #999; margin-bottom: 4px; }
+  .meta-value { font-size: 15px; font-weight: 700; color: #111; }
+  .meta-value.green { color: #1a7a3a; }
+
+  /* --- DEAL BANNER --- */
+  .deal-banner { background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%); border-radius: 12px; padding: 32px 36px; margin-bottom: 40px; color: #fff; }
+  .deal-banner-label { font-size: 10px; font-weight: 700; letter-spacing: 2.5px; text-transform: uppercase; color: #777; margin-bottom: 12px; }
+  .deal-price { font-size: 48px; font-weight: 900; color: #fff; letter-spacing: -1px; }
+  .deal-price-sub { font-size: 14px; color: #999; margin-top: 4px; }
+  .deal-stats { display: flex; gap: 1px; background: #444; border-radius: 8px; overflow: hidden; margin-top: 24px; }
+  .deal-stat { flex: 1; text-align: center; padding: 16px 12px; background: #1a1a1a; }
+  .deal-stat-label { font-size: 9px; letter-spacing: 1.5px; text-transform: uppercase; color: #777; margin-bottom: 4px; }
+  .deal-stat-val { font-size: 18px; font-weight: 800; color: #fff; }
+  .deal-stat-sub { font-size: 10px; color: #666; margin-top: 2px; }
+
+  /* --- CONFIDENCE STRIP --- */
+  .confidence-strip { display: flex; align-items: center; gap: 24px; padding: 20px 28px; background: #fff; border: 1px solid #e5e5e5; border-radius: 10px; margin-bottom: 40px; }
+  .conf-gauge { position: relative; width: 72px; height: 72px; flex-shrink: 0; }
+  .conf-gauge svg { width: 72px; height: 72px; transform: rotate(-90deg); }
+  .conf-gauge-num { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 22px; font-weight: 800; color: #1a7a3a; }
+  .conf-details { flex: 1; }
+  .conf-details h3 { font-size: 13px; font-weight: 700; color: #111; margin-bottom: 4px; }
+  .conf-details p { font-size: 12px; color: #777; line-height: 1.5; }
+
+  /* --- BUYER CONFIDENCE HIGHLIGHTS --- */
+  .highlights { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: #e5e5e5; border: 1px solid #e5e5e5; border-radius: 10px; overflow: hidden; margin-bottom: 40px; }
+  .hl-item { background: #fff; padding: 16px 20px; text-align: center; }
+  .hl-icon { font-size: 16px; margin-bottom: 6px; }
+  .hl-text { font-size: 11px; font-weight: 600; color: #333; line-height: 1.4; }
+  .hl-sub { font-size: 10px; color: #999; margin-top: 2px; }
+
+  /* --- USE CASE CARDS --- */
+  .use-cases { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 40px; }
+  .uc-card { background: #fff; border: 1px solid #e5e5e5; border-radius: 10px; padding: 20px 24px; }
+  .uc-icon { font-size: 20px; margin-bottom: 8px; }
+  .uc-title { font-size: 13px; font-weight: 700; color: #111; margin-bottom: 6px; }
+  .uc-desc { font-size: 11px; color: #666; line-height: 1.6; }
+
+  /* --- SECTION LABELS --- */
+  .section-label { font-size: 10px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: #999; margin-bottom: 16px; margin-top: 8px; }
+
+  /* --- COMPONENT CARDS --- */
+  .comp { background: #fff; border: 1px solid #e5e5e5; border-radius: 10px; margin-bottom: 10px; overflow: hidden; transition: border-color 0.2s, box-shadow 0.2s; }
+  .comp.expanded { border-color: #ccc; box-shadow: 0 2px 12px rgba(0,0,0,0.06); }
+  .comp-head { display: flex; align-items: center; padding: 18px 24px; cursor: pointer; gap: 16px; user-select: none; }
+  .comp-head:hover { background: #fcfcfc; }
+  .comp-score { width: 42px; height: 42px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 14px; font-weight: 800; }
+  .comp-score.excellent { background: #f0f7f2; color: #1a7a3a; border: 1.5px solid #c6e4ce; }
+  .comp-score.very-good { background: #f0f4ff; color: #3b5bdb; border: 1.5px solid #c5d2f0; }
+  .comp-score.bonus { background: #fdf4e8; color: #b8860b; border: 1.5px solid #e8d5a8; }
+  .comp-mid { flex: 1; min-width: 0; }
+  .comp-title { font-size: 14px; font-weight: 700; color: #111; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .comp-subtitle { font-size: 12px; color: #888; margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .verified-dot { display: inline-flex; align-items: center; gap: 3px; font-size: 10px; font-weight: 600; color: #1a7a3a; background: #f0f7f2; padding: 2px 7px; border-radius: 3px; letter-spacing: 0.3px; }
+  .bonus-dot { display: inline-flex; align-items: center; gap: 3px; font-size: 10px; font-weight: 600; color: #b8860b; background: #fdf4e8; padding: 2px 7px; border-radius: 3px; letter-spacing: 0.3px; }
+  .comp-pricing { text-align: right; flex-shrink: 0; }
+  .comp-ask-price { font-size: 16px; font-weight: 700; color: #111; }
+  .comp-floor-price { font-size: 10px; color: #aaa; margin-top: 1px; }
+  .comp-arrow { font-size: 14px; color: #ccc; transition: transform 0.2s; flex-shrink: 0; }
+  .comp-arrow.open { transform: rotate(180deg); }
+
+  /* --- EXPANDED DETAIL --- */
+  .comp-body { display: none; padding: 0 24px 24px; }
+  .comp.expanded .comp-body { display: block; }
+  .metrics { border-top: 1px solid #f0f0f0; padding-top: 16px; }
+  .m-row { display: flex; align-items: baseline; padding: 5px 0; gap: 8px; }
+  .m-row + .m-row { border-top: 1px solid #f8f8f8; }
+  .m-icon { width: 14px; font-size: 11px; text-align: center; flex-shrink: 0; }
+  .m-icon.pass { color: #1a7a3a; }
+  .m-icon.info { color: #999; }
+  .m-icon.pending { color: #b8860b; }
+  .m-label { flex: 0 0 190px; font-size: 12px; color: #888; font-weight: 500; }
+  .m-val { flex: 1; font-size: 12px; color: #222; font-weight: 600; }
+  .m-verdict { font-size: 11px; font-weight: 500; color: #1a7a3a; white-space: nowrap; }
+
+  .price-row { display: flex; gap: 8px; margin-top: 16px; padding-top: 16px; border-top: 1px solid #f0f0f0; }
+  .price-box { flex: 1; text-align: center; padding: 10px; border-radius: 6px; }
+  .price-box.list { background: #f7faf8; }
+  .price-box.expected { background: #f5f7fb; }
+  .price-box.floor { background: #faf8f3; }
+  .price-box-label { font-size: 9px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 3px; }
+  .price-box.list .price-box-label { color: #1a7a3a; }
+  .price-box.expected .price-box-label { color: #3b5bdb; }
+  .price-box.floor .price-box-label { color: #8a6d3b; }
+  .price-box-val { font-size: 16px; font-weight: 800; color: #111; }
+
+  .note-block { margin-top: 14px; padding: 14px 16px; background: #fafafa; border-radius: 6px; border-left: 3px solid #e0e0e0; }
+  .note-label { font-size: 9px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: #aaa; margin-bottom: 4px; }
+  .note-text { font-size: 12px; color: #555; line-height: 1.65; }
+
+  /* --- VALUATION --- */
+  .valuation { background: #1a1a1a; border-radius: 12px; padding: 36px 40px; margin-top: 40px; color: #fff; }
+  .val-header { text-align: center; margin-bottom: 28px; }
+  .val-header-label { font-size: 10px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; color: #777; }
+  .val-cols { display: flex; gap: 1px; background: #333; border-radius: 8px; overflow: hidden; }
+  .val-col { flex: 1; text-align: center; padding: 20px 16px; background: #1a1a1a; }
+  .val-col-label { font-size: 10px; letter-spacing: 1px; text-transform: uppercase; color: #777; margin-bottom: 6px; }
+  .val-col-num { font-size: 28px; font-weight: 800; color: #fff; }
+  .val-col-sub { font-size: 11px; color: #666; margin-top: 3px; }
+  .val-bundle { text-align: center; margin-top: 24px; padding-top: 20px; border-top: 1px solid #333; }
+  .val-bundle-label { font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase; color: #777; margin-bottom: 6px; }
+  .val-bundle-num { font-size: 36px; font-weight: 800; color: #fff; }
+  .val-bundle-sub { font-size: 12px; color: #666; margin-top: 3px; }
+
+  /* --- WHAT'S INCLUDED --- */
+  .included { margin-top: 40px; padding: 28px 32px; background: #fff; border: 1px solid #e5e5e5; border-radius: 10px; }
+  .included h3 { font-size: 13px; font-weight: 700; color: #111; margin-bottom: 16px; }
+  .included-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px 32px; }
+  .inc-item { font-size: 12px; color: #444; padding: 4px 0; display: flex; align-items: center; gap: 8px; }
+  .inc-check { color: #1a7a3a; font-size: 12px; font-weight: 700; }
+  .inc-bonus { color: #b8860b; font-size: 12px; font-weight: 700; }
+
+  /* --- METHODOLOGY --- */
+  .methodology { margin-top: 32px; padding: 24px 28px; background: #fff; border: 1px solid #e5e5e5; border-radius: 10px; }
+  .methodology h3 { font-size: 12px; font-weight: 700; color: #333; margin-bottom: 14px; }
+  .meth-line { font-size: 11px; color: #777; line-height: 1.7; margin-bottom: 8px; }
+  .meth-line:last-child { margin-bottom: 0; }
+  .meth-line strong { color: #444; font-weight: 600; }
+
+  /* --- FOOTER --- */
+  .page-footer { text-align: center; padding: 32px 0 16px; }
+  .footer-line { font-size: 10px; color: #bbb; letter-spacing: 0.5px; }
+  .footer-invite { font-size: 12px; color: #666; margin-top: 12px; line-height: 1.6; padding: 16px 24px; background: #fff; border: 1px solid #e5e5e5; border-radius: 8px; display: inline-block; }
+
+  @media (max-width: 700px) {
+    .page { padding: 24px 16px 48px; }
+    .highlights { grid-template-columns: repeat(2, 1fr); }
+    .use-cases { grid-template-columns: 1fr; }
+    .masthead-meta { gap: 20px; }
+    .m-label { flex: 0 0 130px; }
+    .price-row { flex-direction: column; }
+    .val-cols { flex-direction: column; }
+    .included-grid { grid-template-columns: 1fr; }
+    .deal-stats { flex-direction: column; }
+  }
+  @media print {
+    body { background: #fff; }
+    .comp-body { display: block !important; }
+    .comp-arrow { display: none; }
+    .comp { break-inside: avoid; }
+    .valuation { break-inside: avoid; }
+    .deal-banner { break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+<div class="page" id="app"></div>
+<script>
+const components = [
+  {
+    name: "GPU", model: "PNY NVIDIA GeForce RTX 4090 24GB VERTO Triple Fan (AD102)", rating: "EXCELLENT", confidence: 99, verified: true, bonus: false,
+    listPrice: 2050, expectedSale: 1900, floorPrice: 1700,
+    metrics: [
+      { label: "GPU Die", value: "AD102-300, Rev A1, 5nm, 609mm\u00B2", verdict: "Flagship silicon", icon: "pass" },
+      { label: "GPU Clock", value: "2235 / Boost 2520 MHz (stock)", verdict: "Never overclocked", icon: "pass" },
+      { label: "Memory Clock", value: "1313 MHz (GDDR6X)", verdict: "Stock", icon: "pass" },
+      { label: "ECC Memory Errors", value: "0 (Volatile + Aggregate)", verdict: "Pristine", icon: "pass" },
+      { label: "Remapped Rows", value: "0 correctable, 0 uncorrectable", verdict: "Pristine", icon: "pass" },
+      { label: "Thermal Throttle History", value: "0 microseconds lifetime", verdict: "Never throttled", icon: "pass" },
+      { label: "Power Brake Events", value: "0 microseconds lifetime", verdict: "Never power limited", icon: "pass" },
+      { label: "Idle Temp / Power", value: "38\u00B0C (fans off) / 16W of 450W TDP", verdict: "Excellent", icon: "pass" },
+      { label: "PCIe Link", value: "Gen 4.0 x16, Resizable BAR enabled", verdict: "Full bandwidth", icon: "pass" },
+      { label: "VRAM", value: "24,576 MB GDDR6X (Micron), 384-bit, 1008 GB/s", verdict: "Full spec", icon: "pass" },
+      { label: "VBIOS", value: "95.02.3C.40.3A (stock UEFI)", verdict: "Unmodified", icon: "pass" },
+      { label: "Subvendor", value: "PNY (10DE 2684 - 196E 13DA)", verdict: "Verified", icon: "pass" },
+      { label: "Compute APIs", value: "CUDA, OpenCL, DirectML, Vulkan, RT, PhysX", verdict: "All enabled", icon: "pass" },
+      { label: "Driver", value: "595.79 DCH WHQL (Mar 4, 2026)", verdict: "Current", icon: "pass" },
+      { label: "Cinebench 2026 GPU", value: "142,614 pts", verdict: "#1 on reference chart", icon: "pass" },
+      { label: "vs Apple M4 Max", value: "2.1x faster (68,590 pts)", verdict: "Reference", icon: "info" },
+      { label: "Original Box", value: "PNY retail box \u2014 may be available", verdict: "Check at pickup", icon: "pending" },
+      { label: "Purchase Receipt", value: "Best Buy, Jul 14 2023, Charlotte NC", verdict: "Documented", icon: "pass" },
+      { label: "Warranty", value: "PNY 3-Year \u2014 valid through Jul 2026", verdict: "~4 months remaining", icon: "pass" },
+    ],
+    notes: "Cinebench 2026 GPU: 142,614 pts, #1 on reference chart. GPU-Z confirms stock clocks, PNY subvendor, unmodified UEFI VBIOS. nvidia-smi lifetime report: zero ECC errors, zero remapped rows, zero thermal throttle microseconds. Never mined, never overclocked. Production ceased Oct 2024 \u2014 current new price $2,755 (Amazon). PNY 3-year warranty active through Jul 2026. Card can be swapped directly into any system with a PCIe 4.0 x16 slot and 450W+ power headroom.",
+  },
+  {
+    name: "CPU", model: "Intel Core i9-13900K (24C/32T)", rating: "EXCELLENT", confidence: 97, verified: true, bonus: false,
+    listPrice: 375, expectedSale: 340, floorPrice: 290,
+    metrics: [
+      { label: "Model", value: "i9-13900K (24C/32T, 8P+16E)", verdict: "Flagship", icon: "pass" },
+      { label: "Max Boost", value: "5.8 GHz", verdict: "Full rated speed", icon: "pass" },
+      { label: "Cache", value: "32 MB L2 + 36 MB L3", verdict: "Full spec", icon: "pass" },
+      { label: "Cooling", value: "NZXT Kraken Z63 AIO (top-mount exhaust)", verdict: "Proper config", icon: "pass" },
+      { label: "Cinebench Multi-Core", value: "8,151 pts (rank #4)", verdict: "Above M4 Max", icon: "pass" },
+      { label: "Cinebench Single Core", value: "672 pts", verdict: "Strong", icon: "pass" },
+      { label: "Thermals Under Load", value: "AIO cooling held ~50\u00B0C during Cinebench", verdict: "Well within limits", icon: "pass" },
+      { label: "Event Log Errors", value: "0 CPU errors in 30 days", verdict: "Stable", icon: "pass" },
+      { label: "13th Gen Stability", value: "Zero crashes, BIOS current, never OC'd", verdict: "Unaffected", icon: "pass" },
+      { label: "Server Workloads", value: "24C/32T ideal for VMs, containers, compiles", verdict: "Server-ready", icon: "pass" },
+      { label: "Warranty", value: "Intel 5-Year Extended \u2014 through Jun 2028", verdict: "~2 years remaining", icon: "pass" },
+      { label: "Purchase Receipt", value: "Best Buy, Jun 29 2023, Charlotte NC", verdict: "Documented", icon: "pass" },
+    ],
+    notes: "Cinebench 2026: 8,151 MC / 672 SC, rank #4 above M4 Max. 24 cores / 32 threads makes this an excellent server CPU \u2014 handles VMs, Docker containers, compiles, and background services concurrently without breaking a sweat. AIO cooling held ~50\u00B0C during full all-core Cinebench run. Zero stability issues \u2014 unaffected by 13th/14th gen voltage concern (BIOS current, never overclocked). Intel extended 5-year warranty active through Jun 2028.",
+  },
+  {
+    name: "Motherboard", model: "MSI MPG Z790 EDGE WIFI v3.0", rating: "EXCELLENT", confidence: 95, verified: true, bonus: false,
+    listPrice: 250, expectedSale: 225, floorPrice: 190,
+    metrics: [
+      { label: "Chipset", value: "Intel Z790", verdict: "Premium", icon: "pass" },
+      { label: "BIOS", value: "AMI H.H0 (Aug 2025)", verdict: "Current", icon: "pass" },
+      { label: "WiFi", value: "Intel Wi-Fi 6E AX211 160MHz", verdict: "Latest standard", icon: "pass" },
+      { label: "Ethernet", value: "2.5 GbE Intel I226-V", verdict: "Server-grade NIC", icon: "pass" },
+      { label: "PCIe Config", value: "Gen 4 x16 to GPU", verdict: "Full bandwidth", icon: "pass" },
+      { label: "M.2 Slots", value: "4x M.2 slots (3x NVMe populated)", verdict: "Expandable", icon: "pass" },
+      { label: "XMP", value: "DDR5-6400 running stable", verdict: "Validated", icon: "pass" },
+      { label: "Serial", value: "07D9131_N11E322022", verdict: "Documented", icon: "pass" },
+      { label: "Warranty", value: "MSI 3-Year \u2014 through Jun 2026", verdict: "~3 months remaining", icon: "pass" },
+      { label: "Purchase Receipt", value: "Best Buy, Jun 29 2023, Charlotte Rivergate NC", verdict: "Documented", icon: "pass" },
+      { label: "Current New Price", value: "$299.99 (Best Buy)", verdict: "In stock", icon: "info" },
+    ],
+    notes: "BIOS current, all slots functional, Wi-Fi 6E confirmed, XMP stable at DDR5-6400. 2.5 GbE Intel NIC is ideal for server/homelab networking. 4x M.2 slots with 3 currently populated \u2014 room to expand. MSI 3-year warranty active through Jun 2026. Current new price $299.99 at Best Buy.",
+  },
+  {
+    name: "RAM", model: "64GB G.Skill Trident Z5 RGB DDR5-6400 CL32", rating: "EXCELLENT", confidence: 99, verified: true, bonus: false,
+    listPrice: 700, expectedSale: 600, floorPrice: 475,
+    metrics: [
+      { label: "Kit", value: "F5-6400J3239G32G (2\u00D732GB)", verdict: "Matched pair", icon: "pass" },
+      { label: "Speed / Timings", value: "6384 MT/s, CL32-39-39-102", verdict: "Running at rated XMP", icon: "pass" },
+      { label: "Voltage", value: "1.40V", verdict: "Within spec", icon: "pass" },
+      { label: "Channels", value: "Dual channel (x2)", verdict: "Optimal config", icon: "pass" },
+      { label: "MemTest86", value: "PASS \u2014 48/48 tests (100%)", verdict: "Zero errors", icon: "pass" },
+      { label: "Test Duration", value: "4 hrs 8 min (4 full passes)", verdict: "Thorough", icon: "pass" },
+      { label: "Bits in Error", value: "Total: 0, Min: 0, Max: 0, Avg: 0", verdict: "Pristine", icon: "pass" },
+      { label: "RAM Temp Under Test", value: "43\u00B0C min / 68\u00B0C max / 56\u00B0C avg", verdict: "Within spec", icon: "pass" },
+      { label: "Event Log", value: "0 memory errors in 30 days", verdict: "Stable", icon: "pass" },
+      { label: "Server Use Case", value: "64GB handles multiple VMs, large datasets, caching", verdict: "Ample headroom", icon: "pass" },
+      { label: "Current New Price", value: "$979.99 (Amazon \u2014 DDR5 shortage)", verdict: "Strong resale", icon: "info" },
+    ],
+    notes: "MemTest86 v11.6 PASS: 48/48 tests, zero errors across 4 full passes (4h 8m). Confirmed 6384 MT/s dual-channel. 64GB is the sweet spot for server workloads \u2014 VMs, Docker, caching, and AI inference all benefit from high-bandwidth DDR5. Kit currently $979.99 new on Amazon due to global DDR5 DRAM shortage.",
+  },
+  {
+    name: "NVMe #1 (Boot)", model: "Samsung 980 PRO 2TB (C:)", rating: "EXCELLENT", confidence: 99, verified: true, bonus: false,
+    listPrice: 300, expectedSale: 260, floorPrice: 210,
+    metrics: [
+      { label: "Health / Wear", value: "98% health, 2% wear", verdict: "Near-new", icon: "pass" },
+      { label: "Endurance", value: "25,090 GB of 1,200 TBW (2.1% used)", verdict: "Minimal use", icon: "pass" },
+      { label: "Power-On", value: "5,781 hrs / 1,271 cycles", verdict: "Normal", icon: "pass" },
+      { label: "Critical Warning", value: "0", verdict: "None", icon: "pass" },
+      { label: "Seq Read / Write", value: "6,846 / 4,981 MB/s", verdict: "At rated spec", icon: "pass" },
+      { label: "4K Random (Q32)", value: "745 / 656 MB/s", verdict: "Strong", icon: "pass" },
+      { label: "Temperature", value: "36\u00B0C", verdict: "Cool", icon: "pass" },
+      { label: "Serial / FW", value: "S6B0NJ0T403294Y / 5B2QGXA7", verdict: "Documented", icon: "pass" },
+      { label: "Warranty", value: "Samsung 5-Year \u2014 through Jun 2027", verdict: "~15 months remaining", icon: "pass" },
+      { label: "Current New Price", value: "$389.99 (Amazon \u2014 10 left)", verdict: "Limited stock", icon: "info" },
+    ],
+    notes: "CrystalDiskInfo 98% health, 2.1% endurance consumed. CrystalDiskMark confirms full rated spec: 6,846/4,981 MB/s sequential. Samsung 5-year warranty active through Jun 2027. 10 units left in stock on Amazon at $389.99.",
+  },
+  {
+    name: "NVMe #2", model: "Samsung 980 PRO 2TB (H:)", rating: "EXCELLENT", confidence: 99, verified: true, bonus: false,
+    listPrice: 300, expectedSale: 260, floorPrice: 210,
+    metrics: [
+      { label: "Health / Wear", value: "99% health, 1% wear", verdict: "Near-new", icon: "pass" },
+      { label: "Endurance", value: "28,512 GB of 1,200 TBW (2.4% used)", verdict: "Minimal use", icon: "pass" },
+      { label: "Power-On", value: "4,327 hrs / 1,271 cycles", verdict: "Normal", icon: "pass" },
+      { label: "Critical Warning", value: "0", verdict: "None", icon: "pass" },
+      { label: "Seq Read / Write", value: "6,816 / 4,944 MB/s", verdict: "At rated spec", icon: "pass" },
+      { label: "4K Random (Q32)", value: "807 / 717 MB/s", verdict: "Strong", icon: "pass" },
+      { label: "Temperature", value: "37\u00B0C", verdict: "Cool", icon: "pass" },
+      { label: "Serial / FW", value: "S6B0NJ0T403296N / 5B2QGXA7", verdict: "Documented", icon: "pass" },
+      { label: "Warranty", value: "Samsung 5-Year \u2014 through Jun 2027", verdict: "~15 months remaining", icon: "pass" },
+      { label: "Current New Price", value: "$389.99 (Amazon \u2014 10 left)", verdict: "Limited stock", icon: "info" },
+    ],
+    notes: "CrystalDiskInfo 99% health, 2.4% endurance consumed. Both 980 PROs performing at full rated spec, near-factory condition. Samsung 5-year warranty active through Jun 2027. 10 units left in stock on Amazon at $389.99.",
+  },
+  {
+    name: "SATA SSD", model: "Samsung 870 EVO 2TB (F:)", rating: "EXCELLENT", confidence: 99, verified: true, bonus: false,
+    listPrice: 275, expectedSale: 240, floorPrice: 185,
+    metrics: [
+      { label: "Health / Wear", value: "99% health, 1% wear", verdict: "Near-new", icon: "pass" },
+      { label: "Endurance", value: "2,344 GB of 1,200 TBW (0.2% used)", verdict: "Essentially unused", icon: "pass" },
+      { label: "Power-On", value: "8,436 hrs / 1,271 cycles", verdict: "Normal", icon: "pass" },
+      { label: "SMART Errors", value: "0 across all attributes (100/100)", verdict: "Perfect", icon: "pass" },
+      { label: "Seq Read / Write", value: "560 / 526 MB/s", verdict: "Maxing SATA interface", icon: "pass" },
+      { label: "4K Random (Q32)", value: "386 / 334 MB/s", verdict: "Strong for SATA", icon: "pass" },
+      { label: "Temperature", value: "30\u00B0C", verdict: "Cool", icon: "pass" },
+      { label: "Serial / FW", value: "S6PNNS0T400409E / SVT02B6Q", verdict: "Documented", icon: "pass" },
+      { label: "Current New Price", value: "$474.95 (Amazon)", verdict: "In stock", icon: "info" },
+    ],
+    notes: "99% health, 0.2% endurance used. CrystalDiskMark maxing SATA bandwidth at 560/526 MB/s. Every SMART attribute at 100/100. Currently $474.95 new on Amazon.",
+  },
+  {
+    name: "HDD", model: "Seagate ST1000DM010 1TB (G:)", rating: "VERY_GOOD", confidence: 95, verified: true, bonus: false,
+    listPrice: 35, expectedSale: 25, floorPrice: 15,
+    metrics: [
+      { label: "CrystalDiskInfo", value: "Good \u2014 all SMART attributes clean", verdict: "Healthy", icon: "pass" },
+      { label: "Power-On", value: "8,655 hrs / 1,365 cycles", verdict: "Normal", icon: "pass" },
+      { label: "Reallocated / Pending", value: "0 / 0", verdict: "Perfect", icon: "pass" },
+      { label: "Seq Read / Write", value: "196 / 193 MB/s", verdict: "At spec for 7200 RPM", icon: "pass" },
+      { label: "Temperature", value: "26\u00B0C", verdict: "Cool", icon: "pass" },
+      { label: "Serial / FW", value: "ZN1T509W / CC46", verdict: "Documented", icon: "pass" },
+    ],
+    notes: "All SMART attributes perfect. At-spec sequential speeds. Rated Very Good due to mechanical nature; diagnostics are clean. Current new price ~$45.",
+  },
+  {
+    name: "Case + Fans", model: "NZXT H710i Black + 3\u00d7 Aer RGB 2 140mm", rating: "EXCELLENT", confidence: 95, verified: true, bonus: false,
+    listPrice: 120, expectedSale: 100, floorPrice: 75,
+    metrics: [
+      { label: "Case", value: "NZXT H710i (CA-H710i-B1)", verdict: "Premium mid-tower", icon: "pass" },
+      { label: "Smart Device", value: "V2 integrated \u2014 RGB + fan control", verdict: "Functional", icon: "pass" },
+      { label: "Fans", value: "3\u00d7 NZXT Aer RGB 2 140mm", verdict: "All working", icon: "pass" },
+      { label: "Glass Panel", value: "Tempered glass, intact", verdict: "No damage", icon: "pass" },
+      { label: "Cable Management", value: "Clean build visible through glass", verdict: "Well maintained", icon: "pass" },
+      { label: "Usage", value: "Stationary only, never transported", verdict: "No transport damage", icon: "pass" },
+      { label: "Airflow", value: "Front intake + top AIO exhaust", verdict: "Optimal for 24/7", icon: "pass" },
+    ],
+    notes: "NZXT H710i premium mid-tower with integrated Smart Device V2 for RGB and fan control. 3\u00d7 Aer RGB 2 140mm fans included. Tempered glass intact, cable management clean. Stationary-only use. Excellent airflow configuration for 24/7 server operation. Case discontinued \u2014 current retail ~$188 where available; fans ~$30 each.",
+  },
+  {
+    name: "AIO Cooler", model: "NZXT Kraken Z63 280mm (LCD Display)", rating: "EXCELLENT", confidence: 97, verified: true, bonus: false,
+    listPrice: 200, expectedSale: 170, floorPrice: 135,
+    metrics: [
+      { label: "Model", value: "NZXT Kraken Z63 280mm", verdict: "Premium AIO", icon: "pass" },
+      { label: "LCD Display", value: "2.36\u2033 LCD on pump head", verdict: "Fully functional", icon: "pass" },
+      { label: "Mount Position", value: "Top mount (exhaust)", verdict: "Optimal config", icon: "pass" },
+      { label: "Pump Status", value: "Operational (confirmed via thermals)", verdict: "Working", icon: "pass" },
+      { label: "CPU Idle Temp", value: "38\u00B0C", verdict: "Effective cooling", icon: "pass" },
+      { label: "Radiator", value: "280mm (2\u00d7 140mm fans)", verdict: "Full coverage", icon: "pass" },
+      { label: "24/7 Suitability", value: "AIO maintains low temps during sustained loads", verdict: "Server-ready", icon: "pass" },
+      { label: "Warranty", value: "NZXT 6-Year \u2014 through May 2028", verdict: "~2 years remaining", icon: "pass" },
+      { label: "Current New Price", value: "$299.00 (Newegg)", verdict: "In stock", icon: "info" },
+    ],
+    notes: "NZXT Kraken Z63 with 2.36\u2033 customizable LCD display on pump head. 280mm radiator with dual 140mm fans, top-mount exhaust config. Held ~50\u00B0C during sustained all-core Cinebench. Pump confirmed operational. NZXT 6-year warranty active through May 2028 \u2014 over 2 years of coverage remaining. Excellent for 24/7 server use. Currently $299 on Newegg.",
+  },
+  {
+    name: "PSU", model: "MSI MEG Ai1300P PCIE5 (1300W / ATX 3.0 / 80+ Platinum)", rating: "EXCELLENT", confidence: 95, verified: true, bonus: false,
+    listPrice: 280, expectedSale: 250, floorPrice: 200,
+    metrics: [
+      { label: "Wattage", value: "1300W", verdict: "RTX 4090 ready", icon: "pass" },
+      { label: "Standard", value: "PCIe 5.0 / ATX 3.0", verdict: "Next-gen compatible", icon: "pass" },
+      { label: "Efficiency", value: "80+ Platinum", verdict: "Premium tier", icon: "pass" },
+      { label: "Modular", value: "Fully modular", verdict: "Clean cabling", icon: "pass" },
+      { label: "Warranty", value: "MSI 10-Year \u2014 through Jul 2033", verdict: "~7 years remaining", icon: "pass" },
+      { label: "Operation", value: "Stable under full GPU + CPU load", verdict: "No issues", icon: "pass" },
+      { label: "Headroom", value: "1300W supports GPU swap + upgrades", verdict: "Future-proof", icon: "pass" },
+      { label: "Purchase Receipt", value: "Amazon, Jul 24 2023", verdict: "Documented", icon: "pass" },
+      { label: "Current New Price", value: "$349.99 (Amazon \u2014 2 left)", verdict: "Low stock", icon: "info" },
+    ],
+    notes: "MSI MEG Ai1300P \u2014 1300W 80+ Platinum, fully modular, PCIe 5.0 / ATX 3.0 compliant with native 12V-2x6 connector. MSI 10-year warranty active through Jul 2033 \u2014 over 7 years of coverage remaining. 1300W provides massive headroom \u2014 even after swapping in a different GPU, you'll never touch this PSU again. Currently $349.99 on Amazon with only 2 units remaining.",
+  },
+  {
+    name: "BONUS: External Storage", model: "WD Black D10 8TB Game Drive (USB 3.2 Gen 1)", rating: "EXCELLENT", confidence: 95, verified: true, bonus: true,
+    listPrice: 0, expectedSale: 0, floorPrice: 0,
+    metrics: [
+      { label: "Capacity", value: "8TB (7200 RPM)", verdict: "Massive storage", icon: "pass" },
+      { label: "Interface", value: "USB 3.2 Gen 1 (Micro-B + USB-A)", verdict: "Universal", icon: "pass" },
+      { label: "Read / Write Speed", value: "250 / 250 MB/s", verdict: "At spec", icon: "pass" },
+      { label: "Form Factor", value: "3.5\u2033 Desktop External", verdict: "Built for always-on", icon: "pass" },
+      { label: "Warranty", value: "Best Buy Geek Squad \u2014 through Mar 19, 2027", verdict: "~1 year remaining", icon: "pass" },
+      { label: "Purchase Receipt", value: "Best Buy, Mar 19 2024, Concord Mills NC", verdict: "Documented", icon: "pass" },
+      { label: "Current New Price", value: "$244.99 (Best Buy)", verdict: "In stock", icon: "info" },
+    ],
+    notes: "WD Black D10 8TB external game drive. 7200 RPM, USB 3.2 Gen 1, rated 250 MB/s. Ideal for server backup, media library, or bulk storage. Geek Squad warranty active through March 2027. Currently $244.99 new at Best Buy. Included as a bonus \u2014 no additional cost.",
+  },
+];
+
+const towerComponents = components.filter(c => !c.bonus);
+const bonusComponents = components.filter(c => c.bonus);
+let expandedIdx = null;
+const n = v => v.toLocaleString();
+
+function renderConfGauge(score) {
+  const r = 30, circ = 2 * Math.PI * r;
+  const off = circ - (score / 100) * circ;
+  return `<div class="conf-gauge">
+    <svg viewBox="0 0 72 72"><circle cx="36" cy="36" r="${r}" fill="none" stroke="#eee" stroke-width="5"/>
+    <circle cx="36" cy="36" r="${r}" fill="none" stroke="#1a7a3a" stroke-width="5" stroke-dasharray="${circ}" stroke-dashoffset="${off}" stroke-linecap="round"/></svg>
+    <div class="conf-gauge-num">${score}</div></div>`;
+}
+
+function renderMetrics(metrics) {
+  return metrics.map(m => {
+    const ic = m.icon === "pass" ? "\u2713" : m.icon === "pending" ? "\u25CB" : "\u2014";
+    return `<div class="m-row"><span class="m-icon ${m.icon}">${ic}</span><span class="m-label">${m.label}</span><span class="m-val">${m.value}</span><span class="m-verdict">${m.verdict}</span></div>`;
+  }).join('');
+}
+
+function renderPricing(c) {
+  if (c.bonus) {
+    return `<div class="price-row">
+      <div class="price-box list" style="flex:1;background:#fdf4e8"><div class="price-box-label" style="color:#b8860b">Included Free</div><div class="price-box-val">$0</div></div>
+      <div class="price-box expected"><div class="price-box-label">Retail Value</div><div class="price-box-val">$245</div></div>
+    </div>`;
+  }
+  return `<div class="price-row">
+    <div class="price-box list"><div class="price-box-label">List Price</div><div class="price-box-val">$${n(c.listPrice)}</div></div>
+    <div class="price-box expected"><div class="price-box-label">Expected Sale</div><div class="price-box-val">$${n(c.expectedSale)}</div></div>
+    <div class="price-box floor"><div class="price-box-label">Floor Price</div><div class="price-box-val">$${n(c.floorPrice)}</div></div>
+  </div>`;
+}
+
+function renderCard(comp, idx) {
+  const open = expandedIdx === idx;
+  const scoreCls = comp.bonus ? "bonus" : (comp.rating === "EXCELLENT" ? "excellent" : "very-good");
+  const badge = comp.bonus
+    ? `<span class="bonus-dot">\u2605 BONUS</span>`
+    : `<span class="verified-dot">\u2713 Verified</span>`;
+  const priceDisplay = comp.bonus
+    ? `<div class="comp-ask-price" style="color:#b8860b">FREE</div><div class="comp-floor-price">$245 value</div>`
+    : `<div class="comp-ask-price">$${n(comp.listPrice)}</div><div class="comp-floor-price">Floor $${n(comp.floorPrice)}</div>`;
+  return `<div class="comp ${open ? 'expanded' : ''}" data-idx="${idx}">
+    <div class="comp-head" onclick="toggle(${idx})">
+      <div class="comp-score ${scoreCls}">${comp.confidence}</div>
+      <div class="comp-mid">
+        <div class="comp-title">${comp.name} ${badge}</div>
+        <div class="comp-subtitle">${comp.model}</div>
+      </div>
+      <div class="comp-pricing">${priceDisplay}</div>
+      <span class="comp-arrow ${open ? 'open' : ''}">\u25BC</span>
+    </div>
+    <div class="comp-body">
+      <div class="metrics">${renderMetrics(comp.metrics)}</div>
+      ${renderPricing(comp)}
+      <div class="note-block"><div class="note-label">Inspector's Summary</div><div class="note-text">${comp.notes}</div></div>
+    </div>
+  </div>`;
+}
+
+function render() {
+  const os = Math.round(towerComponents.reduce((s,c) => s + c.confidence, 0) / towerComponents.length);
+  const tL = towerComponents.reduce((s,c) => s + c.listPrice, 0);
+  const tE = towerComponents.reduce((s,c) => s + c.expectedSale, 0);
+  const tF = towerComponents.reduce((s,c) => s + c.floorPrice, 0);
+  const vc = components.filter(c => c.verified).length;
+  const bundlePrice = 3200;
+  const savingsVsNew = 7144 - bundlePrice;
+  const savingsVsParted = tL - bundlePrice;
+
+  document.getElementById("app").innerHTML = `
+    <div class="masthead">
+      <div class="masthead-label">Pre-Sale System Dossier &mdash; Tower Package</div>
+      <h1>RTX 4090 Workstation &amp; Server Platform</h1>
+      <div class="masthead-specs">RTX 4090 24GB &middot; i9-13900K 24C/32T &middot; 64GB DDR5-6400 &middot; 7TB Internal + 8TB External &middot; 1300W ATX 3.0</div>
+      <div class="masthead-statement">Original-owner, stationary-use, never-overclocked tower with documented diagnostics, benchmark validation, purchase receipts, and original packaging for all major components. Purpose-built for elite gaming, AI/ML compute (24GB VRAM + full CUDA), and 24/7 server workloads (24C/32T, 64GB RAM, 15TB total storage). Seven active manufacturer warranties (GPU through Jul 2026, CPU through Jun 2028, motherboard through Jun 2026, AIO cooler through May 2028, PSU through Jul 2033, NVMe x2 through Jun 2027). Includes bonus WD Black 8TB external drive with active warranty.</div>
+      <div class="masthead-meta">
+        <div class="meta-item"><div class="meta-label">Condition</div><div class="meta-value green">Excellent</div></div>
+        <div class="meta-item"><div class="meta-label">Components Verified</div><div class="meta-value">${vc} of ${components.length}</div></div>
+        <div class="meta-item"><div class="meta-label">Diagnostic Faults</div><div class="meta-value">0</div></div>
+        <div class="meta-item"><div class="meta-label">Report Date</div><div class="meta-value">March 31, 2026</div></div>
+      </div>
+    </div>
+
+    <div class="deal-banner">
+      <div class="deal-banner-label">Tower Package &mdash; Private Sale</div>
+      <div class="deal-price">$${n(bundlePrice)}</div>
+      <div class="deal-price-sub">Complete tower + WD Black 8TB bonus &mdash; no monitor</div>
+      <div class="deal-stats">
+        <div class="deal-stat"><div class="deal-stat-label">Replacement Cost</div><div class="deal-stat-val">$7,144</div><div class="deal-stat-sub">Current retail + tax</div></div>
+        <div class="deal-stat"><div class="deal-stat-label">You Save</div><div class="deal-stat-val">$${n(savingsVsNew)}</div><div class="deal-stat-sub">${Math.round((savingsVsNew/7144)*100)}% off new</div></div>
+        <div class="deal-stat"><div class="deal-stat-label">Parted Out Value</div><div class="deal-stat-val">$${n(tL)}</div><div class="deal-stat-sub">$${n(savingsVsParted)} bundle discount</div></div>
+        <div class="deal-stat"><div class="deal-stat-label">Active Warranties</div><div class="deal-stat-val">7</div><div class="deal-stat-sub">GPU + CPU + Mobo + AIO + PSU + NVMe &times;2</div></div>
+      </div>
+    </div>
+
+    <div class="confidence-strip">
+      ${renderConfGauge(os)}
+      <div class="conf-details">
+        <h3>Overall Confidence Score: ${os}/100</h3>
+        <p>Aggregate confidence across all ${towerComponents.length} tower components based on diagnostic depth, benchmark results, and verification completeness. Score of 95+ indicates comprehensive testing with no anomalies detected.</p>
+      </div>
+    </div>
+
+    <div class="highlights">
+      <div class="hl-item"><div class="hl-icon">\u2713</div><div class="hl-text">Original Owner</div><div class="hl-sub">Single owner since new</div></div>
+      <div class="hl-item"><div class="hl-icon">\u2713</div><div class="hl-text">Never Overclocked</div><div class="hl-sub">All components at stock</div></div>
+      <div class="hl-item"><div class="hl-icon">\u2713</div><div class="hl-text">BIOS Current</div><div class="hl-sub">Latest stable firmware</div></div>
+      <div class="hl-item"><div class="hl-icon">\u2713</div><div class="hl-text">MemTest86 Pass</div><div class="hl-sub">48/48 tests, 0 errors</div></div>
+      <div class="hl-item"><div class="hl-icon">\u2713</div><div class="hl-text">All Receipts Retained</div><div class="hl-sub">Every component documented</div></div>
+      <div class="hl-item"><div class="hl-icon">\u2713</div><div class="hl-text">7 Active Warranties</div><div class="hl-sub">GPU + CPU + Mobo + AIO + PSU + NVMe &times;2</div></div>
+    </div>
+
+    <div class="section-label">Ideal Use Cases</div>
+    <div class="use-cases">
+      <div class="uc-card">
+        <div class="uc-icon">\uD83D\uDDA5\uFE0F</div>
+        <div class="uc-title">Home Server Platform</div>
+        <div class="uc-desc">24 cores / 32 threads + 64GB DDR5 + 15TB total storage. Run VMs, Docker containers, Plex, NAS, and services simultaneously. 2.5 GbE NIC, 1300W PSU, AIO cooling \u2014 built for 24/7 uptime.</div>
+      </div>
+      <div class="uc-card">
+        <div class="uc-icon">\uD83C\uDFAE</div>
+        <div class="uc-title">RTX 4090 for Your Gaming Rig</div>
+        <div class="uc-desc">Pull the 4090 and drop it into your existing setup. Cinebench GPU: 142,614 pts (#1 reference). Zero ECC errors, zero throttle history. PNY warranty active through Jul 2026. PNY warranty active through Jul 2026.</div>
+      </div>
+      <div class="uc-card">
+        <div class="uc-icon">\uD83E\uDDE0</div>
+        <div class="uc-title">AI / ML Compute</div>
+        <div class="uc-desc">24GB GDDR6X VRAM with full CUDA, OpenCL, DirectML, and Vulkan support. Run local LLMs, Stable Diffusion, fine-tuning, and inference workloads. 2.1x faster than M4 Max in GPU compute.</div>
+      </div>
+      <div class="uc-card">
+        <div class="uc-icon">\uD83D\uDEE1\uFE0F</div>
+        <div class="uc-title">Warranty-Backed Investment</div>
+        <div class="uc-desc">7 active warranties on the tower alone: GPU (Jul '26), CPU (Jun '28), Mobo (Jun '26), AIO (May '28), PSU (Jul '33), NVMe x2 (Jun '27). Plus the bonus WD Black (Mar '27). All receipts retained for warranty claims. The PSU alone has 7+ years of MSI coverage remaining.</div>
+      </div>
+    </div>
+
+    <div class="section-label">Component Details &mdash; ${towerComponents.length} Tower + ${bonusComponents.length} Bonus, 0 Faults</div>
+    ${components.map(renderCard).join('')}
+
+    <div class="valuation">
+      <div class="val-header"><div class="val-header-label">Tower Package Valuation</div></div>
+      <div class="val-cols">
+        <div class="val-col"><div class="val-col-label">Parted Out Total</div><div class="val-col-num">$${n(tL)}</div><div class="val-col-sub">Individual resale values</div></div>
+        <div class="val-col"><div class="val-col-label">Replacement New</div><div class="val-col-num">$7,144</div><div class="val-col-sub">Current retail + 7.25% tax</div></div>
+        <div class="val-col"><div class="val-col-label">Bonus Value</div><div class="val-col-num">$245</div><div class="val-col-sub">WD Black 8TB included</div></div>
+      </div>
+      <div class="val-bundle">
+        <div class="val-bundle-label">Tower Package Price</div>
+        <div class="val-bundle-num">$${n(bundlePrice)}</div>
+        <div class="val-bundle-sub">${Math.round((savingsVsNew/7144)*100)}% below replacement cost &mdash; walk-away ready</div>
+      </div>
+    </div>
+
+    <div class="included" style="margin-top:40px">
+      <h3>Build-Out Cost &mdash; Tower Only</h3>
+      <p style="font-size:12px;color:#666;margin-bottom:16px;line-height:1.6">What it costs to source and build this exact tower today. Every link goes directly to the retailer listing so you can verify pricing yourself. Charlotte, NC (7.25% sales tax).</p>
+      <div style="display:grid;grid-template-columns:1fr auto auto auto;gap:4px 20px;font-size:12px;align-items:baseline">
+        <div style="font-weight:600;color:#888;border-bottom:1px solid #eee;padding-bottom:6px">Component</div>
+        <div style="font-weight:600;color:#888;text-align:right;border-bottom:1px solid #eee;padding-bottom:6px">Price</div>
+        <div style="font-weight:600;color:#888;text-align:right;border-bottom:1px solid #eee;padding-bottom:6px">Stock</div>
+        <div style="font-weight:600;color:#888;text-align:right;border-bottom:1px solid #eee;padding-bottom:6px">Warranty Left</div>
+        <div style="color:#333">PNY RTX 4090 24GB VERTO</div><div style="text-align:right;font-weight:600">$2,755</div><div style="text-align:right;color:#c0392b;font-size:10px">Scarce</div><div style="text-align:right;color:#1a7a3a;font-size:10px">~4 mo (Jul &rsquo;26)</div>
+        <div style="color:#333"><a href="https://www.amazon.com/dp/B0BCF54SR1" target="_blank" style="color:#333;text-decoration:underline">Intel i9-13900K 24-Core</a></div><div style="text-align:right;font-weight:600">$399</div><div style="text-align:right;color:#666;font-size:10px">In Stock</div><div style="text-align:right;color:#1a7a3a;font-size:10px">~2 yr (Jun &rsquo;28)</div>
+        <div style="color:#333"><a href="https://www.amazon.com/dp/B0BL92SPJQ" target="_blank" style="color:#333;text-decoration:underline">MSI MPG Z790 EDGE WIFI</a></div><div style="text-align:right;font-weight:600">$300</div><div style="text-align:right;color:#c0392b;font-size:10px">1 Left</div><div style="text-align:right;color:#1a7a3a;font-size:10px">~3 mo (Jun &rsquo;26)</div>
+        <div style="color:#333"><a href="https://www.amazon.com/dp/B0BJ7X9P1W" target="_blank" style="color:#333;text-decoration:underline">G.Skill 64GB DDR5-6400 CL32</a> <span style="color:#aaa;font-size:10px">(shortage)</span></div><div style="text-align:right;font-weight:600">$980</div><div style="text-align:right;color:#c0392b;font-size:10px">Shortage Pricing</div><div style="text-align:right;color:#888;font-size:10px">&mdash;</div>
+        <div style="color:#333"><a href="https://www.amazon.com/dp/B08RK2SR23" target="_blank" style="color:#333;text-decoration:underline">Samsung 980 PRO 2TB NVMe (C:)</a></div><div style="text-align:right;font-weight:600">$390</div><div style="text-align:right;color:#c0392b;font-size:10px">10 Left</div><div style="text-align:right;color:#1a7a3a;font-size:10px">~15 mo (Jun &rsquo;27)</div>
+        <div style="color:#333"><a href="https://www.amazon.com/dp/B08RK2SR23" target="_blank" style="color:#333;text-decoration:underline">Samsung 980 PRO 2TB NVMe (H:)</a></div><div style="text-align:right;font-weight:600">$390</div><div style="text-align:right;color:#c0392b;font-size:10px">10 Left</div><div style="text-align:right;color:#1a7a3a;font-size:10px">~15 mo (Jun &rsquo;27)</div>
+        <div style="color:#333"><a href="https://www.amazon.com/dp/B08QB93S6R" target="_blank" style="color:#333;text-decoration:underline">Samsung 870 EVO 2TB SATA</a></div><div style="text-align:right;font-weight:600">$475</div><div style="text-align:right;color:#666;font-size:10px">In Stock</div><div style="text-align:right;color:#888;font-size:10px">&mdash;</div>
+        <div style="color:#333"><a href="https://www.amazon.com/dp/B07D99KFPK" target="_blank" style="color:#333;text-decoration:underline">Seagate Barracuda 1TB HDD</a></div><div style="text-align:right;font-weight:600">$45</div><div style="text-align:right;color:#666;font-size:10px">In Stock</div><div style="text-align:right;color:#888;font-size:10px">&mdash;</div>
+        <div style="color:#333"><a href="https://www.amazon.com/dp/B0B433ZCRP" target="_blank" style="color:#333;text-decoration:underline">MSI MEG Ai1300P 1300W PSU</a></div><div style="text-align:right;font-weight:600">$350</div><div style="text-align:right;color:#c0392b;font-size:10px">2 Left</div><div style="text-align:right;color:#1a7a3a;font-size:10px">~7 yr (Jul &rsquo;33)</div>
+        <div style="color:#333">NZXT H710i Case + 3&times; Aer RGB 2</div><div style="text-align:right;font-weight:600">$278</div><div style="text-align:right;color:#888;font-size:10px">Limited</div><div style="text-align:right;color:#888;font-size:10px">&mdash;</div>
+        <div style="color:#333"><a href="https://www.newegg.com/nzxt-liquid-cooling-system-kraken-z/p/N82E16835146069" target="_blank" style="color:#333;text-decoration:underline">NZXT Kraken Z63 280mm AIO</a></div><div style="text-align:right;font-weight:600">$299</div><div style="text-align:right;color:#666;font-size:10px">In Stock</div><div style="text-align:right;color:#1a7a3a;font-size:10px">~2 yr (May &rsquo;28)</div>
+        <div style="padding-top:8px;border-top:1px solid #ddd;font-weight:700;color:#111">Subtotal</div><div style="padding-top:8px;border-top:1px solid #ddd;text-align:right;font-weight:700;color:#111">$6,661</div><div style="padding-top:8px;border-top:1px solid #ddd"></div><div style="padding-top:8px;border-top:1px solid #ddd"></div>
+        <div style="color:#111;font-weight:700">With Tax (7.25%)</div><div style="text-align:right;font-weight:800;color:#111;font-size:14px">$7,144</div><div></div><div></div>
+        <div style="color:#b8860b;font-weight:600;padding-top:8px;border-top:1px solid #eee">BONUS: WD Black D10 8TB</div><div style="padding-top:8px;border-top:1px solid #eee;text-align:right;font-weight:600;color:#b8860b">$245</div><div style="padding-top:8px;border-top:1px solid #eee;text-align:right;color:#b8860b;font-size:10px">Included Free</div><div style="padding-top:8px;border-top:1px solid #eee;text-align:right;color:#1a7a3a;font-size:10px">~1 yr (Mar &rsquo;27)</div>
+      </div>
+      <p style="font-size:11px;color:#999;margin-top:14px;line-height:1.5">All prices verified from Amazon.com, Best Buy, and Newegg as of March 31, 2026. Click any component name to view the live listing.</p>
+    </div>
+
+    <div class="included">
+      <h3>What&rsquo;s Included</h3>
+      <div class="included-grid">
+        <div class="inc-item"><span class="inc-check">\u2713</span> Complete PC tower (assembled, tested, ready to run)</div>
+        <div class="inc-item"><span class="inc-check">\u2713</span> All original purchase receipts</div>
+        <div class="inc-item"><span class="inc-check">\u2713</span> Purchase receipts for all major components</div>
+        <div class="inc-item"><span class="inc-check">\u2713</span> This diagnostic report with full benchmark data</div>
+        <div class="inc-item"><span class="inc-check">\u2713</span> All original cables and accessories</div>
+        <div class="inc-item"><span class="inc-bonus">\u2605</span> WD Black D10 8TB External Drive (bonus)</div>
+        <div class="inc-item"><span class="inc-bonus">\u2605</span> WD Black warranty through Mar 2027 (bonus)</div>
+      </div>
+    </div>
+
+    <div class="included" style="margin-top:40px">
+      <h3>Ownership Provenance</h3>
+      <p style="font-size:12px;color:#666;margin-bottom:16px;line-height:1.6">Single-owner system. All components purchased new by the current owner. Receipts available for in-person verification.</p>
+      <div style="display:grid;grid-template-columns:1fr auto auto;gap:4px 24px;font-size:12px;align-items:baseline">
+        <div style="font-weight:600;color:#888;border-bottom:1px solid #eee;padding-bottom:6px">Component</div>
+        <div style="font-weight:600;color:#888;text-align:right;border-bottom:1px solid #eee;padding-bottom:6px">Purchase Date</div>
+        <div style="font-weight:600;color:#888;text-align:right;border-bottom:1px solid #eee;padding-bottom:6px">Retailer</div>
+        <div style="color:#333">PNY RTX 4090 24GB VERTO</div><div style="text-align:right;color:#666">Jul 14, 2023</div><div style="text-align:right;color:#666">Best Buy &mdash; Charlotte, NC</div>
+        <div style="color:#333">Intel i9-13900K</div><div style="text-align:right;color:#666">Jun 29, 2023</div><div style="text-align:right;color:#666">Best Buy &mdash; Midtown Charlotte</div>
+        <div style="color:#333">MSI Z790 EDGE WIFI</div><div style="text-align:right;color:#666">Jun 29, 2023</div><div style="text-align:right;color:#666">Best Buy &mdash; Charlotte Rivergate</div>
+        <div style="color:#333">64GB DDR5-6400 + 980 PRO &times;2 + 870 EVO</div><div style="text-align:right;color:#666">Jun 6, 2022</div><div style="text-align:right;color:#666">Amazon</div>
+        <div style="color:#333">MSI MEG Ai1300P 1300W PSU</div><div style="text-align:right;color:#666">Jul 24, 2023</div><div style="text-align:right;color:#666">Amazon</div>
+        <div style="color:#333">NZXT H710i + Kraken Z63 + Fans + HDD</div><div style="text-align:right;color:#666">May 2022</div><div style="text-align:right;color:#666">NZXT BLD (Original Pre-Built)</div>
+        <div style="color:#b8860b;font-weight:500">WD Black D10 8TB (bonus)</div><div style="text-align:right;color:#b8860b">Mar 19, 2024</div><div style="text-align:right;color:#b8860b">Best Buy &mdash; Concord Mills, NC</div>
+      </div>
+      <p style="font-size:11px;color:#999;margin-top:14px;line-height:1.5">Original system purchased as NZXT BLD pre-built (May 2022). CPU, GPU, motherboard, RAM, storage, and PSU upgraded by owner between Jun 2022 &ndash; Jan 2024. All original purchase receipts retained.</p>
+    </div>
+
+    <div class="methodology">
+      <h3>Scoring Methodology</h3>
+      <div class="meth-line"><strong>Condition Rating</strong> &mdash; Based on physical and functional condition. Zero defects and functionally equivalent to new = Excellent.</div>
+      <div class="meth-line"><strong>Confidence Score (0&ndash;100)</strong> &mdash; Certainty based on diagnostic depth. 99 = SMART verified + nvidia-smi + GPU-Z + benchmark validated.</div>
+      <div class="meth-line"><strong>Pricing Tiers</strong> &mdash; List Price = starting ask. Expected Sale = likely close based on eBay sold, r/hardwareswap, and FB Marketplace comps (March 2026). Floor = minimum for fast liquidation.</div>
+      <div class="meth-line"><strong>Data Sources</strong> &mdash; CrystalDiskInfo 9.8.0, CrystalDiskMark 9.0.2, nvidia-smi, GPU-Z 2.57.0, CPU-Z, MemTest86 v11.6, Cinebench 2026, Windows Event Log (30-day), PowerShell StorageReliabilityCounter.</div>
+    </div>
+
+    <div class="page-footer">
+      <div class="footer-invite">Ready for in-person inspection and verification. Power on, benchmark, and walk through every diagnostic \u2014 bring your questions.</div>
+      <div class="footer-line" style="margin-top:16px">Pre-Sale System Dossier &middot; Tower Package &middot; March 31, 2026 &middot; Charlotte, NC</div>
+    </div>
+  `;
+}
+
+function toggle(idx) { expandedIdx = expandedIdx === idx ? null : idx; render(); }
+render();
+</script>
+</body>
+</html>
