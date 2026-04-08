@@ -2261,18 +2261,28 @@ async function pushToSheets(quiet) {
   const btn = document.getElementById("syncBtn");
   if (!quiet) { btn.classList.add("sync-active"); btn.innerHTML = "&#8987;"; }
   try {
-    await fetch(state.sheetsUrl, {
+    const payload = JSON.stringify({action: "sync", data: buildPayload()});
+    // Use fetch with redirect:follow — Apps Script returns 302 to exec URL
+    const resp = await fetch(state.sheetsUrl, {
       method: "POST",
-      mode: "no-cors",
-      headers: {"Content-Type": "application/json"},
-      body: JSON.stringify({action: "sync", data: buildPayload()})
+      redirect: "follow",
+      headers: {"Content-Type": "text/plain;charset=utf-8"},
+      body: payload
     });
-    _lastSync = new Date();
-    updateSyncIndicator("ok");
-    if (!quiet) {
-      btn.innerHTML = "&#10003;";
-      setTimeout(() => { btn.innerHTML = "&#8635;"; btn.classList.remove("sync-active"); }, 2000);
-    }
+    // Try to parse response to verify success
+    let ok = false;
+    try {
+      const text = await resp.text();
+      if (text.includes('"ok"') || resp.ok) ok = true;
+    } catch(e2) { ok = resp.ok || resp.type === "opaque"; }
+    if (ok) {
+      _lastSync = new Date();
+      updateSyncIndicator("ok");
+      if (!quiet) {
+        btn.innerHTML = "&#10003;";
+        setTimeout(() => { btn.innerHTML = "&#8635;"; btn.classList.remove("sync-active"); }, 2000);
+      }
+    } else { throw new Error("Sync response not OK"); }
   } catch(e) {
     updateSyncIndicator("error");
     if (!quiet) {
@@ -2294,7 +2304,7 @@ async function loadFromSheets() {
   if (!state.sheetsUrl) return;
   updateSyncIndicator("loading");
   try {
-    const resp = await fetch(state.sheetsUrl + "?nocache=" + Date.now());
+    const resp = await fetch(state.sheetsUrl + "?nocache=" + Date.now(), {redirect: "follow"});
     const json = await resp.json();
     if (json.status === "ok" && json.data && json.data.length > 0) {
       let merged = 0;
