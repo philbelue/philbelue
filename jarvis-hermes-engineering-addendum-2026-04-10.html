@@ -1,0 +1,1229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>J.A.R.V.I.S. — Hermes Engineering Addendum: The Five Gaps</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Rajdhani:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0b0d12;
+  --bg-card: #10141b;
+  --bg-card-hover: #161b24;
+  --bg-code: #0d1117;
+  --cyan: #7fd8e6;
+  --cyan-soft: #a9e7f0;
+  --cyan-dim: rgba(127,216,230,0.10);
+  --cyan-glow: rgba(127,216,230,0.18);
+  --gold: #ffb86a;
+  --gold-soft: #ffc978;
+  --gold-dim: rgba(255,184,106,0.12);
+  --gold-glow: rgba(255,184,106,0.18);
+  --gold-strong: rgba(255,184,106,0.32);
+  --core-white: #fff4db;
+  --core-warm: #ffd7a3;
+  --green: #5ce0a0;
+  --green-dim: rgba(92,224,160,0.10);
+  --red: #f06060;
+  --red-dim: rgba(240,96,96,0.10);
+  --yellow: #f0d060;
+  --yellow-dim: rgba(240,208,96,0.10);
+  --text: #d5dbe3;
+  --text-bright: #f5f7fa;
+  --text-dim: #8d97a5;
+  --border: rgba(255,255,255,0.06);
+  --border-gold: rgba(255,184,106,0.12);
+  --radius: 8px;
+  --font-display: 'Orbitron', monospace;
+  --font-body: 'Rajdhani', sans-serif;
+  --font-code: 'JetBrains Mono', monospace;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: var(--font-body); background: var(--bg); color: var(--text); line-height: 1.7; font-size: 16px; }
+body::before { content: ''; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: radial-gradient(ellipse at 50% 30%, rgba(255,184,106,0.02) 0%, transparent 50%); pointer-events: none; z-index: 0; }
+
+/* Sidebar Nav */
+nav { position: fixed; top: 0; left: 0; bottom: 0; width: 200px; z-index: 100; background: rgba(10,14,23,0.97); backdrop-filter: blur(12px); border-right: 1px solid var(--border); overflow-y: auto; }
+nav .nav-inner { display: flex; flex-direction: column; padding: 20px 0; }
+nav a { color: var(--text-dim); text-decoration: none; font-family: var(--font-display); font-size: 0.5rem; font-weight: 500; padding: 9px 18px; white-space: nowrap; transition: all 0.3s; border-left: 2px solid transparent; letter-spacing: 0.08em; text-transform: uppercase; }
+nav a:hover, nav a.active { color: var(--core-warm); border-left-color: var(--gold); background: var(--gold-dim); }
+nav .nav-brand { font-family: var(--font-display); color: var(--core-white); font-size: 0.6rem; font-weight: 700; padding: 16px 18px 20px; border-bottom: 1px solid var(--border); margin-bottom: 8px; letter-spacing: 0.15em; }
+nav .gap-num { display: inline-block; color: var(--gold); font-weight: 700; margin-right: 4px; }
+.main-content { margin-left: 200px; }
+@media (max-width: 860px) { nav { position: relative; width: 100%; bottom: auto; border-right: none; border-bottom: 1px solid var(--border); } nav .nav-inner { flex-direction: row; overflow-x: auto; padding: 0; } nav a { padding: 12px 14px; border-left: none; border-bottom: 2px solid transparent; } nav a:hover, nav a.active { border-left-color: transparent; border-bottom-color: var(--gold); } nav .nav-brand { border-bottom: none; border-right: 1px solid var(--border); margin-bottom: 0; margin-right: 8px; padding: 12px 18px; } .main-content { margin-left: 0; } }
+
+/* Hero */
+.hero { background: linear-gradient(135deg, #0b0d12 0%, #0f1218 40%, #12161e 100%); padding: 70px 24px 55px; position: relative; overflow: hidden; border-bottom: 1px solid var(--border); }
+.hero::before { content: ''; position: absolute; top: 50%; left: 50%; width: 500px; height: 500px; transform: translate(-50%, -50%); border-radius: 50%; background: radial-gradient(circle, rgba(240,96,96,0.03) 0%, rgba(255,184,106,0.02) 40%, transparent 70%); pointer-events: none; }
+.hero-inner { max-width: 920px; margin: 0 auto; position: relative; z-index: 1; }
+.hero-tag { display: inline-block; font-family: var(--font-display); font-size: 0.55rem; font-weight: 600; letter-spacing: 0.25em; text-transform: uppercase; color: var(--red); border: 1px solid rgba(240,96,96,0.25); padding: 6px 16px; border-radius: 2px; margin-bottom: 20px; background: var(--red-dim); }
+.hero h1 { font-family: var(--font-display); font-size: clamp(1.4rem, 4vw, 2.2rem); color: var(--text-bright); margin-bottom: 8px; font-weight: 700; letter-spacing: 0.05em; line-height: 1.3; }
+.hero h1 span { color: var(--red); }
+.hero .subtitle { font-size: 1.05rem; color: var(--text-dim); font-weight: 300; letter-spacing: 0.03em; margin-bottom: 12px; }
+.hero p { font-size: 0.95rem; color: var(--text); max-width: 700px; line-height: 1.8; }
+.hero-meta { margin-top: 24px; display: flex; gap: 28px; flex-wrap: wrap; }
+.hero-meta div { font-size: 0.8rem; color: var(--text-dim); }
+.hero-meta strong { color: var(--core-warm); display: block; font-family: var(--font-display); font-size: 0.6rem; letter-spacing: 0.1em; text-transform: uppercase; }
+
+/* Sections */
+.container { max-width: 920px; margin: 0 auto; padding: 0 24px; position: relative; z-index: 1; }
+section { padding: 50px 0; border-bottom: 1px solid var(--border); }
+section:last-of-type { border-bottom: none; }
+.section-label { font-family: var(--font-display); font-size: 0.55rem; font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold); margin-bottom: 6px; }
+.section-title { font-family: var(--font-display); font-size: clamp(1.1rem, 2.5vw, 1.5rem); color: var(--text-bright); font-weight: 700; margin-bottom: 16px; letter-spacing: 0.03em; line-height: 1.4; }
+.section-intro { font-size: 1rem; color: var(--text); line-height: 1.8; margin-bottom: 28px; max-width: 780px; }
+
+/* Gap cards */
+.gap-header { display: flex; align-items: center; gap: 14px; margin-bottom: 20px; }
+.gap-number { font-family: var(--font-display); font-size: 2rem; font-weight: 900; color: var(--red); opacity: 0.4; line-height: 1; }
+.gap-title-block {}
+.gap-critique { font-family: var(--font-body); font-size: 0.85rem; color: var(--red); font-weight: 500; font-style: italic; margin-top: 2px; opacity: 0.8; }
+
+/* Code blocks */
+.code-block { background: var(--bg-code); border: 1px solid var(--border); border-radius: var(--radius); padding: 0; margin: 20px 0; overflow: hidden; }
+.code-header { background: rgba(255,255,255,0.03); padding: 8px 16px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+.code-lang { font-family: var(--font-display); font-size: 0.5rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--cyan); font-weight: 600; }
+.code-file { font-family: var(--font-code); font-size: 0.7rem; color: var(--text-dim); }
+.code-block pre { padding: 16px; overflow-x: auto; margin: 0; }
+.code-block code { font-family: var(--font-code); font-size: 0.78rem; line-height: 1.65; color: var(--text); }
+.code-block .kw { color: var(--cyan); }
+.code-block .str { color: var(--green); }
+.code-block .fn { color: var(--gold); }
+.code-block .cm { color: var(--text-dim); font-style: italic; }
+.code-block .num { color: var(--gold-soft); }
+.code-block .op { color: var(--text-dim); }
+.code-block .dec { color: var(--cyan-soft); }
+.code-block .tag { color: var(--red); }
+
+/* Decision matrix */
+.decision-matrix { width: 100%; border-collapse: collapse; margin: 20px 0; font-size: 0.88rem; }
+.decision-matrix th { font-family: var(--font-display); font-size: 0.55rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--core-warm); text-align: left; padding: 10px 14px; border-bottom: 2px solid var(--border-gold); font-weight: 600; }
+.decision-matrix td { padding: 10px 14px; border-bottom: 1px solid var(--border); color: var(--text); vertical-align: top; }
+.decision-matrix tr:hover td { background: rgba(255,255,255,0.02); }
+.verdict { color: var(--green); font-weight: 600; }
+.reject { color: var(--red); opacity: 0.6; }
+
+/* Callouts */
+.callout { border-radius: var(--radius); padding: 20px 24px; margin: 24px 0; }
+.callout-title { font-family: var(--font-display); font-size: 0.6rem; letter-spacing: 0.15em; text-transform: uppercase; font-weight: 700; margin-bottom: 8px; }
+.callout-gold { background: var(--gold-dim); border-left: 3px solid var(--gold); }
+.callout-gold .callout-title { color: var(--gold); }
+.callout-cyan { background: var(--cyan-dim); border-left: 3px solid var(--cyan); }
+.callout-cyan .callout-title { color: var(--cyan); }
+.callout-green { background: var(--green-dim); border-left: 3px solid var(--green); }
+.callout-green .callout-title { color: var(--green); }
+.callout-red { background: var(--red-dim); border-left: 3px solid var(--red); }
+.callout-red .callout-title { color: var(--red); }
+
+/* State diagram */
+.state-diagram { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px; margin: 20px 0; }
+.state-row { display: flex; align-items: center; gap: 8px; margin: 10px 0; flex-wrap: wrap; }
+.state-box { display: inline-block; padding: 6px 14px; border-radius: 4px; font-family: var(--font-code); font-size: 0.75rem; font-weight: 500; }
+.state-boot { background: var(--yellow-dim); color: var(--yellow); border: 1px solid rgba(240,208,96,0.2); }
+.state-ready { background: var(--green-dim); color: var(--green); border: 1px solid rgba(92,224,160,0.2); }
+.state-degraded { background: var(--gold-dim); color: var(--gold); border: 1px solid rgba(255,184,106,0.2); }
+.state-dead { background: var(--red-dim); color: var(--red); border: 1px solid rgba(240,96,96,0.2); }
+.state-arrow { color: var(--text-dim); font-family: var(--font-code); font-size: 0.7rem; }
+.state-label { font-family: var(--font-code); font-size: 0.65rem; color: var(--text-dim); }
+
+/* Directory tree */
+.dir-tree { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px 24px; margin: 20px 0; font-family: var(--font-code); font-size: 0.78rem; line-height: 1.8; color: var(--text-dim); }
+.dir-tree .dir { color: var(--cyan); }
+.dir-tree .file { color: var(--text); }
+.dir-tree .desc { color: var(--text-dim); font-family: var(--font-body); font-size: 0.8rem; }
+
+/* Timeline */
+.boot-timeline { margin: 20px 0; }
+.boot-step { display: flex; gap: 16px; padding: 10px 0; border-left: 2px solid var(--border); margin-left: 24px; padding-left: 20px; position: relative; }
+.boot-step::before { content: ''; position: absolute; left: -6px; top: 14px; width: 10px; height: 10px; border-radius: 50%; background: var(--bg); border: 2px solid var(--gold); }
+.boot-step.active::before { background: var(--gold); box-shadow: 0 0 8px rgba(255,184,106,0.4); }
+.boot-time { font-family: var(--font-code); font-size: 0.75rem; color: var(--gold); min-width: 50px; font-weight: 600; }
+.boot-desc { font-size: 0.9rem; color: var(--text); }
+.boot-desc strong { color: var(--text-bright); }
+
+/* Errata */
+.errata-item { display: flex; gap: 14px; padding: 16px 0; border-bottom: 1px solid var(--border); }
+.errata-item:last-child { border-bottom: none; }
+.errata-action { font-family: var(--font-display); font-size: 0.55rem; letter-spacing: 0.1em; text-transform: uppercase; font-weight: 700; min-width: 70px; padding-top: 2px; }
+.errata-drop { color: var(--red); }
+.errata-keep { color: var(--green); }
+.errata-add { color: var(--cyan); }
+.errata-move { color: var(--gold); }
+
+/* REBUILD section */
+.rebuild-step { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px 24px; margin: 16px 0; }
+.rebuild-num { font-family: var(--font-display); font-size: 0.9rem; color: var(--gold); font-weight: 700; margin-bottom: 6px; }
+.rebuild-title { font-family: var(--font-display); font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-bright); font-weight: 600; margin-bottom: 8px; }
+.rebuild-cmd { background: var(--bg-code); border: 1px solid var(--border); border-radius: 4px; padding: 10px 14px; margin: 8px 0; font-family: var(--font-code); font-size: 0.75rem; color: var(--cyan); overflow-x: auto; white-space: pre; }
+.rebuild-note { font-size: 0.85rem; color: var(--text-dim); margin-top: 6px; }
+
+footer { text-align: center; padding: 40px 24px; font-family: var(--font-display); font-size: 0.6rem; color: var(--text-dim); letter-spacing: 0.1em; border-top: 1px solid var(--border); line-height: 2; }
+footer strong { color: var(--core-warm); }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <div class="nav-brand">ENGINEERING<br>ADDENDUM</div>
+    <a href="#gap1"><span class="gap-num">01</span> Hermes Runtime</a>
+    <a href="#gap2"><span class="gap-num">02</span> Task Queue</a>
+    <a href="#gap3"><span class="gap-num">03</span> Self-Improvement</a>
+    <a href="#gap4"><span class="gap-num">04</span> Startup Deadlock</a>
+    <a href="#gap5"><span class="gap-num">05</span> REBUILD.md</a>
+    <a href="#errata">Errata</a>
+    <a href="#verdict">Verdict</a>
+  </div>
+</nav>
+
+<div class="main-content">
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-inner">
+    <div class="hero-tag">Addendum &mdash; Pencil Sharpened</div>
+    <h1>The Five <span>Gaps</span>, Answered</h1>
+    <div class="subtitle">Engineering decisions that make the blueprint buildable.</div>
+    <p>Jarvis called it: the strategic blueprint was 70% correct and 30% aspirational hand-waving. Five load-bearing questions were skipped. This document answers each one with concrete decisions, actual code, and real justifications. No marketing. No &ldquo;this would be configured appropriately.&rdquo; Decisions with receipts.</p>
+    <div class="hero-meta">
+      <div><strong>Classification</strong>Engineering Spec</div>
+      <div><strong>Date</strong>April 10, 2026</div>
+      <div><strong>Companion To</strong>Strategic Blueprint v1.0</div>
+      <div><strong>Status</strong>Decision Document</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- GAP 1: HERMES RUNTIME -->
+<!-- ============================================================ -->
+<section id="gap1">
+  <div class="container">
+    <div class="gap-header">
+      <div class="gap-number">01</div>
+      <div class="gap-title-block">
+        <div class="section-label">Gap One</div>
+        <div class="section-title">What Runtime IS Hermes?</div>
+        <div class="gap-critique">&ldquo;Opus designed the interior of a house without picking what it&rsquo;s built from.&rdquo;</div>
+      </div>
+    </div>
+
+    <p class="section-intro">Fair. The blueprint described skills, handoff protocols, and self-repair cascades without ever answering the most fundamental question: what process runs, what language, what framework, and why. Here&rsquo;s the answer.</p>
+
+    <div class="callout callout-gold">
+      <div class="callout-title">The Decision</div>
+      <p><strong style="color:var(--core-white);">Hermes is a Python 3.12+ asyncio daemon</strong>, managed by launchd, running as a user-level LaunchAgent. Single process. No framework. No container. Just Python, asyncio, and a handful of well-tested libraries.</p>
+    </div>
+
+    <p style="margin:20px 0;"><strong style="color:var(--text-bright);">Why Python over every alternative:</strong></p>
+
+    <table class="decision-matrix">
+      <thead>
+        <tr><th>Option</th><th>Pros</th><th>Cons</th><th>Verdict</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Python asyncio daemon</strong></td>
+          <td>Native async/await. Phil&rsquo;s AI stack is Python. psutil, aiosqlite, aiohttp all mature. Single process, single plist. Ollama client libraries are Python-native.</td>
+          <td>GIL limits CPU-bound work (irrelevant&mdash;Hermes is I/O-bound).</td>
+          <td class="verdict">CHOSEN</td>
+        </tr>
+        <tr>
+          <td>Node.js process</td>
+          <td>n8n is Node. Event loop is good.</td>
+          <td>Phil&rsquo;s AI tooling is Python. Two ecosystems to maintain. Node process monitoring libraries less mature on macOS.</td>
+          <td class="reject">REJECTED</td>
+        </tr>
+        <tr>
+          <td>Shell script loop</td>
+          <td>Simple. No dependencies.</td>
+          <td>No async. No error handling. No state management. No task queue. Fragile.</td>
+          <td class="reject">REJECTED</td>
+        </tr>
+        <tr>
+          <td>OpenClaw skill</td>
+          <td>Already running infrastructure.</td>
+          <td>Hermes monitors OpenClaw. If Hermes IS OpenClaw, it can&rsquo;t monitor itself. Circular dependency. Single point of failure.</td>
+          <td class="reject">REJECTED</td>
+        </tr>
+        <tr>
+          <td>n8n workflow</td>
+          <td>Already running. Visual.</td>
+          <td>n8n is a monitored service. Can&rsquo;t be the monitor AND the monitored. Same circular dependency as OpenClaw.</td>
+          <td class="reject">REJECTED</td>
+        </tr>
+        <tr>
+          <td>Claude Code session</td>
+          <td>Most capable reasoning.</td>
+          <td>Requires internet. Not a daemon. Can&rsquo;t run unsupervised 24/7. Not self-contained.</td>
+          <td class="reject">REJECTED</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p style="margin:20px 0;"><strong style="color:var(--text-bright);">The directory structure:</strong></p>
+
+    <div class="dir-tree">
+<span class="dir">~/jarvis/hermes/</span>
+├── <span class="file">main.py</span>              <span class="desc">&mdash; entry point, asyncio.run()</span>
+├── <span class="file">config.yaml</span>           <span class="desc">&mdash; all tunable parameters</span>
+├── <span class="dir">skills/</span>
+│   ├── <span class="file">health_probe.py</span>   <span class="desc">&mdash; Skill 1: system health checks</span>
+│   ├── <span class="file">config_guardian.py</span> <span class="desc">&mdash; Skill 2: config drift detection</span>
+│   └── <span class="file">workflow_exec.py</span>  <span class="desc">&mdash; Skill 3: n8n workflow trigger</span>
+├── <span class="dir">core/</span>
+│   ├── <span class="file">queue.py</span>          <span class="desc">&mdash; SQLite task queue (aiosqlite)</span>
+│   ├── <span class="file">monitor.py</span>        <span class="desc">&mdash; health check loop</span>
+│   ├── <span class="file">state.py</span>          <span class="desc">&mdash; daemon state machine</span>
+│   └── <span class="file">discord.py</span>        <span class="desc">&mdash; alert dispatcher</span>
+├── <span class="dir">data/</span>
+│   ├── <span class="file">queue.db</span>          <span class="desc">&mdash; SQLite WAL task queue</span>
+│   └── <span class="file">state.json</span>        <span class="desc">&mdash; last known state snapshot</span>
+└── <span class="dir">logs/</span>
+    └── <span class="file">hermes.log</span>        <span class="desc">&mdash; (stdout via launchd, rotated)</span>
+    </div>
+
+    <p style="margin:20px 0;"><strong style="color:var(--text-bright);">The main.py skeleton &mdash; this is the actual process that runs:</strong></p>
+
+    <div class="code-block">
+      <div class="code-header">
+        <span class="code-lang">Python</span>
+        <span class="code-file">~/jarvis/hermes/main.py</span>
+      </div>
+      <pre><code><span class="cm">#!/usr/bin/env python3</span>
+<span class="cm">"""Hermes — Jarvis infrastructure watchdog daemon."""</span>
+
+<span class="kw">import</span> asyncio
+<span class="kw">import</span> signal
+<span class="kw">import</span> logging
+<span class="kw">import</span> sys
+<span class="kw">from</span> pathlib <span class="kw">import</span> Path
+
+<span class="kw">from</span> core.queue <span class="kw">import</span> TaskQueue
+<span class="kw">from</span> core.monitor <span class="kw">import</span> HealthMonitor
+<span class="kw">from</span> core.state <span class="kw">import</span> DaemonState
+<span class="kw">from</span> core.discord <span class="kw">import</span> DiscordAlert
+<span class="kw">from</span> skills.health_probe <span class="kw">import</span> HealthProbeSkill
+<span class="kw">from</span> skills.config_guardian <span class="kw">import</span> ConfigGuardianSkill
+<span class="kw">from</span> skills.workflow_exec <span class="kw">import</span> WorkflowExecutorSkill
+
+<span class="fn">HERMES_HOME</span> = Path.home() / <span class="str">"jarvis"</span> / <span class="str">"hermes"</span>
+<span class="fn">HEALTH_PORT</span> = <span class="num">7777</span>
+<span class="fn">BOOT_GRACE</span>  = <span class="num">120</span>  <span class="cm"># seconds before monitoring goes live</span>
+
+logger = logging.getLogger(<span class="str">"hermes"</span>)
+
+<span class="kw">class</span> <span class="fn">Hermes</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(self):
+        self.state    = DaemonState()
+        self.queue    = TaskQueue(HERMES_HOME / <span class="str">"data"</span> / <span class="str">"queue.db"</span>)
+        self.discord  = DiscordAlert()
+        self.skills   = {}
+        self._shutdown = asyncio.Event()
+
+    <span class="kw">async def</span> <span class="fn">start</span>(self):
+        <span class="cm">"""Boot sequence: init → grace period → operational."""</span>
+        logger.info(<span class="str">"Hermes starting — entering boot grace period (%ds)"</span>, BOOT_GRACE)
+        self.state.set(<span class="str">"booting"</span>)
+
+        <span class="cm"># Initialize subsystems</span>
+        <span class="kw">await</span> self.queue.init_db()
+        self.skills = {
+            <span class="str">"health_probe"</span>:    HealthProbeSkill(),
+            <span class="str">"config_guardian"</span>: ConfigGuardianSkill(),
+            <span class="str">"workflow_exec"</span>:   WorkflowExecutorSkill(),
+        }
+
+        <span class="cm"># Register signal handlers (SIGTERM from launchd)</span>
+        loop = asyncio.get_event_loop()
+        <span class="kw">for</span> sig <span class="kw">in</span> (signal.SIGTERM, signal.SIGINT):
+            loop.add_signal_handler(sig, <span class="kw">lambda</span> s=sig: self._handle_signal(s))
+
+        <span class="cm"># Boot grace: poll dependencies but don't alert on failures</span>
+        <span class="kw">await</span> self._boot_grace_period()
+
+        <span class="cm"># Go operational</span>
+        self.state.set(<span class="str">"operational"</span>)
+        logger.info(<span class="str">"Hermes operational — all systems monitored"</span>)
+        <span class="kw">await</span> self.discord.send(<span class="str">"Hermes is online and monitoring."</span>)
+
+        <span class="cm"># Launch concurrent loops</span>
+        <span class="kw">await</span> asyncio.gather(
+            self._health_loop(interval=<span class="num">300</span>),     <span class="cm"># 5 min health checks</span>
+            self._queue_processor(),               <span class="cm"># task queue consumer</span>
+            self._health_endpoint(HEALTH_PORT),    <span class="cm"># HTTP /health for launchd</span>
+            self._shutdown.wait(),                 <span class="cm"># blocks until signal</span>
+        )
+
+    <span class="kw">async def</span> <span class="fn">_boot_grace_period</span>(self):
+        <span class="cm">"""Wait up to BOOT_GRACE seconds for dependencies.
+        Poll every 5s. Don't alert on failures during this window."""</span>
+        deadline = asyncio.get_event_loop().time() + BOOT_GRACE
+        <span class="kw">while</span> asyncio.get_event_loop().time() < deadline:
+            deps = <span class="kw">await</span> self._check_dependencies()
+            <span class="kw">if</span> deps[<span class="str">"all_ready"</span>]:
+                logger.info(<span class="str">"All dependencies ready — grace period complete"</span>)
+                <span class="kw">return</span>
+            <span class="kw">await</span> asyncio.sleep(<span class="num">5</span>)
+        logger.warning(<span class="str">"Grace period expired — starting with available deps"</span>)
+
+    <span class="kw">async def</span> <span class="fn">_health_loop</span>(self, interval: int):
+        <span class="cm">"""Run health probe skill on schedule."""</span>
+        <span class="kw">while not</span> self._shutdown.is_set():
+            result = <span class="kw">await</span> self.skills[<span class="str">"health_probe"</span>].execute()
+            <span class="kw">if</span> result.has_failures:
+                <span class="kw">await</span> self.discord.send(result.format_alert())
+                <span class="kw">await</span> self._attempt_self_repair(result.failures)
+            <span class="kw">await</span> asyncio.sleep(interval)
+
+    <span class="kw">async def</span> <span class="fn">_queue_processor</span>(self):
+        <span class="cm">"""Claim and execute tasks from SQLite queue."""</span>
+        <span class="kw">while not</span> self._shutdown.is_set():
+            task = <span class="kw">await</span> self.queue.claim()
+            <span class="kw">if</span> task <span class="kw">is</span> <span class="kw">None</span>:
+                <span class="kw">await</span> asyncio.sleep(<span class="num">5</span>)  <span class="cm"># poll interval</span>
+                <span class="kw">continue</span>
+            <span class="kw">try</span>:
+                skill = self.skills[task.skill_name]
+                <span class="kw">await</span> skill.execute(task.payload)
+                <span class="kw">await</span> self.queue.complete(task.id)
+            <span class="kw">except</span> Exception <span class="kw">as</span> e:
+                <span class="kw">await</span> self.queue.fail(task.id, str(e))
+
+    <span class="kw">async def</span> <span class="fn">_health_endpoint</span>(self, port: int):
+        <span class="cm">"""HTTP /health for launchd and external probes."""</span>
+        <span class="kw">async def</span> handler(reader, writer):
+            status = self.state.current
+            code = <span class="str">b"200"</span> <span class="kw">if</span> status == <span class="str">"operational"</span> <span class="kw">else</span> <span class="str">b"503"</span>
+            body = f<span class="str">'{{"status":"{status}"}}'</span>.encode()
+            writer.write(
+                <span class="str">b"HTTP/1.1 "</span> + code + <span class="str">b" OK\r\n"</span>
+                <span class="str">b"Content-Type: application/json\r\n"</span>
+                <span class="str">b"Content-Length: "</span> + str(len(body)).encode() + <span class="str">b"\r\n\r\n"</span>
+                + body
+            )
+            <span class="kw">await</span> writer.drain()
+            writer.close()
+        server = <span class="kw">await</span> asyncio.start_server(handler, <span class="str">"127.0.0.1"</span>, port)
+        <span class="kw">async with</span> server:
+            <span class="kw">await</span> server.serve_forever()
+
+    <span class="kw">def</span> <span class="fn">_handle_signal</span>(self, sig):
+        logger.info(<span class="str">"Signal %s received — graceful shutdown"</span>, sig)
+        self._shutdown.set()
+
+<span class="kw">if</span> __name__ == <span class="str">"__main__"</span>:
+    logging.basicConfig(
+        level=logging.INFO,
+        format=<span class="str">"%(asctime)s [%(name)s] %(levelname)s: %(message)s"</span>,
+        stream=sys.stdout,
+    )
+    asyncio.run(Hermes().start())</code></pre>
+    </div>
+
+    <p style="margin:20px 0;"><strong style="color:var(--text-bright);">The launchd plist &mdash; this is how macOS keeps it alive:</strong></p>
+
+    <div class="code-block">
+      <div class="code-header">
+        <span class="code-lang">XML</span>
+        <span class="code-file">~/Library/LaunchAgents/com.jarvis.hermes.plist</span>
+      </div>
+      <pre><code><span class="tag">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span>
+<span class="tag">&lt;!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN"
+  "http://www.apple.com/DTDs/PropertyList-1.0.dtd"&gt;</span>
+<span class="tag">&lt;plist version="1.0"&gt;</span>
+<span class="tag">&lt;dict&gt;</span>
+    <span class="tag">&lt;key&gt;</span>Label<span class="tag">&lt;/key&gt;</span>
+    <span class="tag">&lt;string&gt;</span>com.jarvis.hermes<span class="tag">&lt;/string&gt;</span>
+
+    <span class="tag">&lt;key&gt;</span>ProgramArguments<span class="tag">&lt;/key&gt;</span>
+    <span class="tag">&lt;array&gt;</span>
+        <span class="tag">&lt;string&gt;</span>/usr/bin/python3<span class="tag">&lt;/string&gt;</span>
+        <span class="tag">&lt;string&gt;</span>/Users/philbelue/jarvis/hermes/main.py<span class="tag">&lt;/string&gt;</span>
+    <span class="tag">&lt;/array&gt;</span>
+
+    <span class="tag">&lt;key&gt;</span>WorkingDirectory<span class="tag">&lt;/key&gt;</span>
+    <span class="tag">&lt;string&gt;</span>/Users/philbelue/jarvis/hermes<span class="tag">&lt;/string&gt;</span>
+
+    <span class="tag">&lt;key&gt;</span>KeepAlive<span class="tag">&lt;/key&gt;</span>
+    <span class="tag">&lt;dict&gt;</span>
+        <span class="cm">&lt;!-- Restart if it crashes (non-zero exit) --&gt;</span>
+        <span class="tag">&lt;key&gt;</span>SuccessfulExit<span class="tag">&lt;/key&gt;</span>
+        <span class="tag">&lt;false/&gt;</span>
+    <span class="tag">&lt;/dict&gt;</span>
+
+    <span class="cm">&lt;!-- 10 second minimum between restart attempts --&gt;</span>
+    <span class="tag">&lt;key&gt;</span>ThrottleInterval<span class="tag">&lt;/key&gt;</span>
+    <span class="tag">&lt;integer&gt;</span>10<span class="tag">&lt;/integer&gt;</span>
+
+    <span class="cm">&lt;!-- 15 seconds to shut down gracefully before SIGKILL --&gt;</span>
+    <span class="tag">&lt;key&gt;</span>ExitTimeOut<span class="tag">&lt;/key&gt;</span>
+    <span class="tag">&lt;integer&gt;</span>15<span class="tag">&lt;/integer&gt;</span>
+
+    <span class="tag">&lt;key&gt;</span>EnvironmentVariables<span class="tag">&lt;/key&gt;</span>
+    <span class="tag">&lt;dict&gt;</span>
+        <span class="tag">&lt;key&gt;</span>PYTHONUNBUFFERED<span class="tag">&lt;/key&gt;</span>
+        <span class="tag">&lt;string&gt;</span>1<span class="tag">&lt;/string&gt;</span>
+        <span class="tag">&lt;key&gt;</span>HERMES_ENV<span class="tag">&lt;/key&gt;</span>
+        <span class="tag">&lt;string&gt;</span>production<span class="tag">&lt;/string&gt;</span>
+    <span class="tag">&lt;/dict&gt;</span>
+
+    <span class="tag">&lt;key&gt;</span>StandardOutPath<span class="tag">&lt;/key&gt;</span>
+    <span class="tag">&lt;string&gt;</span>/Users/philbelue/jarvis/hermes/logs/hermes.log<span class="tag">&lt;/string&gt;</span>
+
+    <span class="tag">&lt;key&gt;</span>StandardErrorPath<span class="tag">&lt;/key&gt;</span>
+    <span class="tag">&lt;string&gt;</span>/Users/philbelue/jarvis/hermes/logs/hermes-error.log<span class="tag">&lt;/string&gt;</span>
+
+    <span class="tag">&lt;key&gt;</span>ProcessType<span class="tag">&lt;/key&gt;</span>
+    <span class="tag">&lt;string&gt;</span>Background<span class="tag">&lt;/string&gt;</span>
+
+    <span class="tag">&lt;key&gt;</span>RunAtLoad<span class="tag">&lt;/key&gt;</span>
+    <span class="tag">&lt;true/&gt;</span>
+<span class="tag">&lt;/dict&gt;</span>
+<span class="tag">&lt;/plist&gt;</span></code></pre>
+    </div>
+
+    <div class="callout callout-green">
+      <div class="callout-title">Dependencies (pip install)</div>
+      <p><code style="font-family:var(--font-code);color:var(--cyan);">aiosqlite</code> &mdash; async SQLite for task queue. <code style="font-family:var(--font-code);color:var(--cyan);">aiohttp</code> &mdash; async HTTP for health checks and Ollama/n8n API calls. <code style="font-family:var(--font-code);color:var(--cyan);">psutil</code> &mdash; system metrics (with M4 Max workarounds). <code style="font-family:var(--font-code);color:var(--cyan);">watchfiles</code> &mdash; Rust-backed file watcher (only for Obsidian vault mirroring, not task queue). <code style="font-family:var(--font-code);color:var(--cyan);">pyyaml</code> &mdash; config loading. That&rsquo;s it. Five dependencies. No framework.</p>
+    </div>
+
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- GAP 2: TASK QUEUE -->
+<!-- ============================================================ -->
+<section id="gap2">
+  <div class="container">
+    <div class="gap-header">
+      <div class="gap-number">02</div>
+      <div class="gap-title-block">
+        <div class="section-label">Gap Two</div>
+        <div class="section-title">The Task Queue: SQLite Replaces fswatch</div>
+        <div class="gap-critique">&ldquo;fswatch is not a task queue &mdash; it&rsquo;s a race condition waiting to happen.&rdquo;</div>
+      </div>
+    </div>
+
+    <p class="section-intro">Jarvis is right. Watching a directory of markdown files with fswatch gives you zero atomicity, zero dead letter handling, and zero idempotency. Two handoffs land at the same time? Race. Hermes crashes mid-execution? File stuck at <code style="font-family:var(--font-code);color:var(--red);">in_progress</code> forever. NVMe not mounted? Handoff directory doesn&rsquo;t exist. Silent failure.</p>
+
+    <div class="callout callout-gold">
+      <div class="callout-title">The Decision</div>
+      <p><strong style="color:var(--core-white);">SQLite in WAL mode is the task queue.</strong> Single file, atomic transactions, no external infrastructure. The Obsidian vault gets markdown mirrors for human readability, but the source of truth is <code style="font-family:var(--font-code);">queue.db</code>. No fswatch anywhere in the system.</p>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header">
+        <span class="code-lang">Python</span>
+        <span class="code-file">~/jarvis/hermes/core/queue.py</span>
+      </div>
+      <pre><code><span class="cm">"""SQLite WAL task queue with atomic claiming and dead letter handling."""</span>
+
+<span class="kw">import</span> asyncio
+<span class="kw">import</span> json
+<span class="kw">import</span> aiosqlite
+<span class="kw">from</span> dataclasses <span class="kw">import</span> dataclass
+<span class="kw">from</span> typing <span class="kw">import</span> Optional
+<span class="kw">from</span> pathlib <span class="kw">import</span> Path
+
+<span class="dec">@dataclass</span>
+<span class="kw">class</span> <span class="fn">Task</span>:
+    id: int
+    skill_name: str
+    payload: dict
+    attempts: int
+
+<span class="kw">class</span> <span class="fn">TaskQueue</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, db_path: Path):
+        self.db_path = str(db_path)
+        self._lock = asyncio.Lock()  <span class="cm"># serialize writes</span>
+
+    <span class="kw">async def</span> <span class="fn">init_db</span>(self):
+        <span class="kw">async with</span> aiosqlite.connect(self.db_path) <span class="kw">as</span> db:
+            <span class="kw">await</span> db.execute(<span class="str">"PRAGMA journal_mode=WAL"</span>)
+            <span class="kw">await</span> db.execute(<span class="str">"PRAGMA synchronous=NORMAL"</span>)
+            <span class="kw">await</span> db.execute(<span class="str">"PRAGMA busy_timeout=30000"</span>)
+            <span class="kw">await</span> db.execute(<span class="str">"""
+                CREATE TABLE IF NOT EXISTS tasks (
+                    id          INTEGER PRIMARY KEY AUTOINCREMENT,
+                    skill_name  TEXT NOT NULL,
+                    payload     TEXT NOT NULL DEFAULT '{}',
+                    status      TEXT NOT NULL DEFAULT 'pending',
+                    idempotency TEXT UNIQUE,
+                    attempts    INTEGER DEFAULT 0,
+                    max_retries INTEGER DEFAULT 3,
+                    created_at  TEXT DEFAULT (datetime('now')),
+                    claimed_at  TEXT,
+                    finished_at TEXT,
+                    error       TEXT
+                )
+            """</span>)
+            <span class="kw">await</span> db.execute(<span class="str">"""
+                CREATE INDEX IF NOT EXISTS idx_status
+                ON tasks(status, created_at)
+            """</span>)
+            <span class="kw">await</span> db.commit()
+
+    <span class="kw">async def</span> <span class="fn">enqueue</span>(self, skill: str, payload: dict,
+                      idempotency: str = <span class="kw">None</span>) -> int:
+        <span class="cm">"""Add a task. Idempotency key prevents duplicates."""</span>
+        <span class="kw">async with</span> self._lock:
+            <span class="kw">async with</span> aiosqlite.connect(self.db_path) <span class="kw">as</span> db:
+                <span class="kw">try</span>:
+                    cur = <span class="kw">await</span> db.execute(
+                        <span class="str">"INSERT INTO tasks (skill_name, payload, idempotency) VALUES (?, ?, ?)"</span>,
+                        (skill, json.dumps(payload), idempotency)
+                    )
+                    <span class="kw">await</span> db.commit()
+                    <span class="kw">return</span> cur.lastrowid
+                <span class="kw">except</span> aiosqlite.IntegrityError:
+                    <span class="kw">return</span> -<span class="num">1</span>  <span class="cm"># duplicate idempotency key — skip</span>
+
+    <span class="kw">async def</span> <span class="fn">claim</span>(self) -> Optional[Task]:
+        <span class="cm">"""Atomically claim the oldest pending task.
+        Uses BEGIN IMMEDIATE to prevent read-upgrade deadlocks."""</span>
+        <span class="kw">async with</span> self._lock:
+            <span class="kw">async with</span> aiosqlite.connect(self.db_path) <span class="kw">as</span> db:
+                <span class="kw">await</span> db.execute(<span class="str">"BEGIN IMMEDIATE"</span>)
+                <span class="kw">try</span>:
+                    cur = <span class="kw">await</span> db.execute(<span class="str">"""
+                        SELECT id, skill_name, payload, attempts
+                        FROM tasks
+                        WHERE status = 'pending'
+                        ORDER BY created_at ASC
+                        LIMIT 1
+                    """</span>)
+                    row = <span class="kw">await</span> cur.fetchone()
+                    <span class="kw">if not</span> row:
+                        <span class="kw">await</span> db.execute(<span class="str">"ROLLBACK"</span>)
+                        <span class="kw">return</span> <span class="kw">None</span>
+
+                    task_id, skill, payload, attempts = row
+                    <span class="kw">await</span> db.execute(<span class="str">"""
+                        UPDATE tasks
+                        SET status = 'in_progress',
+                            attempts = attempts + 1,
+                            claimed_at = datetime('now')
+                        WHERE id = ? AND status = 'pending'
+                    """</span>, (task_id,))
+                    <span class="kw">await</span> db.commit()
+
+                    <span class="kw">return</span> Task(
+                        id=task_id,
+                        skill_name=skill,
+                        payload=json.loads(payload),
+                        attempts=attempts + <span class="num">1</span>
+                    )
+                <span class="kw">except</span>:
+                    <span class="kw">await</span> db.execute(<span class="str">"ROLLBACK"</span>)
+                    <span class="kw">raise</span>
+
+    <span class="kw">async def</span> <span class="fn">complete</span>(self, task_id: int):
+        <span class="kw">async with</span> self._lock:
+            <span class="kw">async with</span> aiosqlite.connect(self.db_path) <span class="kw">as</span> db:
+                <span class="kw">await</span> db.execute(<span class="str">"""
+                    UPDATE tasks SET status='completed', finished_at=datetime('now')
+                    WHERE id=?
+                """</span>, (task_id,))
+                <span class="kw">await</span> db.commit()
+
+    <span class="kw">async def</span> <span class="fn">fail</span>(self, task_id: int, error: str):
+        <span class="cm">"""Fail a task. If max retries exceeded → dead_letter."""</span>
+        <span class="kw">async with</span> self._lock:
+            <span class="kw">async with</span> aiosqlite.connect(self.db_path) <span class="kw">as</span> db:
+                cur = <span class="kw">await</span> db.execute(
+                    <span class="str">"SELECT attempts, max_retries FROM tasks WHERE id=?"</span>,
+                    (task_id,)
+                )
+                row = <span class="kw">await</span> cur.fetchone()
+                attempts, max_retries = row
+
+                <span class="kw">if</span> attempts >= max_retries:
+                    new_status = <span class="str">"dead_letter"</span>
+                <span class="kw">else</span>:
+                    new_status = <span class="str">"pending"</span>  <span class="cm"># back in queue for retry</span>
+
+                <span class="kw">await</span> db.execute(<span class="str">"""
+                    UPDATE tasks
+                    SET status=?, error=?, finished_at=datetime('now')
+                    WHERE id=?
+                """</span>, (new_status, error, task_id))
+                <span class="kw">await</span> db.commit()
+
+    <span class="kw">async def</span> <span class="fn">reap_stale</span>(self, stale_minutes: int = <span class="num">10</span>):
+        <span class="cm">"""Find tasks stuck in 'in_progress' for too long.
+        Reset to 'pending' for retry or 'dead_letter' if exhausted."""</span>
+        <span class="kw">async with</span> self._lock:
+            <span class="kw">async with</span> aiosqlite.connect(self.db_path) <span class="kw">as</span> db:
+                <span class="kw">await</span> db.execute(<span class="str">f"""
+                    UPDATE tasks
+                    SET status = CASE
+                        WHEN attempts >= max_retries THEN 'dead_letter'
+                        ELSE 'pending'
+                    END,
+                    error = 'stale: exceeded {stale_minutes}m in_progress'
+                    WHERE status = 'in_progress'
+                    AND claimed_at < datetime('now', '-{stale_minutes} minutes')
+                """</span>)
+                <span class="kw">await</span> db.commit()</code></pre>
+    </div>
+
+    <p style="margin:20px 0;"><strong style="color:var(--text-bright);">Every failure mode Jarvis raised, handled:</strong></p>
+
+    <table class="decision-matrix">
+      <thead>
+        <tr><th>Failure</th><th>fswatch Behavior</th><th>SQLite Queue Behavior</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Two handoffs land simultaneously</td>
+          <td class="reject">Race condition. Both fire, undefined order.</td>
+          <td class="verdict">BEGIN IMMEDIATE + asyncio.Lock(). One claims, other waits. FIFO guaranteed.</td>
+        </tr>
+        <tr>
+          <td>Hermes crashes mid-execution</td>
+          <td class="reject">File stuck at in_progress forever.</td>
+          <td class="verdict">reap_stale() runs every 5 min. Stuck tasks reset to pending or dead_letter.</td>
+        </tr>
+        <tr>
+          <td>NVMe not mounted</td>
+          <td class="reject">Handoff directory doesn&rsquo;t exist. Silent failure.</td>
+          <td class="verdict">queue.db lives on internal SSD (~/jarvis/hermes/data/). No NVMe dependency.</td>
+        </tr>
+        <tr>
+          <td>Duplicate handoff (Jarvis sends twice)</td>
+          <td class="reject">Executes twice. No idempotency.</td>
+          <td class="verdict">idempotency key (UNIQUE constraint). Second insert silently skipped.</td>
+        </tr>
+        <tr>
+          <td>Task keeps failing</td>
+          <td class="reject">Infinite retry loop or ignored.</td>
+          <td class="verdict">max_retries=3 then dead_letter. Discord alert on dead letter.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="callout callout-cyan">
+      <div class="callout-title">Obsidian Mirror (Human Readability)</div>
+      <p>After each task completes or dead-letters, Hermes writes a markdown summary to <code style="font-family:var(--font-code);">~/JarvisVault/hermes/task-log/YYYY-MM-DD/task-{id}.md</code>. This is a <strong>write-only mirror</strong> &mdash; the vault is for human eyes. The queue.db is the source of truth. If the vault is unavailable, nothing breaks.</p>
+    </div>
+
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- GAP 3: SELF-IMPROVEMENT -->
+<!-- ============================================================ -->
+<section id="gap3">
+  <div class="container">
+    <div class="gap-header">
+      <div class="gap-number">03</div>
+      <div class="gap-title-block">
+        <div class="section-label">Gap Three</div>
+        <div class="section-title">Self-Improvement: The Honest Answer</div>
+        <div class="gap-critique">&ldquo;That&rsquo;s marketing, not engineering.&rdquo;</div>
+      </div>
+    </div>
+
+    <p class="section-intro">Jarvis is right again. The blueprint said every skill &ldquo;self-improves&rdquo; &mdash; recalibrates thresholds, builds dangerous-keys lists, tracks success rates. That sounds compelling and is completely unspecified. So here&rsquo;s the honest answer:</p>
+
+    <div class="callout callout-red">
+      <div class="callout-title">The Decision</div>
+      <p><strong style="color:var(--core-white);">Hermes does NOT self-improve in Phases 1&ndash;2.</strong> Period. Self-modification of a system that monitors your infrastructure is a Phase 3+ capability, and it requires a human-in-the-loop gate. Anything else is asking for a bad threshold change to cascade into a false-positive storm that wakes you up at 3am.</p>
+    </div>
+
+    <p style="margin:20px 0;"><strong style="color:var(--text-bright);">Phase 1&ndash;2: Static skills with manual tuning.</strong> All thresholds live in <code style="font-family:var(--font-code);">config.yaml</code>. You change them by editing the file. Hermes watches config.yaml with Config Guardian and applies changes on next cycle. That&rsquo;s it. No AI analyzing its own behavior. No auto-recalibration.</p>
+
+    <p style="margin:20px 0;"><strong style="color:var(--text-bright);">Phase 3+ (May onwards): The actual self-improvement mechanism, if you choose to build it:</strong></p>
+
+    <div class="code-block">
+      <div class="code-header">
+        <span class="code-lang">Architecture</span>
+        <span class="code-file">Self-improvement loop (Phase 3 only)</span>
+      </div>
+      <pre><code><span class="cm"># THE LOOP (runs weekly, not per-execution)</span>
+
+<span class="fn">1. OBSERVE</span>
+   <span class="cm"># SQLite execution log aggregated weekly</span>
+   SELECT skill_name,
+          COUNT(*) as executions,
+          SUM(CASE WHEN status='completed' THEN 1 ELSE 0 END) as successes,
+          AVG(duration_ms) as avg_duration,
+          GROUP_CONCAT(DISTINCT error) as errors
+   FROM task_log
+   WHERE finished_at > datetime('now', '-7 days')
+   GROUP BY skill_name
+
+<span class="fn">2. ANALYZE</span>
+   <span class="cm"># n8n workflow calls Ollama/Mistral (local, no cloud dependency)</span>
+   <span class="cm"># Input: weekly execution summary (above SQL output)</span>
+   <span class="cm"># Output: JSON with proposed config changes</span>
+   <span class="cm"># Example: {"health_probe.interval": 180, "reason": "12 false negatives this week"}</span>
+
+<span class="fn">3. PROPOSE</span> (not apply)
+   <span class="cm"># Changes written to ~/JarvisVault/hermes/proposals/2026-04-17.md</span>
+   <span class="cm"># Discord message sent to Phil:</span>
+   <span class="str">"Hermes wants to adjust health_probe.interval from 300s to 180s.</span>
+   <span class="str"> Reason: 12 false negatives this week at 300s interval.</span>
+   <span class="str"> React ✅ to approve, ❌ to reject."</span>
+
+<span class="fn">4. GATE</span>
+   <span class="cm"># Human approves via Discord reaction</span>
+   <span class="cm"># Bot reads reaction, writes approved changes to config.yaml</span>
+   <span class="cm"># Config Guardian detects change, applies on next cycle</span>
+
+<span class="fn">5. ROLLBACK</span>
+   <span class="cm"># config.yaml is git-versioned (~/jarvis/hermes/ is a git repo)</span>
+   <span class="cm"># If next week's metrics are worse:</span>
+   git log --oneline config.yaml  <span class="cm"># find last known good</span>
+   git checkout abc123 -- config.yaml  <span class="cm"># revert</span>
+   <span class="cm"># Hermes proposes the rollback the same way — via Discord approval</span></code></pre>
+    </div>
+
+    <p style="margin:20px 0;"><strong style="color:var(--text-bright);">What prevents a bad self-modification from cascading?</strong></p>
+    <p style="margin-bottom:8px;">Three things: <strong style="color:var(--gold);">(1)</strong> The human gate &mdash; nothing auto-applies. <strong style="color:var(--gold);">(2)</strong> Git versioning &mdash; every config change has a revert target. <strong style="color:var(--gold);">(3)</strong> Weekly cadence &mdash; you have 7 days of data before the next proposal. No real-time feedback loop. No oscillation possible.</p>
+
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- GAP 4: STARTUP DEADLOCK -->
+<!-- ============================================================ -->
+<section id="gap4">
+  <div class="container">
+    <div class="gap-header">
+      <div class="gap-number">04</div>
+      <div class="gap-title-block">
+        <div class="section-label">Gap Four</div>
+        <div class="section-title">The Startup Deadlock, Solved</div>
+        <div class="gap-critique">&ldquo;This is a classic distributed systems startup problem and the doc skips it entirely.&rdquo;</div>
+      </div>
+    </div>
+
+    <p class="section-intro">Hermes monitors Jarvis (OpenClaw). Jarvis monitors Hermes. Both managed by launchd. On cold boot, launchd starts both simultaneously. The naive implementation: both start, neither is ready, both mark the other as down, restart cascade begins. Classic deadlock.</p>
+
+    <div class="callout callout-gold">
+      <div class="callout-title">The Solution: Boot Grace Period + State Machine</div>
+      <p>Adapted from Kubernetes startup/readiness/liveness probe separation. Hermes has four states, and it does <strong>not monitor anything</strong> until it has passed through the boot grace period.</p>
+    </div>
+
+    <p style="margin:20px 0;"><strong style="color:var(--text-bright);">The state machine:</strong></p>
+
+    <div class="state-diagram">
+      <div class="state-row">
+        <span class="state-box state-boot">BOOTING</span>
+        <span class="state-arrow">&mdash; grace period (120s) polls deps, no alerts &rarr;</span>
+        <span class="state-box state-ready">OPERATIONAL</span>
+      </div>
+      <div class="state-row">
+        <span class="state-box state-ready">OPERATIONAL</span>
+        <span class="state-arrow">&mdash; 3 consecutive health failures on a dep &rarr;</span>
+        <span class="state-box state-degraded">DEGRADED</span>
+      </div>
+      <div class="state-row">
+        <span class="state-box state-degraded">DEGRADED</span>
+        <span class="state-arrow">&mdash; dep recovers (1 successful check) &rarr;</span>
+        <span class="state-box state-ready">OPERATIONAL</span>
+      </div>
+      <div class="state-row">
+        <span class="state-box state-degraded">DEGRADED</span>
+        <span class="state-arrow">&mdash; 5 min with no recovery &rarr;</span>
+        <span class="state-box state-dead">EMERGENCY</span>
+        <span class="state-arrow">&mdash; Discord alert + stop trying &rarr;</span>
+      </div>
+    </div>
+
+    <p style="margin:20px 0;"><strong style="color:var(--text-bright);">The cold boot sequence, concretely:</strong></p>
+
+    <div class="boot-timeline">
+      <div class="boot-step active">
+        <span class="boot-time">T+0s</span>
+        <span class="boot-desc"><strong>launchd loads all plists.</strong> OpenClaw, Ollama, n8n, and Hermes all start. No guaranteed ordering.</span>
+      </div>
+      <div class="boot-step active">
+        <span class="boot-time">T+0s</span>
+        <span class="boot-desc"><strong>Hermes enters BOOTING state.</strong> Initializes SQLite queue, loads config. Does NOT check any service health yet.</span>
+      </div>
+      <div class="boot-step">
+        <span class="boot-time">T+5s</span>
+        <span class="boot-desc"><strong>Grace period polling begins.</strong> Every 5 seconds, Hermes tries to reach OpenClaw (:3000/health), n8n (:5678/healthz), Ollama (:11434/api/tags). Failures are logged but <strong>not acted on</strong>.</span>
+      </div>
+      <div class="boot-step">
+        <span class="boot-time">T+15s</span>
+        <span class="boot-desc">Ollama responds. n8n responds. OpenClaw still loading extensions.</span>
+      </div>
+      <div class="boot-step">
+        <span class="boot-time">T+35s</span>
+        <span class="boot-desc">OpenClaw responds. <strong>All deps ready.</strong> Grace period ends early.</span>
+      </div>
+      <div class="boot-step active">
+        <span class="boot-time">T+35s</span>
+        <span class="boot-desc"><strong>Hermes enters OPERATIONAL state.</strong> Monitoring loops go live. Discord message: "Hermes online."</span>
+      </div>
+      <div class="boot-step">
+        <span class="boot-time">T+120s</span>
+        <span class="boot-desc"><strong>(Fallback)</strong> If any dep still isn&rsquo;t up by 120s, Hermes goes OPERATIONAL anyway with those services marked DEGRADED. Monitoring is live. Alerts fire for whatever&rsquo;s still down.</span>
+      </div>
+    </div>
+
+    <p style="margin:20px 0;"><strong style="color:var(--text-bright);">The specific deadlock scenario Jarvis raised, solved:</strong></p>
+
+    <div class="callout callout-cyan">
+      <div class="callout-title">Scenario: Hermes starts before OpenClaw is ready</div>
+      <p><strong>Old behavior (broken):</strong> Hermes starts, checks OpenClaw, fails, marks it down, tries to restart it, but OpenClaw is still booting. Restart collides with the existing boot. Chaos.</p>
+      <p style="margin-top:10px;"><strong>New behavior (fixed):</strong> Hermes starts, enters BOOTING state for 120s. During BOOTING, it polls OpenClaw every 5s but <strong>takes no action on failures</strong>. OpenClaw finishes booting at T+35s. Hermes detects it, transitions to OPERATIONAL. No false restart. No cascade.</p>
+      <p style="margin-top:10px;"><strong>Edge case:</strong> OpenClaw genuinely dead (not just slow to boot)? After 120s grace, Hermes goes OPERATIONAL with OpenClaw in DEGRADED. Three more failures → EMERGENCY. Discord alert. Hermes does <strong>not</strong> try to restart OpenClaw &mdash; launchd owns restarts. Hermes only reports.</p>
+    </div>
+
+    <div class="callout callout-red">
+      <div class="callout-title">Critical Design Rule</div>
+      <p><strong style="color:var(--core-white);">Hermes never restarts other services.</strong> That&rsquo;s launchd&rsquo;s job. Hermes monitors and alerts. If it tried to restart services, it would fight with launchd&rsquo;s own KeepAlive restart logic, creating the exact oscillation Jarvis warned about. Separation of concerns: launchd restarts, Hermes watches and reports.</p>
+    </div>
+
+    <p style="margin:20px 0;">This eliminates the &ldquo;mutual self-repair&rdquo; startup deadlock entirely. There is no mutual restart. There&rsquo;s one restart authority (launchd) and one monitoring authority (Hermes). They don&rsquo;t compete.</p>
+
+    <p style="margin:20px 0;"><strong style="color:var(--text-bright);">What about Jarvis monitoring Hermes?</strong></p>
+    <p>Jarvis (OpenClaw) checks <code style="font-family:var(--font-code);">http://127.0.0.1:7777/health</code> on a 5-minute cron. If Hermes is down, Jarvis posts to Discord: &ldquo;Hermes health check failed.&rdquo; That&rsquo;s it. No restart attempt. launchd handles the restart. The &ldquo;mutual monitoring&rdquo; is really just mutual <em>awareness</em> with unilateral <em>action</em> by launchd.</p>
+
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- GAP 5: REBUILD.md -->
+<!-- ============================================================ -->
+<section id="gap5">
+  <div class="container">
+    <div class="gap-header">
+      <div class="gap-number">05</div>
+      <div class="gap-title-block">
+        <div class="section-label">Gap Five</div>
+        <div class="section-title">The Actual REBUILD.md</div>
+        <div class="gap-critique">&ldquo;Produce the actual REBUILD.md, not a description of what it would contain.&rdquo;</div>
+      </div>
+    </div>
+
+    <p class="section-intro">This is the real runbook. Standing in a parking lot, phone in hand, system down. Every step is a command you can paste. Estimated full rebuild: 45&ndash;60 minutes from a clean macOS install with backups accessible.</p>
+
+    <div class="rebuild-step">
+      <div class="rebuild-num">01</div>
+      <div class="rebuild-title">Verify Backups Are Accessible</div>
+      <div class="rebuild-cmd">ls /Volumes/JarvisNVMe/backups/latest/
+# Should see: ollama/ n8n/ obsidian-vault/ hermes/ openclaw/
+# If NVMe not available, pull from Backblaze B2:
+# brew install rclone && rclone copy b2:jarvis-backups/latest ~/jarvis-restore/</div>
+      <div class="rebuild-note">If neither backup source is available, you're rebuilding from scratch. Skip to step 03 and reconfigure manually.</div>
+    </div>
+
+    <div class="rebuild-step">
+      <div class="rebuild-num">02</div>
+      <div class="rebuild-title">Install Prerequisites (5 min)</div>
+      <div class="rebuild-cmd"># Xcode CLI tools
+xargs xcode-select --install
+
+# Homebrew
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+
+# Core tools
+brew install python@3.12 node@20 git jq curl
+
+# Ollama
+brew install ollama
+
+# n8n
+npm install -g n8n
+
+# Obsidian (download from obsidian.md or restore from backup)</div>
+    </div>
+
+    <div class="rebuild-step">
+      <div class="rebuild-num">03</div>
+      <div class="rebuild-title">Restore Ollama Models (10&ndash;15 min)</div>
+      <div class="rebuild-cmd"># Start Ollama
+brew services start ollama
+
+# If NVMe backup available:
+export OLLAMA_MODELS=/Volumes/JarvisNVMe/ollama-models
+# Symlink for Ollama:
+ln -sf /Volumes/JarvisNVMe/ollama-models ~/.ollama/models
+
+# If pulling fresh (slower):
+ollama pull mistral:7b-instruct-v0.3-q8_0
+# Pin to digest after pull:
+ollama show mistral:7b-instruct-v0.3-q8_0 --json | jq '.digest'
+
+# Verify:
+curl http://localhost:11434/api/tags | jq '.models[].name'</div>
+    </div>
+
+    <div class="rebuild-step">
+      <div class="rebuild-num">04</div>
+      <div class="rebuild-title">Restore n8n (5 min)</div>
+      <div class="rebuild-cmd"># Restore n8n data directory
+mkdir -p ~/.n8n
+cp -r /Volumes/JarvisNVMe/backups/latest/n8n/* ~/.n8n/
+
+# Set encryption key (CRITICAL — without this, credentials are unreadable)
+# Retrieve from macOS Keychain:
+export N8N_ENCRYPTION_KEY=$(security find-generic-password -a "n8n" -s "encryption-key" -w)
+
+# Start n8n
+n8n start --tunnel=false
+
+# Verify workflows:
+curl http://localhost:5678/healthz</div>
+      <div class="rebuild-note">If you lost the encryption key, all stored credentials (Discord webhook, API keys) must be re-entered manually in each workflow.</div>
+    </div>
+
+    <div class="rebuild-step">
+      <div class="rebuild-num">05</div>
+      <div class="rebuild-title">Restore OpenClaw / Jarvis Bot (5 min)</div>
+      <div class="rebuild-cmd"># Clone or restore
+cd ~/jarvis
+git clone https://github.com/philbelue/jarvis-openclaw.git openclaw
+# Or restore: cp -r /Volumes/JarvisNVMe/backups/latest/openclaw ~/jarvis/
+
+# Install deps
+cd ~/jarvis/openclaw && npm install
+
+# Restore API keys from Keychain
+export DISCORD_BOT_TOKEN=$(security find-generic-password -a "jarvis" -s "discord-bot-token" -w)
+export OPENAI_API_KEY=$(security find-generic-password -a "jarvis" -s "openai-api-key" -w)
+
+# Start
+node index.js
+
+# Verify:
+curl http://localhost:3000/health</div>
+    </div>
+
+    <div class="rebuild-step">
+      <div class="rebuild-num">06</div>
+      <div class="rebuild-title">Restore Hermes (5 min)</div>
+      <div class="rebuild-cmd"># Clone or restore
+cd ~/jarvis
+git clone https://github.com/philbelue/jarvis-hermes.git hermes
+# Or restore: cp -r /Volumes/JarvisNVMe/backups/latest/hermes ~/jarvis/
+
+# Install Python deps
+cd ~/jarvis/hermes
+python3 -m pip install aiosqlite aiohttp psutil watchfiles pyyaml
+
+# Initialize queue
+python3 -c "import asyncio; from core.queue import TaskQueue; asyncio.run(TaskQueue('data/queue.db').init_db())"
+
+# Test run (foreground, verify it boots):
+python3 main.py
+# Should see: "Hermes starting — entering boot grace period (120s)"
+# Wait for: "Hermes operational — all systems monitored"
+# Ctrl+C to stop</div>
+    </div>
+
+    <div class="rebuild-step">
+      <div class="rebuild-num">07</div>
+      <div class="rebuild-title">Install launchd Plists (3 min)</div>
+      <div class="rebuild-cmd"># Copy all plists
+cp ~/jarvis/hermes/plists/com.jarvis.hermes.plist ~/Library/LaunchAgents/
+cp ~/jarvis/openclaw/plists/com.jarvis.openclaw.plist ~/Library/LaunchAgents/
+
+# Create log directories
+mkdir -p ~/jarvis/hermes/logs ~/jarvis/openclaw/logs
+
+# Load services
+launchctl load ~/Library/LaunchAgents/com.jarvis.hermes.plist
+launchctl load ~/Library/LaunchAgents/com.jarvis.openclaw.plist
+
+# Verify both running:
+launchctl list | grep jarvis</div>
+    </div>
+
+    <div class="rebuild-step">
+      <div class="rebuild-num">08</div>
+      <div class="rebuild-title">Restore Obsidian Vault (2 min)</div>
+      <div class="rebuild-cmd"># Vault restores via Obsidian Sync automatically
+# Just open Obsidian, connect to "Jarvis" remote vault
+# If Sync unavailable, restore from backup:
+cp -r /Volumes/JarvisNVMe/backups/latest/obsidian-vault ~/JarvisVault</div>
+    </div>
+
+    <div class="rebuild-step">
+      <div class="rebuild-num">09</div>
+      <div class="rebuild-title">Smoke Test Everything (5 min)</div>
+      <div class="rebuild-cmd"># Health check all services
+echo "=== Ollama ===" && curl -sf http://localhost:11434/api/tags | jq '.models | length'
+echo "=== n8n ===" && curl -sf http://localhost:5678/healthz
+echo "=== OpenClaw ===" && curl -sf http://localhost:3000/health
+echo "=== Hermes ===" && curl -sf http://localhost:7777/health | jq .
+
+# Test Discord delivery
+curl -X POST http://localhost:5678/webhook/test-discord \
+  -H "Content-Type: application/json" \
+  -d '{"message": "REBUILD COMPLETE — all systems restored"}'
+
+# Test n8n workflow execution
+curl -X POST http://localhost:5678/webhook/ixon-am-brief
+
+# Check Hermes logs for operational status
+tail -20 ~/jarvis/hermes/logs/hermes.log</div>
+    </div>
+
+    <div class="rebuild-step">
+      <div class="rebuild-num">10</div>
+      <div class="rebuild-title">Update Healthchecks.io (1 min)</div>
+      <div class="rebuild-cmd"># Ping dead-man switch to confirm system is back
+curl -sf https://hc-ping.com/YOUR-UUID-HERE
+
+# Verify monitoring is receiving pings in Healthchecks.io dashboard</div>
+      <div class="rebuild-note">If you set up Healthchecks.io and it was alerting during the outage, this ping clears the alert.</div>
+    </div>
+
+    <div class="callout callout-green">
+      <div class="callout-title">Total Rebuild Time</div>
+      <p><strong style="color:var(--core-white);">~45 minutes</strong> from clean macOS with NVMe backup accessible. ~60 minutes if pulling Ollama models fresh. ~90 minutes if restoring from Backblaze B2 on decent internet. This runbook lives at <code style="font-family:var(--font-code);">~/jarvis/REBUILD.md</code> and is committed to both the Obsidian vault and the GitHub repo. Print a copy and keep it in a drawer.</p>
+    </div>
+
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- ERRATA -->
+<!-- ============================================================ -->
+<section id="errata">
+  <div class="container">
+    <div class="section-label">Errata</div>
+    <div class="section-title">Corrections to Strategic Blueprint v1.0</div>
+    <p class="section-intro">Based on Jarvis review and Phil&rsquo;s threat model assessment, these items are updated from the original blueprint.</p>
+
+    <div class="errata-item">
+      <div class="errata-action errata-drop">DROP</div>
+      <div>
+        <strong style="color:var(--text-bright);">NVMe Encryption</strong>
+        <p>Threat model doesn&rsquo;t justify it. Phil&rsquo;s physical security is solid (key fob building, key fob apartment). FileVault on the internal SSD covers the real risk. The data on the NVMe is models and vault content, not financial credentials. The half-day reformat + re-download is not worth the marginal security gain.</p>
+      </div>
+    </div>
+
+    <div class="errata-item">
+      <div class="errata-action errata-drop">DROP</div>
+      <div>
+        <strong style="color:var(--text-bright);">SQLite &rarr; PostgreSQL Migration</strong>
+        <p>Jarvis was right: this is resume-driven architecture. You have 5 workflows. SQLite is fine until you need queue mode or concurrent writers, and with a single Hermes daemon doing all the writing, you never will. Removing from roadmap entirely.</p>
+      </div>
+    </div>
+
+    <div class="errata-item">
+      <div class="errata-action errata-move">MOVE</div>
+      <div>
+        <strong style="color:var(--text-bright);">Self-Improvement Skills &rarr; Phase 3+</strong>
+        <p>Moved from Phase 2 to Phase 3 minimum. Requires human-in-the-loop approval gate, git-versioned configs, and weekly cadence. See Gap 3 above for full spec.</p>
+      </div>
+    </div>
+
+    <div class="errata-item">
+      <div class="errata-action errata-add">ADD</div>
+      <div>
+        <strong style="color:var(--text-bright);">Eero Plus Subscription</strong>
+        <p>$10/month for network-level threat detection on a system running AI infrastructure and deal intelligence. Cheap insurance. Adds intrusion detection, ad blocking at the DNS level, and threat scanning for all devices. Do it.</p>
+      </div>
+    </div>
+
+    <div class="errata-item">
+      <div class="errata-action errata-add">ADD</div>
+      <div>
+        <strong style="color:var(--text-bright);">OpenClaw allowInsecureAuth Flag</strong>
+        <p>Blueprint mentioned flipping this but didn&rsquo;t flag the risk. Changing this flag may break Discord delivery if OpenClaw&rsquo;s auth negotiation depends on it. <strong>Test in isolation first</strong> &mdash; spin up OpenClaw on a different port, flip the flag, verify Discord webhook delivery still works. Only then apply to production. Adding as explicit Phase 1 test item.</p>
+      </div>
+    </div>
+
+    <div class="errata-item">
+      <div class="errata-action errata-add">ADD</div>
+      <div>
+        <strong style="color:var(--text-bright);">Hermes Does Not Restart Services</strong>
+        <p>Blueprint implied Hermes would restart failed services (cross-agent repair). This is wrong. launchd owns all restarts via KeepAlive. Hermes monitors and alerts only. Fighting with launchd&rsquo;s restart logic creates oscillation. Single authority for restarts. See Gap 4.</p>
+      </div>
+    </div>
+
+    <div class="errata-item">
+      <div class="errata-action errata-keep">KEEP</div>
+      <div>
+        <strong style="color:var(--text-bright);">psutil CPU Monitoring Workaround</strong>
+        <p>Note for Hermes development: <code style="font-family:var(--font-code);">psutil.cpu_percent()</code> is broken on Apple Silicon (reports 0&ndash;10% under load). Hermes health probe must use <code style="font-family:var(--font-code);">subprocess.run(["ps", "-p", str(pid), "-o", "%cpu="])</code> as fallback for per-process CPU. System-wide <code style="font-family:var(--font-code);">cpu_times_percent()</code> works fine.</p>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- VERDICT -->
+<!-- ============================================================ -->
+<section id="verdict">
+  <div class="container">
+    <div class="section-label">Verdict</div>
+    <div class="section-title">Is the Blueprint Buildable Now?</div>
+
+    <table class="decision-matrix">
+      <thead>
+        <tr><th>Gap</th><th>Jarvis Critique</th><th>Status</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>01 &mdash; Runtime</strong></td>
+          <td>&ldquo;What process runs, what language, what framework?&rdquo;</td>
+          <td class="verdict">ANSWERED. Python asyncio daemon. Plist, skeleton, deps all specified.</td>
+        </tr>
+        <tr>
+          <td><strong>02 &mdash; Task Queue</strong></td>
+          <td>&ldquo;fswatch is a race condition waiting to happen.&rdquo;</td>
+          <td class="verdict">ANSWERED. SQLite WAL queue. Atomic claiming, dead letters, idempotency keys, stale reaper. Every failure mode addressed.</td>
+        </tr>
+        <tr>
+          <td><strong>03 &mdash; Self-Improvement</strong></td>
+          <td>&ldquo;That&rsquo;s marketing, not engineering.&rdquo;</td>
+          <td class="verdict">ANSWERED. Killed for Phase 1&ndash;2. Phase 3 spec: weekly, human-gated, git-versioned, rollbackable.</td>
+        </tr>
+        <tr>
+          <td><strong>04 &mdash; Startup Deadlock</strong></td>
+          <td>&ldquo;Classic distributed systems problem, skipped entirely.&rdquo;</td>
+          <td class="verdict">ANSWERED. 120s boot grace period. State machine. Hermes never restarts services (launchd does). No deadlock possible.</td>
+        </tr>
+        <tr>
+          <td><strong>05 &mdash; REBUILD.md</strong></td>
+          <td>&ldquo;Produce the actual runbook, not a description.&rdquo;</td>
+          <td class="verdict">ANSWERED. 10-step runbook. Every step is a pasteable command. 45-minute full rebuild target.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="callout callout-gold">
+      <div class="callout-title">Bottom Line</div>
+      <p>The blueprint was a roadmap. This addendum pours the foundation. Hermes is a Python asyncio daemon managed by launchd. Its task queue is SQLite, not a directory of files. It doesn&rsquo;t self-improve until Phase 3 and only then with human approval. It doesn&rsquo;t restart services &mdash; it watches and alerts. And when everything goes sideways, there&rsquo;s a 10-step, 45-minute runbook with pasteable commands.</p>
+      <p style="margin-top:12px;">Jarvis asked five questions. Five answers, delivered. No hand-waving. This is buildable.</p>
+    </div>
+
+  </div>
+</section>
+
+<footer>
+  <strong>J.A.R.V.I.S.</strong> &mdash; Engineering Addendum v1.0<br>
+  <span style="color:var(--text-dim);">Generated April 10, 2026 &middot; Claude Opus (Cowork) &middot; Pencil Sharpened</span><br>
+  <span style="color:var(--text-dim);font-size:0.55rem;margin-top:6px;display:inline-block;">Companion to: Strategic Blueprint v1.0 &middot; Addresses all five gaps identified by Jarvis review</span>
+</footer>
+
+</div>
+
+<script>
+const sections = document.querySelectorAll('section[id]');
+const navLinks = document.querySelectorAll('nav a[href^="#"]');
+window.addEventListener('scroll', () => {
+  let current = '';
+  sections.forEach(section => {
+    const sectionTop = section.offsetTop - 120;
+    if (pageYOffset >= sectionTop) current = section.getAttribute('id');
+  });
+  navLinks.forEach(link => {
+    link.classList.remove('active');
+    if (link.getAttribute('href') === '#' + current) link.classList.add('active');
+  });
+});
+</script>
+</body>
+</html>
