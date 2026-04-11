@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>J.A.R.V.I.S. — April 11 Sprint Summary v2.1</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Rajdhani:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0b0d12;
+  --bg-card: #10141b;
+  --bg-card-hover: #161b24;
+  --bg-code: #0d1117;
+  --cyan: #7fd8e6;
+  --cyan-dim: rgba(127,216,230,0.10);
+  --gold: #ffb86a;
+  --gold-soft: #ffc978;
+  --gold-dim: rgba(255,184,106,0.12);
+  --gold-glow: rgba(255,184,106,0.18);
+  --gold-strong: rgba(255,184,106,0.32);
+  --core-white: #fff4db;
+  --core-warm: #ffd7a3;
+  --green: #5ce0a0;
+  --green-dim: rgba(92,224,160,0.10);
+  --red: #f06060;
+  --red-dim: rgba(240,96,96,0.10);
+  --yellow: #f0d060;
+  --yellow-dim: rgba(240,208,96,0.10);
+  --text: #d5dbe3;
+  --text-bright: #f5f7fa;
+  --text-dim: #8d97a5;
+  --border: rgba(255,255,255,0.06);
+  --border-gold: rgba(255,184,106,0.12);
+  --radius: 8px;
+  --font-display: 'Orbitron', monospace;
+  --font-body: 'Rajdhani', sans-serif;
+  --font-code: 'JetBrains Mono', monospace;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: var(--font-body); background: var(--bg); color: var(--text); line-height: 1.7; font-size: 16px; }
+body::before { content: ''; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: radial-gradient(ellipse at 50% 20%, rgba(255,184,106,0.02) 0%, transparent 50%); pointer-events: none; z-index: 0; }
+
+nav { position: fixed; top: 0; left: 0; bottom: 0; width: 190px; z-index: 100; background: rgba(10,14,23,0.97); backdrop-filter: blur(12px); border-right: 1px solid var(--border); overflow-y: auto; }
+nav .nav-inner { display: flex; flex-direction: column; padding: 20px 0; }
+nav a { color: var(--text-dim); text-decoration: none; font-family: var(--font-display); font-size: 0.5rem; font-weight: 500; padding: 9px 18px; white-space: nowrap; transition: all 0.3s; border-left: 2px solid transparent; letter-spacing: 0.08em; text-transform: uppercase; }
+nav a:hover, nav a.active { color: var(--core-warm); border-left-color: var(--gold); background: var(--gold-dim); }
+nav .nav-brand { font-family: var(--font-display); color: var(--core-white); font-size: 0.58rem; font-weight: 700; padding: 16px 18px 20px; border-bottom: 1px solid var(--border); margin-bottom: 8px; letter-spacing: 0.12em; line-height: 1.6; }
+.main-content { margin-left: 190px; }
+@media (max-width: 860px) { nav { position: relative; width: 100%; bottom: auto; border-right: none; border-bottom: 1px solid var(--border); } nav .nav-inner { flex-direction: row; overflow-x: auto; padding: 0; } nav a { padding: 12px 14px; border-left: none; border-bottom: 2px solid transparent; font-size: 0.45rem; } .main-content { margin-left: 0; } nav .nav-brand { border-bottom: none; border-right: 1px solid var(--border); margin-bottom: 0; padding: 12px 14px; font-size: 0.5rem; } }
+
+.hero { background: linear-gradient(135deg, #0b0d12 0%, #0f1218 40%, #12161e 100%); padding: 70px 24px 55px; position: relative; overflow: hidden; border-bottom: 1px solid var(--border); }
+.hero::before { content: ''; position: absolute; top: 50%; left: 50%; width: 500px; height: 500px; transform: translate(-50%, -50%); border-radius: 50%; background: radial-gradient(circle, rgba(255,244,219,0.03) 0%, rgba(255,184,106,0.02) 40%, transparent 70%); pointer-events: none; }
+.hero-inner { max-width: 920px; margin: 0 auto; position: relative; z-index: 1; }
+.hero-tag { display: inline-block; font-family: var(--font-display); font-size: 0.55rem; font-weight: 600; letter-spacing: 0.25em; text-transform: uppercase; color: var(--green); border: 1px solid rgba(92,224,160,0.25); padding: 6px 16px; border-radius: 2px; margin-bottom: 20px; background: var(--green-dim); }
+.hero h1 { font-family: var(--font-display); font-size: clamp(1.4rem, 4vw, 2.2rem); color: var(--text-bright); margin-bottom: 8px; font-weight: 700; letter-spacing: 0.04em; line-height: 1.3; }
+.hero h1 span { color: var(--gold); }
+.hero .subtitle { font-size: 1.05rem; color: var(--text-dim); font-weight: 300; letter-spacing: 0.03em; margin-bottom: 14px; }
+.hero p { font-size: 0.95rem; color: var(--text); max-width: 700px; line-height: 1.8; }
+.hero-meta { margin-top: 24px; display: flex; gap: 28px; flex-wrap: wrap; }
+.hero-meta div { font-size: 0.8rem; color: var(--text-dim); }
+.hero-meta strong { color: var(--core-warm); display: block; font-family: var(--font-display); font-size: 0.6rem; letter-spacing: 0.1em; text-transform: uppercase; }
+
+.container { max-width: 920px; margin: 0 auto; padding: 0 24px; position: relative; z-index: 1; }
+section { padding: 50px 0; border-bottom: 1px solid var(--border); }
+section:last-of-type { border-bottom: none; }
+.section-label { font-family: var(--font-display); font-size: 0.55rem; font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold); margin-bottom: 6px; }
+.section-title { font-family: var(--font-display); font-size: clamp(1.1rem, 2.5vw, 1.5rem); color: var(--text-bright); font-weight: 700; margin-bottom: 16px; letter-spacing: 0.03em; line-height: 1.4; }
+.section-intro { font-size: 1rem; color: var(--text); line-height: 1.8; margin-bottom: 28px; max-width: 780px; }
+
+.task-list { list-style: none; padding: 0; margin: 12px 0; }
+.task-list li { display: flex; align-items: flex-start; gap: 10px; padding: 6px 0; font-size: 0.88rem; color: var(--text); }
+.task-list li::before { content: ''; width: 14px; height: 14px; min-width: 14px; border: 1.5px solid var(--text-dim); border-radius: 3px; margin-top: 4px; background: var(--green); border-color: var(--green); }
+.task-list li.pending::before { background: transparent; border-color: var(--gold); }
+.task-list li.pending { color: var(--text); }
+
+.task-tag { display: inline-block; font-family: var(--font-display); font-size: 0.42rem; letter-spacing: 0.12em; text-transform: uppercase; padding: 2px 8px; border-radius: 2px; font-weight: 600; margin-left: 6px; vertical-align: middle; color: var(--gold); background: var(--gold-dim); }
+
+.callout { border-radius: var(--radius); padding: 20px 24px; margin: 24px 0; }
+.callout-title { font-family: var(--font-display); font-size: 0.6rem; letter-spacing: 0.15em; text-transform: uppercase; font-weight: 700; margin-bottom: 8px; }
+.callout-gold { background: var(--gold-dim); border-left: 3px solid var(--gold); }
+.callout-gold .callout-title { color: var(--gold); }
+.callout-green { background: var(--green-dim); border-left: 3px solid var(--green); }
+.callout-green .callout-title { color: var(--green); }
+.callout-cyan { background: var(--cyan-dim); border-left: 3px solid var(--cyan); }
+.callout-cyan .callout-title { color: var(--cyan); }
+.callout p { font-size: 0.88rem; color: var(--text); margin: 0; }
+.callout p + p { margin-top: 8px; }
+
+.score-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; margin: 20px 0; }
+.score-item { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 18px; text-align: center; }
+.score-item .number { font-family: var(--font-display); font-size: 1.6rem; font-weight: 700; margin-bottom: 4px; }
+.score-item .number.green { color: var(--green); }
+.score-item .number.gold { color: var(--gold); }
+.score-item .number.cyan { color: var(--cyan); }
+.score-item .label { font-family: var(--font-display); font-size: 0.5rem; color: var(--text-dim); letter-spacing: 0.12em; text-transform: uppercase; }
+
+.subsection { margin: 24px 0 40px 0; }
+.subsection-title { font-family: var(--font-display); font-size: 0.9rem; color: var(--core-warm); font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 12px; }
+
+.ready-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; margin: 20px 0; }
+.ready-item { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 18px; text-align: center; }
+.ready-item .status { font-family: var(--font-display); font-size: 0.5rem; letter-spacing: 0.15em; text-transform: uppercase; font-weight: 700; margin-bottom: 6px; color: var(--green); }
+.ready-item .name { font-family: var(--font-display); font-size: 0.6rem; color: var(--text-bright); font-weight: 600; letter-spacing: 0.08em; margin-bottom: 4px; }
+.ready-item .desc { font-size: 0.8rem; color: var(--text-dim); }
+
+footer { text-align: center; padding: 40px 24px; font-family: var(--font-display); font-size: 0.6rem; color: var(--text-dim); letter-spacing: 0.1em; border-top: 1px solid var(--border); line-height: 2; }
+footer strong { color: var(--core-warm); }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <div class="nav-brand">SPRINT<br>SUMMARY<br>v2.1</div>
+    <a href="#scorecard">Scorecard</a>
+    <a href="#what-built">What Built</a>
+    <a href="#n8n">n8n Workflows</a>
+    <a href="#kanban">Tasks Kanban</a>
+    <a href="#routing">Model Routing</a>
+    <a href="#github">GitHub</a>
+    <a href="#vault">Obsidian</a>
+    <a href="#phase2">Phase 2</a>
+  </div>
+</nav>
+
+<div class="main-content">
+
+<div class="hero">
+  <div class="hero-inner">
+    <div class="hero-tag">April 11 &mdash; Friday Sprint</div>
+    <h1>Weekend Sprint <span>Summary v2.1</span></h1>
+    <div class="subtitle">Clean executive summary of April 11, 2026 sprint — shareable.</div>
+    <p>Friday morning startup of n8n automation ecosystem, IXON intelligence pipeline, multi-model routing, infrastructure hardening. Seven active workflows deployed. Google Tasks Kanban live. Pipeline intelligence pulling live email data every Friday 4 PM. Model routing finalized across channels. Obsidian vault published. Github restructured.</p>
+    <div class="hero-meta">
+      <div><strong>Sprint Date</strong>Friday, April 11, 2026</div>
+      <div><strong>Sprint Start</strong>9:00 AM ET</div>
+      <div><strong>Systems Live</strong>7 n8n workflows</div>
+      <div><strong>Status</strong>Production Ready</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- SCORECARD -->
+<!-- ============================================================ -->
+<section id="scorecard">
+  <div class="container">
+    <div class="section-label">Sprint Status</div>
+    <div class="section-title">Scorecard</div>
+
+    <div class="score-grid">
+      <div class="score-item">
+        <div class="number green">7</div>
+        <div class="label">n8n Workflows Deployed</div>
+      </div>
+      <div class="score-item">
+        <div class="number gold">4</div>
+        <div class="label">Task Bucket System</div>
+      </div>
+      <div class="score-item">
+        <div class="number cyan">3</div>
+        <div class="label">Pre-deployment Bugs Fixed</div>
+      </div>
+      <div class="score-item">
+        <div class="number gold">87%</div>
+        <div class="label">Cost Savings (Gemini Flash)</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- WHAT WAS BUILT -->
+<!-- ============================================================ -->
+<section id="what-built">
+  <div class="container">
+    <div class="section-label">Execution</div>
+    <div class="section-title">What Was Built Today</div>
+    <div class="section-intro">April 11 focused on deploying the IXON automation suite: n8n workflows, Google Tasks Kanban, intelligence pipelines, multi-model routing across Discord channels, infrastructure backups, and vault publishing.</div>
+
+    <!-- n8n Workflows -->
+    <div class="subsection" id="n8n">
+      <div class="subsection-title">1. n8n Workflows — 7 Total, All Active</div>
+      <ul class="task-list">
+        <li>Jarvis: Task Inbox (webhook at localhost:5678/webhook/task-inbox, always on)</li>
+        <li>IXON AM Brief (Monday–Friday 6:00 AM ET)</li>
+        <li>IXON PM Recap (Monday–Friday 6:30 PM ET)</li>
+        <li>IXON Pipeline Intelligence (Fridays 4:00 PM ET)</li>
+        <li>Daily System Health (daily check)</li>
+        <li>Morning Brief (daily delivery)</li>
+        <li>Weekly Deal Strategy Review (weekly)</li>
+      </ul>
+    </div>
+
+    <!-- Google Tasks Kanban -->
+    <div class="subsection" id="kanban">
+      <div class="subsection-title">2. Google Tasks Kanban — 4-Bucket System</div>
+      <ul class="task-list">
+        <li>Buckets: ON FIRE | Today | This Week | Growing</li>
+        <li>Task Inbox webhook integration auto-routes incoming tasks</li>
+        <li>AM Brief + PM Recap auto-create Today tasks from email synthesis</li>
+        <li>Pipeline Intelligence auto-creates Friday Today task for pipeline review</li>
+      </ul>
+    </div>
+
+    <!-- Pipeline Intelligence -->
+    <div class="subsection" id="pipeline-intel">
+      <div class="subsection-title">3. IXON Pipeline Intelligence</div>
+      <ul class="task-list">
+        <li>n8n pulls last 120 days of Gmail inbox + sent every Friday 4:00 PM</li>
+        <li>Aggregates email activity by external domain (customer/partner accounts)</li>
+        <li>Gemini 2.0 Flash synthesizes deal stage: Active | Stalling | Cold | Closed</li>
+        <li>Posts markdown summary to #arc-reactor Discord channel</li>
+        <li>Writes full analysis to Obsidian vault for permanent record</li>
+        <li>First production run: Friday, April 18, 2026</li>
+      </ul>
+    </div>
+
+    <!-- Model Routing -->
+    <div class="subsection" id="routing">
+      <div class="subsection-title">4. Model Routing Finalized</div>
+      <ul class="task-list">
+        <li>#thinking, #jarvis-builds, DMs → Claude Sonnet 4 (Anthropic)</li>
+        <li>AUTOMATIONS channels (#n8n-ops, #research, #summarizer) → Gemini 2.0 Flash (OpenRouter)</li>
+        <li>#local-chat, Hermes default → Mistral Small 3.1 (Ollama, free, local)</li>
+        <li>n8n workflows internally → Gemini 2.0 Flash (OpenRouter)</li>
+        <li>Heavy builds + research → Claude Opus (IXON Enterprise Cowork)</li>
+      </ul>
+    </div>
+
+    <!-- Watchdog -->
+    <div class="subsection">
+      <div class="subsection-title">5. Mutual Watchdog Confirmed Live</div>
+      <ul class="task-list">
+        <li>com.jarvis.watchdog-hermes: 120-second health check cycle</li>
+        <li>com.jarvis.watchdog-openclaw: 120-second health check cycle</li>
+        <li>Both fired successfully twice during April 11 deployment</li>
+        <li>Auto-restart on failure enabled in launchd plist</li>
+      </ul>
+    </div>
+
+    <!-- GitHub Restructure -->
+    <div class="subsection" id="github">
+      <div class="subsection-title">6. GitHub Restructured</div>
+      <ul class="task-list">
+        <li><strong>jarvis-core (private)</strong> — infrastructure, configs, runbooks, launchd plists</li>
+        <li><strong>ixon-internal (private)</strong> — sales tools, pipeline logic, strategy notes</li>
+        <li><strong>ixon-customer (private)</strong> — customer-facing deliverables, case studies</li>
+        <li><strong>projects (public)</strong> — portfolio, published tools, demos</li>
+        <li>IXON Pages repo remains public (docs site)</li>
+      </ul>
+    </div>
+
+    <!-- Obsidian Vault -->
+    <div class="subsection" id="vault">
+      <div class="subsection-title">7. Obsidian Vault Restructured + Publish Live</div>
+      <ul class="task-list">
+        <li>Published at publish.obsidian.md/jarvis-cockpit</li>
+        <li>New files: DECISIONS/2026-04-11.md, ARCHITECTURE/stack.md, IXON/pipeline-status.md</li>
+        <li>Vault structure: STATUS/ | IXON/ | LOG/ | DECISIONS/ | ARCHITECTURE/ | ARCHIVE/ | _private/</li>
+        <li>Enables shareable documentation without exposing private configs</li>
+      </ul>
+    </div>
+
+    <!-- Config Backup -->
+    <div class="subsection">
+      <div class="subsection-title">8. Config Backup Confirmed Running</div>
+      <ul class="task-list">
+        <li>Automated backup script: 3 AM daily + boot time</li>
+        <li>Backs up 6 directories (launchd, n8n, Ollama, Hermes, vault, keys)</li>
+        <li>14-day rolling retention with date stamping</li>
+      </ul>
+    </div>
+
+    <!-- Hermes Live -->
+    <div class="subsection">
+      <div class="subsection-title">9. Hermes Confirmed Live</div>
+      <ul class="task-list">
+        <li>Version 0.8.0, 100 slash commands, 6 active skills</li>
+        <li>Mutual watchdog integration active</li>
+        <li>Multi-model routing working across channels</li>
+      </ul>
+    </div>
+
+    <!-- API Keys -->
+    <div class="subsection">
+      <div class="subsection-title">10. Old API Keys Cleaned</div>
+      <ul class="task-list">
+        <li>All deprecated Anthropic keys deleted from environment</li>
+        <li>One clean production key in keychain</li>
+      </ul>
+    </div>
+
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- PHASE 2 ROADMAP -->
+<!-- ============================================================ -->
+<section id="phase2">
+  <div class="container">
+    <div class="section-label">Future</div>
+    <div class="section-title">Phase 2 Roadmap</div>
+    <div class="section-intro">Prioritized work for the next 3 weeks. P1 hardening starts week of April 14. Intelligence and expansion phases follow.</div>
+
+    <div class="subsection">
+      <div class="subsection-title">P1 — Hardening (Week of April 14)</div>
+      <ul class="task-list pending">
+        <li>Healthchecks.io integration (external health monitoring) <span class="task-tag">P1</span></li>
+        <li>Keychain secrets migration (replace env vars) <span class="task-tag">P1</span></li>
+        <li>Eero Plus upgrade (home network hardening) <span class="task-tag">P1</span></li>
+      </ul>
+    </div>
+
+    <div class="subsection">
+      <div class="subsection-title">P2 — Intelligence (April 20+)</div>
+      <ul class="task-list pending">
+        <li>Hermes Python Daemon (persistent background service) <span class="task-tag">P2</span></li>
+        <li>Pipeline Intelligence v2 (enhanced deal analytics) <span class="task-tag">P2</span></li>
+        <li>Personal Morning Brief (AI synthesis of overnight events) <span class="task-tag">P2</span></li>
+      </ul>
+    </div>
+
+    <div class="subsection">
+      <div class="subsection-title">P3 — Expansion</div>
+      <ul class="task-list pending">
+        <li>ElevenLabs TTS integration (voice synthesis) <span class="task-tag">P3</span></li>
+        <li>Playwright testing automation <span class="task-tag">P3</span></li>
+        <li>IXON ROI Calculator (sales tool) <span class="task-tag">P3</span></li>
+        <li>Sales OS v2 (workflow automation) <span class="task-tag">P3</span></li>
+      </ul>
+    </div>
+
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- SYSTEMS READY -->
+<!-- ============================================================ -->
+<section>
+  <div class="container">
+    <div class="section-label">Status</div>
+    <div class="section-title">Systems Ready for Monday</div>
+
+    <div class="ready-grid">
+      <div class="ready-item">
+        <div class="status">LIVE</div>
+        <div class="name">n8n Automation</div>
+        <div class="desc">7 workflows active, email-triggered, time-based execution</div>
+      </div>
+      <div class="ready-item">
+        <div class="status">LIVE</div>
+        <div class="name">Google Tasks</div>
+        <div class="desc">Kanban 4-bucket system, auto-populated from workflows</div>
+      </div>
+      <div class="ready-item">
+        <div class="status">LIVE</div>
+        <div class="name">Pipeline Intel</div>
+        <div class="desc">First run Friday April 18, continuous on Fridays</div>
+      </div>
+      <div class="ready-item">
+        <div class="status">LIVE</div>
+        <div class="name">Model Routing</div>
+        <div class="desc">5 channels, correct LLM per task, cost optimized</div>
+      </div>
+      <div class="ready-item">
+        <div class="status">LIVE</div>
+        <div class="name">Config Backup</div>
+        <div class="desc">Automated daily + boot, 14-day retention</div>
+      </div>
+      <div class="ready-item">
+        <div class="status">LIVE</div>
+        <div class="name">Obsidian Vault</div>
+        <div class="desc">Published at jarvis-cockpit, shareable docs</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- FOOTER -->
+<!-- ============================================================ -->
+<footer>
+WEEKEND SPRINT SUMMARY v2.1<br>
+<strong>April 11, 2026</strong> — Automation Ecosystem Live<br>
+Phil Belue | IXON Ventures<br>
+<strong>Shareable.</strong> Confidential internal report.
+</footer>
+
+</div>
+
+</body>
+</html>

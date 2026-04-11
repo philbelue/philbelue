@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>J.A.R.V.I.S. — Infrastructure Status v1.9</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0b0d12;
+  --bg-card: #10141b;
+  --bg-card-hover: #161b24;
+  --cyan: #7fd8e6;
+  --cyan-soft: #a9e7f0;
+  --cyan-dim: rgba(127,216,230,0.10);
+  --cyan-glow: rgba(127,216,230,0.18);
+  --gold: #ffb86a;
+  --gold-soft: #ffc978;
+  --gold-dim: rgba(255,184,106,0.12);
+  --gold-glow: rgba(255,184,106,0.18);
+  --gold-strong: rgba(255,184,106,0.32);
+  --core-white: #fff4db;
+  --core-warm: #ffd7a3;
+  --green: #5ce0a0;
+  --green-dim: rgba(92,224,160,0.10);
+  --red: #f06060;
+  --red-dim: rgba(240,96,96,0.10);
+  --yellow: #f0d060;
+  --yellow-dim: rgba(240,208,96,0.10);
+  --text: #d5dbe3;
+  --text-bright: #f5f7fa;
+  --text-dim: #8d97a5;
+  --border: rgba(255,255,255,0.06);
+  --border-gold: rgba(255,184,106,0.12);
+  --radius: 8px;
+  --shadow: 0 0 20px rgba(255,184,106,0.04);
+  --shadow-glow: 0 0 30px rgba(255,184,106,0.06);
+  --font-display: 'Orbitron', monospace;
+  --font-body: 'Rajdhani', sans-serif;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: var(--font-body); background: var(--bg); color: var(--text); line-height: 1.7; font-size: 16px; }
+body::before { content: ''; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: radial-gradient(ellipse at 50% 30%, rgba(255,184,106,0.02) 0%, transparent 50%); pointer-events: none; z-index: 0; }
+
+/* Sidebar Nav */
+nav { position: fixed; top: 0; left: 0; bottom: 0; width: 180px; z-index: 100; background: rgba(10,14,23,0.97); backdrop-filter: blur(12px); border-right: 1px solid var(--border); overflow-y: auto; }
+nav .nav-inner { display: flex; flex-direction: column; padding: 20px 0; }
+nav a { color: var(--text-dim); text-decoration: none; font-family: var(--font-display); font-size: 0.58rem; font-weight: 500; padding: 9px 20px; white-space: nowrap; transition: all 0.3s; border-left: 2px solid transparent; letter-spacing: 0.08em; text-transform: uppercase; }
+nav a:hover, nav a.active { color: var(--core-warm); border-left-color: var(--gold); background: var(--gold-dim); }
+nav .nav-brand { font-family: var(--font-display); color: var(--core-white); font-size: 0.72rem; font-weight: 700; padding: 16px 20px 20px; border-bottom: 1px solid var(--border); margin-bottom: 8px; letter-spacing: 0.15em; }
+.main-content { margin-left: 180px; }
+@media (max-width: 800px) { nav { position: relative; width: 100%; bottom: auto; border-right: none; border-bottom: 1px solid var(--border); } nav .nav-inner { flex-direction: row; overflow-x: auto; padding: 0; } nav a { padding: 12px 14px; border-left: none; border-bottom: 2px solid transparent; } nav a:hover, nav a.active { border-left-color: transparent; border-bottom-color: var(--gold); } nav .nav-brand { border-bottom: none; border-right: 1px solid var(--border); margin-bottom: 0; margin-right: 8px; padding: 12px 20px; } .main-content { margin-left: 0; } }
+
+/* Hero */
+.hero { background: linear-gradient(135deg, #0b0d12 0%, #0f1218 40%, #12161e 100%); padding: 80px 24px 65px; position: relative; overflow: hidden; border-bottom: 1px solid var(--border); }
+.hero::before { content: ''; position: absolute; top: 50%; left: 50%; width: 500px; height: 500px; transform: translate(-50%, -50%); border-radius: 50%; background: radial-gradient(circle, rgba(255,244,219,0.04) 0%, rgba(255,184,106,0.02) 40%, transparent 70%); pointer-events: none; }
+.hero::after { content: ''; position: absolute; top: 0; right: 0; width: 50%; height: 100%; background: none; pointer-events: none; }
+.hero-inner { max-width: 900px; margin: 0 auto; position: relative; z-index: 1; }
+.hero-tag { display: inline-block; font-family: var(--font-display); font-size: 0.55rem; font-weight: 600; letter-spacing: 0.25em; text-transform: uppercase; color: var(--gold); border: 1px solid var(--border-gold); padding: 6px 16px; border-radius: 2px; margin-bottom: 20px; background: var(--gold-dim); }
+.hero h1 { font-family: var(--font-display); font-size: clamp(1.8rem, 5vw, 3rem); color: var(--text-bright); margin-bottom: 8px; font-weight: 700; letter-spacing: 0.05em; }
+.hero h1 span { color: var(--core-white); }
+.hero .subtitle { font-size: 1.1rem; color: var(--text-dim); font-weight: 300; letter-spacing: 0.03em; margin-bottom: 8px; }
+.hero p { font-size: 0.95rem; color: var(--text); max-width: 640px; line-height: 1.8; }
+.hero-meta { margin-top: 28px; display: flex; gap: 32px; flex-wrap: wrap; }
+.hero-meta div { font-size: 0.8rem; color: var(--text-dim); }
+.hero-meta strong { color: var(--core-warm); display: block; font-family: var(--font-display); font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase; }
+
+/* Sections */
+.container { max-width: 900px; margin: 0 auto; padding: 0 24px; position: relative; z-index: 1; }
+section { padding: 55px 0; }
+section + section { border-top: 1px solid var(--border); }
+h2 { font-family: var(--font-display); font-size: 1.2rem; color: var(--core-warm); margin-bottom: 6px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; }
+h2 + .section-line { width: 60px; height: 2px; background: linear-gradient(90deg, var(--gold), transparent); margin-bottom: 20px; }
+h3 { font-family: var(--font-display); font-size: 0.78rem; font-weight: 600; color: var(--gold-soft); margin: 28px 0 12px; letter-spacing: 0.1em; text-transform: uppercase; }
+p { margin-bottom: 14px; font-size: 0.95rem; color: var(--text); font-weight: 400; }
+
+/* Cards */
+.card { background: var(--bg-card); border-radius: var(--radius); padding: 24px; box-shadow: var(--shadow); margin-bottom: 16px; border: 1px solid var(--border); transition: border-color 0.3s; }
+.card:hover { border-color: var(--border-gold); }
+.card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
+.card h3 { margin: 0; }
+
+/* Badges */
+.badge { display: inline-block; font-family: var(--font-display); font-size: 0.55rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; padding: 4px 12px; border-radius: 2px; }
+.badge-green { background: var(--green-dim); color: var(--green); border: 1px solid rgba(92,224,160,0.2); }
+.badge-red { background: var(--red-dim); color: var(--red); border: 1px solid rgba(240,96,96,0.2); }
+.badge-yellow { background: var(--yellow-dim); color: var(--yellow); border: 1px solid rgba(240,208,96,0.2); }
+.badge-cyan { background: var(--cyan-dim); color: var(--cyan-soft); border: 1px solid rgba(127,216,230,0.2); }
+
+/* Status Grid */
+.status-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px; margin: 20px 0; }
+.status-item { background: var(--bg-card); border-radius: var(--radius); padding: 16px 18px; border: 1px solid var(--border); display: flex; align-items: center; gap: 14px; transition: all 0.3s; }
+.status-item:hover { border-color: var(--border-gold); box-shadow: var(--shadow); }
+.status-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+.status-dot.green { background: var(--green); box-shadow: 0 0 6px rgba(92,224,160,0.3); }
+.status-dot.red { background: var(--red); box-shadow: 0 0 6px rgba(240,96,96,0.3); }
+.status-dot.yellow { background: var(--yellow); box-shadow: 0 0 6px rgba(240,208,96,0.3); }
+.status-dot.gray { background: #3a4556; }
+.status-dot.cyan { background: var(--cyan); box-shadow: 0 0 6px var(--cyan-glow); }
+.status-label { font-family: var(--font-display); font-size: 0.65rem; font-weight: 600; color: var(--text-bright); letter-spacing: 0.06em; text-transform: uppercase; }
+.status-detail { font-size: 0.78rem; color: var(--text-dim); margin-top: 2px; }
+
+/* Tables */
+table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 0.88rem; }
+th { background: rgba(255,184,106,0.06); color: var(--core-warm); font-family: var(--font-display); font-weight: 600; text-align: left; padding: 10px 14px; font-size: 0.6rem; letter-spacing: 0.1em; text-transform: uppercase; border-bottom: 1px solid var(--border); }
+td { padding: 10px 14px; border-bottom: 1px solid var(--border); color: var(--text); }
+tr:hover td { background: rgba(255,184,106,0.03); }
+
+/* Callouts */
+.callout { background: rgba(255,184,106,0.04); border-left: 3px solid var(--gold); padding: 18px 22px; border-radius: 0 var(--radius) var(--radius) 0; margin: 18px 0; }
+.callout-green { border-left-color: var(--green); background: rgba(92,224,160,0.03); }
+.callout-red { border-left-color: var(--red); background: rgba(240,96,96,0.03); }
+.callout-gold { border-left-color: var(--gold); background: rgba(255,184,106,0.04); }
+.callout-title { font-family: var(--font-display); font-weight: 600; font-size: 0.65rem; color: var(--core-warm); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 6px; }
+.callout-green .callout-title { color: var(--green); }
+.callout-gold .callout-title { color: var(--gold); }
+.callout p { font-size: 0.88rem; color: var(--text); margin: 0; }
+
+/* Fix items */
+.fix-item { display: flex; gap: 14px; padding: 14px 0; border-bottom: 1px solid var(--border); }
+.fix-item:last-child { border-bottom: none; }
+.fix-num { width: 28px; height: 28px; background: linear-gradient(135deg, var(--gold), var(--core-warm)); color: var(--bg); border-radius: 4px; display: flex; align-items: center; justify-content: center; font-family: var(--font-display); font-size: 0.65rem; font-weight: 700; flex-shrink: 0; margin-top: 2px; }
+.fix-content { flex: 1; }
+.fix-content strong { font-size: 0.9rem; color: var(--text-bright); display: block; margin-bottom: 4px; }
+.fix-content p { font-size: 0.85rem; margin: 0; }
+
+/* Memory bars */
+.mem-stat { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; }
+.mem-bar { width: 55%; height: 8px; background: rgba(255,255,255,0.05); border-radius: 4px; overflow: hidden; }
+.mem-fill { height: 100%; border-radius: 4px; }
+
+/* Comparison grid */
+.comparison-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 20px 0; }
+@media (max-width: 640px) { .comparison-grid { grid-template-columns: 1fr; } }
+.comp-card { background: var(--bg-card); border-radius: var(--radius); padding: 22px; border: 1px solid var(--border); }
+.comp-card.recommended { border-color: var(--green); box-shadow: 0 0 20px rgba(0,255,136,0.08); }
+.comp-card h4 { font-family: var(--font-display); font-size: 0.72rem; color: var(--text-bright); margin-bottom: 8px; letter-spacing: 0.06em; text-transform: uppercase; }
+.comp-card p { font-size: 0.85rem; }
+.comp-card ul { list-style: none; padding: 0; margin: 10px 0 0; }
+.comp-card li { font-size: 0.85rem; color: var(--text); padding: 4px 0 4px 20px; position: relative; }
+.comp-card li::before { content: ''; position: absolute; left: 0; top: 11px; width: 8px; height: 1px; background: var(--text-dim); }
+.comp-card.recommended li::before { background: var(--green); }
+
+/* Code block */
+code { background: rgba(255,255,255,0.05); padding: 2px 7px; border-radius: 3px; font-size: 0.82rem; color: var(--cyan-soft); font-family: 'SF Mono', 'Fira Code', monospace; }
+.terminal-block { font-family: 'SF Mono', 'Fira Code', monospace; font-size: 0.75rem; line-height: 1.9; background: #060a12; border: 1px solid var(--border); border-radius: var(--radius); padding: 24px; color: var(--text); overflow-x: auto; }
+.terminal-block .cyan { color: var(--cyan); }
+.terminal-block .gold { color: var(--gold); }
+.terminal-block .green { color: var(--green); }
+.terminal-block .dim { color: var(--text-dim); }
+
+/* Arc reactor */
+.arc-reactor { width: 80px; height: 80px; position: relative; margin: 0 auto 20px; }
+.arc-reactor .ring { position: absolute; border-radius: 50%; border: 1.5px solid transparent; }
+.arc-reactor .ring-1 { top: 0; left: 0; right: 0; bottom: 0; border-color: rgba(127,216,230,0.15); animation: spin 14s linear infinite; }
+.arc-reactor .ring-2 { top: 8px; left: 8px; right: 8px; bottom: 8px; border-color: rgba(255,215,163,0.18); border-top-color: transparent; animation: spin-reverse 9s linear infinite; }
+.arc-reactor .ring-3 { top: 16px; left: 16px; right: 16px; bottom: 16px; border-color: rgba(255,244,219,0.2); border-bottom-color: transparent; animation: spin 6s linear infinite; }
+.arc-reactor .core { position: absolute; top: 22px; left: 22px; right: 22px; bottom: 22px; background: radial-gradient(circle, #fff8ed 0%, var(--core-white) 25%, var(--core-warm) 50%, rgba(255,184,106,0.15) 70%, transparent 85%); border-radius: 50%; box-shadow: 0 0 18px rgba(255,244,219,0.45), 0 0 40px rgba(255,184,106,0.15); animation: pulse-core 4s ease-in-out infinite; }
+@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+@keyframes spin-reverse { 0% { transform: rotate(360deg); } 100% { transform: rotate(0deg); } }
+@keyframes pulse-core { 0%, 100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.05); opacity: 0.88; } }
+
+/* Footer */
+footer { background: rgba(10,14,23,0.95); border-top: 1px solid var(--border); color: var(--text-dim); padding: 30px 24px; text-align: center; font-size: 0.75rem; }
+footer strong { color: var(--core-white); font-family: var(--font-display); font-size: 0.6rem; letter-spacing: 0.15em; text-transform: uppercase; }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <span class="nav-brand">J.A.R.V.I.S.</span>
+    <a href="#status">Systems</a>
+    <a href="#kanban">Tasks</a>
+    <a href="#pipeline">Pipeline</a>
+    <a href="#github">GitHub</a>
+    <a href="#apis">Auth</a>
+    <a href="#architecture">Architecture</a>
+    <a href="#routing">Model Routing</a>
+    <a href="#cron">Automation</a>
+    <a href="#obsidian">Obsidian</a>
+    <a href="#roadmap">Roadmap</a>
+    <a href="#changelog">Changelog</a>
+  </div>
+</nav>
+
+<div class="main-content">
+<div class="hero">
+  <div class="hero-inner">
+    <div class="arc-reactor">
+      <div class="ring ring-1"></div>
+      <div class="ring ring-2"></div>
+      <div class="ring ring-3"></div>
+      <div class="core"></div>
+    </div>
+    <div class="hero-tag">Critical Infrastructure Audit &mdash; Classified</div>
+    <h1>J.A.R.V.I.S. <span>Online</span></h1>
+    <p class="subtitle">Just A Rather Very Intelligent System</p>
+    <p>Full infrastructure audit &mdash; v1.9. Seven n8n workflows operational. Google Tasks Kanban live with 4-bucket system (ON FIRE / Today / This Week / Growing). Pipeline Intelligence automated Friday reports via Gemini 2.0 Flash. Dual-agent architecture live. Hermes activated with 100 slash commands. Per-channel model routing operational. Mutual watchdog system protecting Hermes and OpenClaw (120s check intervals). GitHub structure organized across 4 private/public repos. Config backups running to NVMe. The system is self-monitoring, self-healing, backed up, and operationally robust.</p>
+    <div class="hero-meta">
+      <div><strong>Platform</strong>Mac Studio M4 Max</div>
+      <div><strong>Memory</strong>36 GB Unified</div>
+      <div><strong>Workflows</strong>7 Total (n8n)</div>
+      <div><strong>Watchdog</strong>Mutual (2 services)</div>
+      <div><strong>Status</strong>All Systems Operational</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- SYSTEM STATUS -->
+<!-- ============================================================ -->
+<section id="status">
+  <div class="container">
+    <h2>System Status</h2>
+    <div class="section-line"></div>
+    <p>All critical services operational. Dual-agent architecture live. Mutual watchdog system protecting core services. Running clean on native macOS.</p>
+
+    <div class="status-grid">
+      <div class="status-item">
+        <div class="status-dot green"></div>
+        <div><div class="status-label">n8n Workflows</div><div class="status-detail">v2.8.4 &middot; localhost:5678 &middot; 7 workflows &middot; ALL LIVE</div></div>
+      </div>
+      <div class="status-item">
+        <div class="status-dot green"></div>
+        <div><div class="status-label">Jarvis: Task Inbox</div><div class="status-detail">ID: 2iqd6KpmadgsGatW &middot; Webhook always-on &middot; LIVE</div></div>
+      </div>
+      <div class="status-item">
+        <div class="status-dot green"></div>
+        <div><div class="status-label">IXON AM Brief</div><div class="status-detail">ID: wBEyixfbPuIOFjgV &middot; Mon-Fri 6:00 AM ET &middot; LIVE</div></div>
+      </div>
+      <div class="status-item">
+        <div class="status-dot green"></div>
+        <div><div class="status-label">IXON PM Recap</div><div class="status-detail">ID: cjvMbE8BDYB9e7WD &middot; Mon-Fri 6:30 PM ET &middot; LIVE</div></div>
+      </div>
+      <div class="status-item">
+        <div class="status-dot green"></div>
+        <div><div class="status-label">Pipeline Intelligence</div><div class="status-detail">ID: EpNVTCR7hpEM7yrD &middot; Fridays 4:00 PM ET &middot; LIVE</div></div>
+      </div>
+      <div class="status-item">
+        <div class="status-dot green"></div>
+        <div><div class="status-label">Daily System Health</div><div class="status-detail">ID: MZo3W30xXtB3CkwU &middot; Daily &middot; LIVE</div></div>
+      </div>
+      <div class="status-item">
+        <div class="status-dot green"></div>
+        <div><div class="status-label">Morning Brief</div><div class="status-detail">ID: Yfu7BWjTGbzoacwo &middot; Daily &middot; LIVE</div></div>
+      </div>
+      <div class="status-item">
+        <div class="status-dot green"></div>
+        <div><div class="status-label">Weekly Deal Strategy</div><div class="status-detail">ID: nZA0AWFzBxm8eFyK &middot; Weekly &middot; LIVE</div></div>
+      </div>
+      <div class="status-item">
+        <div class="status-dot green"></div>
+        <div><div class="status-label">Watchdog &mdash; Hermes</div><div class="status-detail">com.jarvis.watchdog-hermes &middot; 120s check &middot; Auto-restart</div></div>
+      </div>
+      <div class="status-item">
+        <div class="status-dot green"></div>
+        <div><div class="status-label">Watchdog &mdash; OpenClaw</div><div class="status-detail">com.jarvis.watchdog-openclaw &middot; 120s check &middot; Fired 2x today</div></div>
+      </div>
+      <div class="status-item">
+        <div class="status-dot green"></div>
+        <div><div class="status-label">Google Tasks Kanban</div><div class="status-detail">4-bucket system &middot; Webhook active &middot; Auto-population live</div></div>
+      </div>
+      <div class="status-item">
+        <div class="status-dot green"></div>
+        <div><div class="status-label">Ollama</div><div class="status-detail">localhost:11434 &middot; Mistral Small 3.1 &middot; KEEP_ALIVE=5m</div></div>
+      </div>
+      <div class="status-item">
+        <div class="status-dot green"></div>
+        <div><div class="status-label">OpenClaw Gateway</div><div class="status-detail">v2026.4.11 &middot; Port 18789 &middot; launchd managed</div></div>
+      </div>
+      <div class="status-item">
+        <div class="status-dot green"></div>
+        <div><div class="status-label">Hermes Agent</div><div class="status-detail">v0.8.0 &middot; LIVE &middot; Heremes#2749 &middot; 100 commands</div></div>
+      </div>
+      <div class="status-item">
+        <div class="status-dot green"></div>
+        <div><div class="status-label">Discord &mdash; JarvisAI</div><div class="status-detail">OpenClaw bot &middot; Per-channel routing &middot; LIVE</div></div>
+      </div>
+      <div class="status-item">
+        <div class="status-dot green"></div>
+        <div><div class="status-label">Model Routing</div><div class="status-detail">Per-channel &middot; Mistral/Flash/Sonnet &middot; LIVE</div></div>
+      </div>
+      <div class="status-item">
+        <div class="status-dot green"></div>
+        <div><div class="status-label">Config Backup</div><div class="status-detail">3 AM daily + boot &middot; NVMe &middot; 14-day rotation</div></div>
+      </div>
+      <div class="status-item">
+        <div class="status-dot green"></div>
+        <div><div class="status-label">Obsidian Vault</div><div class="status-detail">/Volumes/Jarvis/obsidian-vault &middot; Synced &middot; Publish live</div></div>
+      </div>
+      <div class="status-item">
+        <div class="status-dot green"></div>
+        <div><div class="status-label">GitHub Repos</div><div class="status-detail">4 repos &middot; jarvis-core, ixon-internal, ixon-customer, projects</div></div>
+      </div>
+      <div class="status-item">
+        <div class="status-dot green"></div>
+        <div><div class="status-label">macOS Firewall</div><div class="status-detail">Enabled &middot; Application Firewall active</div></div>
+      </div>
+    </div>
+
+    <h3>Memory Allocation</h3>
+    <div class="card">
+      <div class="mem-stat"><span style="font-family:var(--font-display);font-size:0.65rem;font-weight:600;color:var(--text-bright);letter-spacing:0.06em;text-transform:uppercase;">Active</span><div class="mem-bar"><div class="mem-fill" style="width:25%;background:var(--cyan-soft);box-shadow:0 0 8px var(--cyan-glow);"></div></div><span style="font-size:0.82rem;color:var(--text-dim);">~5.2 GB</span></div>
+      <div class="mem-stat"><span style="font-family:var(--font-display);font-size:0.65rem;font-weight:600;color:var(--text-bright);letter-spacing:0.06em;text-transform:uppercase;">Cached</span><div class="mem-bar"><div class="mem-fill" style="width:34%;background:var(--gold);box-shadow:0 0 8px var(--gold-glow);"></div></div><span style="font-size:0.82rem;color:var(--text-dim);">~7 GB</span></div>
+      <div class="mem-stat"><span style="font-family:var(--font-display);font-size:0.65rem;font-weight:600;color:var(--text-bright);letter-spacing:0.06em;text-transform:uppercase;">Available</span><div class="mem-bar"><div class="mem-fill" style="width:58%;background:var(--green);box-shadow:0 0 8px rgba(0,255,136,0.3);"></div></div><span style="font-size:0.82rem;color:var(--text-dim);">~19.5 GB</span></div>
+      <p style="font-size:0.82rem;color:var(--text-dim);margin-top:12px;margin-bottom:0;">Mistral Small 3.1 loads at ~14GB. OLLAMA_KEEP_ALIVE=5m auto-unloads after idle, freeing RAM. Cold start ~15-30s. With containers eliminated, ~27GB available for model operations when loaded.</p>
+    </div>
+
+    <h3>Storage</h3>
+    <div class="card">
+      <div class="mem-stat"><span style="font-family:var(--font-display);font-size:0.65rem;font-weight:600;color:var(--text-bright);letter-spacing:0.06em;text-transform:uppercase;">Macintosh HD (512GB SSD)</span><div class="mem-bar"><div class="mem-fill" style="width:7%;background:var(--cyan-soft);"></div></div><span style="font-size:0.82rem;color:var(--text-dim);">~35 GB / 495 GB</span></div>
+      <div class="mem-stat"><span style="font-family:var(--font-display);font-size:0.65rem;font-weight:600;color:var(--text-bright);letter-spacing:0.06em;text-transform:uppercase;">Jarvis NVMe (4TB External)</span><div class="mem-bar"><div class="mem-fill" style="width:0.5%;background:var(--green);"></div></div><span style="font-size:0.82rem;color:var(--text-dim);">~16 GB / 3.6 TB</span></div>
+      <p style="font-size:0.82rem;color:var(--text-dim);margin-top:12px;margin-bottom:0;">Ollama models on NVMe via symlink. Config backups running to NVMe with 14-day rotation. Obsidian vault and pipeline logs on NVMe. 3.58 TB available for workspace mirrors and model storage.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- GOOGLE TASKS KANBAN -->
+<!-- ============================================================ -->
+<section id="kanban">
+  <div class="container">
+    <h2>Google Tasks Kanban</h2>
+    <div class="section-line"></div>
+    <p>Four-bucket task management system integrated with n8n automation. Real-time webhook task intake.</p>
+
+    <table>
+      <thead>
+        <tr><th>Bucket</th><th>Purpose</th><th>Auto-Population</th><th>Status</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>ON FIRE</strong></td><td>Critical, immediate action required</td><td>Manual escalation</td><td><span class="badge badge-red">HOT</span></td></tr>
+        <tr><td><strong>Today</strong></td><td>Daily priorities, deliverables</td><td>AM Brief + PM Recap auto-create tasks after delivery</td><td><span class="badge badge-green">LIVE</span></td></tr>
+        <tr><td><strong>This Week</strong></td><td>Medium-term action items</td><td>Weekly Deal Strategy report triggers tasks Friday</td><td><span class="badge badge-green">LIVE</span></td></tr>
+        <tr><td><strong>Growing</strong></td><td>Backlog, future considerations</td><td>Manual or low-priority automation</td><td><span class="badge badge-green">LIVE</span></td></tr>
+      </tbody>
+    </table>
+
+    <div class="card">
+      <h3>Webhook Integration</h3>
+      <table>
+        <tr><td style="width:130px;font-weight:600;color:var(--text-bright);">Endpoint</td><td><code>localhost:5678/webhook/task-inbox</code></td></tr>
+        <tr><td style="font-weight:600;color:var(--text-bright);">Integration</td><td>n8n Google Tasks node &middot; Bi-directional sync</td></tr>
+        <tr><td style="font-weight:600;color:var(--text-bright);">Auth</td><td>OAuth2 &middot; phil.belue@ixon.cloud &middot; Full read/write access</td></tr>
+        <tr><td style="font-weight:600;color:var(--text-bright);">Workflow</td><td>Jarvis: Task Inbox (2iqd6KpmadgsGatW) &middot; Always-on webhook</td></tr>
+      </table>
+    </div>
+
+    <div class="callout-green callout">
+      <div class="callout-title">Workflow Automation</div>
+      <p>AM Brief (6 AM) and PM Recap (6:30 PM) workflows automatically create tasks in the "Today" bucket immediately after delivery. Friday's Pipeline Intelligence report auto-creates "This Week" action items. Tasks cascade through buckets based on due dates and custom labels.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- PIPELINE INTELLIGENCE -->
+<!-- ============================================================ -->
+<section id="pipeline">
+  <div class="container">
+    <h2>Pipeline Intelligence</h2>
+    <div class="section-line"></div>
+    <p>Automated account intelligence system synthesizing Gmail activity into actionable pipeline status reports.</p>
+
+    <div class="card">
+      <h3>Weekly Report Cycle (Fridays 4 PM ET)</h3>
+      <table>
+        <tr><td style="width:140px;font-weight:600;color:var(--text-bright);">Workflow ID</td><td>EpNVTCR7hpEM7yrD &middot; n8n automation</td></tr>
+        <tr><td style="font-weight:600;color:var(--text-bright);">Data Source</td><td>Gmail API &middot; Last 120 days of inbox + sent folder</td></tr>
+        <tr><td style="font-weight:600;color:var(--text-bright);">Aggregation</td><td>By external domain &middot; Maps every account touched in 120-day window</td></tr>
+        <tr><td style="font-weight:600;color:var(--text-bright);">AI Synthesis</td><td>Gemini 2.0 Flash &middot; OpenRouter integration</td></tr>
+        <tr><td style="font-weight:600;color:var(--text-bright);">Classification</td><td>Active / Stalling / Cold / Closed buckets &middot; Next actions per deal</td></tr>
+        <tr><td style="font-weight:600;color:var(--text-bright);">Output</td><td>Discord embed to #arc-reactor &middot; MD file to obsidian-vault</td></tr>
+        <tr><td style="font-weight:600;color:var(--text-bright);">Archive Path</td><td>/Volumes/Jarvis/obsidian-vault/IXON/pipeline-status.md</td></tr>
+        <tr><td style="font-weight:600;color:var(--text-bright);">First Run</td><td>Friday, April 18, 2026 at 4:00 PM ET</td></tr>
+      </table>
+    </div>
+
+    <div class="callout-gold callout">
+      <div class="callout-title">Integration Notes</div>
+      <p>Pipeline Intelligence pulls every Gmail message from the past 120 days, groups by sender domain, and asks Gemini Flash to synthesize account status and recommended actions. Results are posted as a rich embed to #arc-reactor Discord channel and archived to the IXON vault for historical tracking. Auto-creates "This Week" action items in Google Tasks for hot deals.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- GITHUB STRUCTURE -->
+<!-- ============================================================ -->
+<section id="github">
+  <div class="container">
+    <h2>GitHub Repository Structure</h2>
+    <div class="section-line"></div>
+    <p>Organized across four private and public repositories for infrastructure, internal tools, customer deliverables, and portfolio.</p>
+
+    <table>
+      <thead>
+        <tr><th>Repository</th><th>Visibility</th><th>Purpose</th><th>Contents</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>jarvis-core</strong></td><td><span class="badge badge-cyan">Private</span></td><td>Infrastructure &amp; Ops</td><td>Configuration files, launchd plists, shell scripts, REBUILD.md, runbooks, backup automation</td></tr>
+        <tr><td><strong>ixon-internal</strong></td><td><span class="badge badge-cyan">Private</span></td><td>Internal Strategy</td><td>Sales tools, pipeline intelligence workflows, strategic playbooks, internal analysis</td></tr>
+        <tr><td><strong>ixon-customer</strong></td><td><span class="badge badge-cyan">Private</span></td><td>Customer Facing</td><td>Deliverables, demos, proposal templates, customer-ready documentation</td></tr>
+        <tr><td><strong>projects</strong></td><td><span class="badge badge-green">Public</span></td><td>Portfolio &amp; OSS</td><td>Published tools, personal projects, open-source contributions</td></tr>
+      </tbody>
+    </table>
+
+    <div class="callout callout">
+      <div class="callout-title">GitHub Pages</div>
+      <p>Existing IXON GitHub Pages repository (ixon.github.io) remains public and hosts all live documentation URLs referenced across the system. It serves as the public-facing knowledge hub for customer-accessible information.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- AUTH MATRIX -->
+<!-- ============================================================ -->
+<section id="apis">
+  <div class="container">
+    <h2>Authentication Matrix</h2>
+    <div class="section-line"></div>
+    <p>All providers verified with live endpoint tests. One clean Anthropic key. OpenRouter validated for automation channels.</p>
+
+    <table>
+      <thead>
+        <tr><th>Provider</th><th>Method</th><th>Endpoint</th><th>Status</th><th>Models / Notes</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>Anthropic</strong></td><td>API Key</td><td>api.anthropic.com</td><td><span class="badge badge-green">Verified</span></td><td>Claude Sonnet 4.6 &middot; One clean key (old keys deleted)</td></tr>
+        <tr><td><strong>OpenRouter</strong></td><td>API Key</td><td>openrouter.ai/api/v1</td><td><span class="badge badge-green">Verified</span></td><td>Gemini 2.0 Flash &middot; n8n automations &middot; $100 credit</td></tr>
+        <tr><td><strong>Ollama</strong></td><td>Localhost</td><td>localhost:11434</td><td><span class="badge badge-green">Verified</span></td><td>Mistral Small 3.1 (24B) &middot; Flash Attention &middot; Q8 KV cache</td></tr>
+        <tr><td><strong>Google OAuth2</strong></td><td>OAuth 2.0</td><td>googleapis.com</td><td><span class="badge badge-green">Connected</span></td><td>Gmail &middot; Calendar &middot; Tasks &middot; IXON account</td></tr>
+        <tr><td><strong>n8n API</strong></td><td>API Key</td><td>localhost:5678</td><td><span class="badge badge-green">Verified</span></td><td>Jarvis-MacStudio key &middot; No expiry</td></tr>
+        <tr><td><strong>Discord (JarvisAI)</strong></td><td>Bot Token</td><td>discord.com/api</td><td><span class="badge badge-green">Connected</span></td><td>OpenClaw bot &middot; Guild: Jarvis</td></tr>
+        <tr><td><strong>Discord (Heremes)</strong></td><td>Bot Token</td><td>discord.com/api</td><td><span class="badge badge-green">Connected</span></td><td>Hermes bot &middot; #2749 &middot; Separate token</td></tr>
+      </tbody>
+    </table>
+
+    <div class="callout-gold callout">
+      <div class="callout-title">Security Advisory</div>
+      <p>Gateway binds to <code>0.0.0.0:18789</code> with <code>allowInsecureAuth: true</code>. Acceptable behind eero Max 7 on home network. Recommend Eero Plus ($10/mo) for network-level threat detection. Tighten before any external exposure.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- ARCHITECTURE -->
+<!-- ============================================================ -->
+<section id="architecture">
+  <div class="container">
+    <h2>System Architecture</h2>
+    <div class="section-line"></div>
+    <p>Dual-agent architecture. Per-channel model routing. Native macOS services. Mutual watchdog protection. No containers. Self-healing.</p>
+
+    <div class="terminal-block">
+<pre>
+ <span class="gold">MAC STUDIO M4 MAX</span>  <span class="dim">&middot;</span>  <span class="cyan">36GB Unified</span>  <span class="dim">&middot;</span>  macOS Native
+ <span class="dim">══════════════════════════════════════════════════════</span>
+
+ <span class="gold">SERVICE LAYER</span> <span class="dim">(launchd / brew services)</span>
+ <span class="dim">├──</span> <span class="green">Ollama</span> <span class="dim">..............</span> brew services <span class="dim">(ThrottleInterval:15, KEEP_ALIVE:5m)</span>
+ <span class="dim">├──</span> <span class="green">OpenClaw Gateway</span> <span class="dim">....</span> launchd plist <span class="dim">(v2026.4.11, port 18789, KeepAlive)</span>
+ <span class="dim">├──</span> <span class="green">Hermes Agent</span> <span class="dim">........</span> launchd plist <span class="dim">(v0.8.0, ai.hermes.gateway, LIVE)</span>
+ <span class="dim">├──</span> <span class="green">n8n Workflows</span> <span class="dim">.......</span> launchd plist <span class="dim">(v2.8.4, port 5678, DO NOT UPGRADE)</span>
+ <span class="dim">└──</span> <span class="cyan">Config Backup</span> <span class="dim">.......</span> launchd plist <span class="dim">(3 AM daily + RunAtLoad)</span>
+
+ <span class="gold">MUTUAL WATCHDOG</span> <span class="dim">(120s check intervals)</span>
+ <span class="dim">├──</span> <span class="green">com.jarvis.watchdog-hermes</span> <span class="dim">.....</span> Monitors &amp; auto-restarts Hermes <span class="dim">(2x today)</span>
+ <span class="dim">└──</span> <span class="green">com.jarvis.watchdog-openclaw</span> <span class="dim">..</span> Monitors &amp; auto-restarts OpenClaw <span class="dim">(2x today)</span>
+
+ <span class="gold">DISCORD BOTS</span> <span class="dim">(two separate bots, one server)</span>
+ <span class="dim">├──</span> <span class="green">JarvisAI</span> <span class="dim">..........</span> OpenClaw <span class="dim">(routing, channels, memory, cron)</span>
+ <span class="dim">└──</span> <span class="green">Heremes #2749</span> <span class="dim">.....</span> Hermes <span class="dim">(100 slash commands, 6 skills)</span>
+
+ <span class="gold">MODEL ROUTING</span> <span class="dim">(per-channel)</span>
+ <span class="dim">├──</span> <span class="green">#local-chat</span> <span class="dim">........</span> Mistral Small 3.1 via Ollama <span class="dim">(free, private)</span>
+ <span class="dim">├──</span> <span class="cyan">AUTOMATIONS channels</span> <span class="dim">..</span> Gemini 2.0 Flash via OpenRouter <span class="dim">(fast, cheap)</span>
+ <span class="dim">│   ├──</span> <span class="dim">#n8n-ops</span>
+ <span class="dim">│   ├──</span> <span class="dim">#research</span>
+ <span class="dim">│   └──</span> <span class="dim">#summarizer</span>
+ <span class="dim">└──</span> <span class="gold">#thinking + default</span> <span class="dim">...</span> Claude Sonnet 4.6 via Anthropic <span class="dim">(premium)</span>
+
+ <span class="gold">AUTOMATION</span> <span class="dim">(n8n workflows + cron + launchd)</span>
+ <span class="dim">├──</span> <span class="green">n8n: Jarvis Task Inbox</span> <span class="dim">.......</span> Webhook (always-on) <span class="dim">→</span> Google Tasks
+ <span class="dim">├──</span> <span class="green">n8n: IXON AM Brief</span> <span class="dim">...........</span> 6:00 AM ET <span class="dim">→</span> #ixon-morning-brief
+ <span class="dim">├──</span> <span class="green">n8n: IXON PM Recap</span> <span class="dim">...........</span> 6:30 PM ET <span class="dim">→</span> #ixon-evening-brief
+ <span class="dim">├──</span> <span class="green">n8n: IXON Pipeline Intelligence</span> <span class="dim">...</span> Fridays 4:00 PM ET <span class="dim">→</span> #arc-reactor
+ <span class="dim">├──</span> <span class="green">n8n: Daily System Health</span> <span class="dim">.....</span> Published
+ <span class="dim">├──</span> <span class="green">n8n: Morning Brief</span> <span class="dim">...........</span> Published
+ <span class="dim">├──</span> <span class="green">n8n: Weekly Deal Strategy Review</span> <span class="dim">.</span> Weekly
+ <span class="dim">├──</span> Cron: Nightly Historian <span class="dim">........</span> 11:45 PM ET <span class="dim">→</span> daily log + MEMORY.md
+ <span class="dim">└──</span> <span class="green">launchd: Config Backup</span> <span class="dim">........</span> 3:00 AM ET <span class="dim">→</span> rsync 6 dirs to NVMe
+
+ <span class="gold">HERMES SKILLS</span> <span class="dim">(6 active)</span>
+ <span class="dim">├──</span> <span class="green">domain-intel</span> <span class="dim">...........</span> Domain intelligence gathering
+ <span class="dim">├──</span> <span class="green">duckduckgo-search</span> <span class="dim">.....</span> Web search integration
+ <span class="dim">├──</span> <span class="green">scrapling</span> <span class="dim">.............</span> Web scraping
+ <span class="dim">├──</span> <span class="green">agentmail</span> <span class="dim">.............</span> Email automation
+ <span class="dim">├──</span> <span class="green">fastmcp</span> <span class="dim">.................</span> Fast MCP integration
+ <span class="dim">└──</span> <span class="green">parallel-cli</span> <span class="dim">..........</span> Parallel command execution
+
+ <span class="gold">GOOGLE APIs</span> <span class="dim">(via n8n OAuth2 &middot; phil.belue@ixon.cloud)</span>
+ <span class="dim">├──</span> <span class="green">Gmail</span> <span class="dim">..........</span> gmailOAuth2 <span class="dim">→ ID:</span> <span class="cyan">Zn0oq6myhn6ObIzW</span>
+ <span class="dim">├──</span> <span class="green">Calendar</span> <span class="dim">.......</span> googleCalendarOAuth2Api <span class="dim">→ ID:</span> <span class="cyan">LbwImKtdrzJSIuop</span>
+ <span class="dim">├──</span> <span class="green">Tasks</span> <span class="dim">..........</span> googleTasksOAuth2Api <span class="dim">→ ID:</span> <span class="cyan">cRWlSvTom9VZiDWR</span>
+ <span class="dim">└──</span> <span class="green">Generic</span> <span class="dim">........</span> googleOAuth2Api <span class="dim">→ ID:</span> <span class="cyan">OF6SjenbtmJxYuox</span>
+
+ <span class="gold">STORAGE</span>
+ <span class="dim">├──</span> Config <span class="dim">......</span> ~/.openclaw/ <span class="dim">(internal SSD)</span>
+ <span class="dim">├──</span> Workspace <span class="dim">...</span> ~/.openclaw/workspace/ <span class="dim">(internal SSD)</span>
+ <span class="dim">├──</span> Memory <span class="dim">......</span> ~/.openclaw/workspace/memory/ <span class="dim">(internal SSD)</span>
+ <span class="dim">├──</span> Hermes <span class="dim">......</span> ~/.hermes/ <span class="dim">(internal SSD)</span>
+ <span class="dim">├──</span> <span class="green">Ollama Models</span> <span class="dim">..</span> /Volumes/Jarvis/ollama/ <span class="dim">(4TB NVMe, symlinked)</span>
+ <span class="dim">├──</span> <span class="green">Obsidian Vault</span> <span class="dim">.</span> /Volumes/Jarvis/obsidian-vault/ <span class="dim">(4TB NVMe)</span>
+ <span class="dim">├──</span> <span class="green">Config Backups</span> <span class="dim">.</span> /Volumes/Jarvis/backups/configs/ <span class="dim">(NVMe, 14-day rotation)</span>
+ <span class="dim">└──</span> <span class="green">Obsidian Publish</span> publish.obsidian.md/jarvis-cockpit <span class="dim">(cloud sync)</span>
+
+ <span class="gold">SECURITY</span>
+ <span class="dim">├──</span> <span class="green">macOS Firewall</span> <span class="dim">....</span> Enabled
+ <span class="dim">├──</span> <span class="green">n8n Auth</span> <span class="dim">..........</span> Basic auth enabled
+ <span class="dim">├──</span> <span class="green">Mutual Watchdog</span> <span class="dim">......</span> 120s health checks on Hermes + OpenClaw
+ <span class="dim">├──</span> <span class="gold">Eero Plus</span> <span class="dim">.........</span> Recommended <span class="dim">(network threat detection)</span>
+ <span class="dim">└──</span> <span class="gold">Sandbox</span> <span class="dim">...........</span> Off <span class="dim">(intentional — full exec access)</span>
+</pre>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- MODEL ROUTING -->
+<!-- ============================================================ -->
+<section id="routing">
+  <div class="container">
+    <h2>Per-Channel Model Routing</h2>
+    <div class="section-line"></div>
+    <p>Multi-tier model strategy optimized for cost, speed, capability, and use case. Each context routes to the right model.</p>
+
+    <table>
+      <thead>
+        <tr><th>Channel/Context</th><th>Model</th><th>Provider</th><th>Cost</th><th>Use Case</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>#thinking, #jarvis-builds, DMs</strong></td><td>Claude Sonnet 4.6</td><td>Anthropic direct</td><td>Premium</td><td>Strategy, deep thinking, quality</td></tr>
+        <tr><td><strong>#n8n-ops, #research, #summarizer</strong></td><td>Gemini 2.0 Flash</td><td>OpenRouter</td><td>~$0.001/req</td><td>Automation, bulk tasks, fast</td></tr>
+        <tr><td><strong>#local-chat, Hermes default</strong></td><td>Mistral Small 3.1</td><td>Ollama (local)</td><td>$0</td><td>Quick queries, private, instant</td></tr>
+        <tr><td><strong>n8n AM/PM briefs, Pipeline Intel</strong></td><td>Gemini 2.0 Flash</td><td>OpenRouter</td><td>~$0.001/req</td><td>Scheduled automation, synthesis</td></tr>
+        <tr><td><strong>Heavy builds (Claude)</strong></td><td>Claude Opus</td><td>IXON Enterprise Cowork</td><td>$0</td><td>Complex code generation, builds</td></tr>
+      </tbody>
+    </table>
+
+    <div class="callout-green callout">
+      <div class="callout-title">Cost Optimization</div>
+      <p>Operating model: Jarvis (OpenClaw) = consultant at low cost via Mistral local. Claude Opus = builder at $0 via Cowork. Mistral daily ops = $0. Target: near-zero daily inference cost with premium capability available on demand.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- AUTOMATION -->
+<!-- ============================================================ -->
+<section id="cron">
+  <div class="container">
+    <h2>Automation Systems</h2>
+    <div class="section-line"></div>
+
+    <div class="card">
+      <div class="card-header">
+        <h3>n8n Workflows (7 Total)</h3>
+        <span class="badge badge-green">All Live</span>
+      </div>
+      <table>
+        <thead>
+          <tr><th>Workflow</th><th>ID</th><th>Schedule</th><th>Status</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>Jarvis: Task Inbox</strong></td><td><code>2iqd6KpmadgsGatW</code></td><td>Webhook (always on)</td><td><span class="badge badge-green">Live</span></td></tr>
+          <tr><td><strong>IXON AM Brief</strong></td><td><code>wBEyixfbPuIOFjgV</code></td><td>Mon-Fri 6:00 AM ET</td><td><span class="badge badge-green">Live</span></td></tr>
+          <tr><td><strong>IXON PM Recap</strong></td><td><code>cjvMbE8BDYB9e7WD</code></td><td>Mon-Fri 6:30 PM ET</td><td><span class="badge badge-green">Live</span></td></tr>
+          <tr><td><strong>IXON Pipeline Intelligence</strong></td><td><code>EpNVTCR7hpEM7yrD</code></td><td>Fridays 4:00 PM ET</td><td><span class="badge badge-green">Live</span></td></tr>
+          <tr><td><strong>Daily System Health</strong></td><td><code>MZo3W30xXtB3CkwU</code></td><td>Daily</td><td><span class="badge badge-green">Live</span></td></tr>
+          <tr><td><strong>Morning Brief</strong></td><td><code>Yfu7BWjTGbzoacwo</code></td><td>Daily</td><td><span class="badge badge-green">Live</span></td></tr>
+          <tr><td><strong>Weekly Deal Strategy Review</strong></td><td><code>nZA0AWFzBxm8eFyK</code></td><td>Weekly</td><td><span class="badge badge-green">Live</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <h3>Config Backup (launchd)</h3>
+        <span class="badge badge-green">Live</span>
+      </div>
+      <table>
+        <tr><td style="width:130px;font-weight:600;color:var(--text-bright);">Schedule</td><td>3:00 AM daily (StartCalendarInterval) + RunAtLoad on boot</td></tr>
+        <tr><td style="font-weight:600;color:var(--text-bright);">Script</td><td><code>~/jarvis/scripts/config-backup.sh</code></td></tr>
+        <tr><td style="font-weight:600;color:var(--text-bright);">Targets</td><td>~/.openclaw/, ~/.hermes/, ~/.n8n/, ~/.ollama/, obsidian-vault, launchd plists</td></tr>
+        <tr><td style="font-weight:600;color:var(--text-bright);">Destination</td><td>/Volumes/Jarvis/backups/configs/{timestamp}/ with <code>latest</code> symlink</td></tr>
+        <tr><td style="font-weight:600;color:var(--text-bright);">Retention</td><td>14-day auto-prune</td></tr>
+      </table>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <h3>Nightly Historian (Cron)</h3>
+        <span class="badge badge-green">Armed</span>
+      </div>
+      <table>
+        <tr><td style="width:130px;font-weight:600;color:var(--text-bright);">Schedule</td><td>11:45 PM ET daily (<code>45 3 * * *</code> UTC)</td></tr>
+        <tr><td style="font-weight:600;color:var(--text-bright);">Model</td><td>OpenRouter / Gemini Flash 2.0</td></tr>
+        <tr><td style="font-weight:600;color:var(--text-bright);">Output</td><td>Daily log &rarr; <code>memory/YYYY-MM-DD.md</code> + distill to <code>MEMORY.md</code> + post to #thinking</td></tr>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- OBSIDIAN VAULT -->
+<!-- ============================================================ -->
+<section id="obsidian">
+  <div class="container">
+    <h2>Obsidian Vault</h2>
+    <div class="section-line"></div>
+    <p>Restructured knowledge base with organized folders for decisions, architecture, and domain-specific intelligence.</p>
+
+    <div class="card">
+      <h3>Vault Structure</h3>
+      <table>
+        <tr><td style="width:120px;font-weight:600;color:var(--text-bright);">STATUS/</td><td>Daily logs, system snapshots, health checks</td></tr>
+        <tr><td style="font-weight:600;color:var(--text-bright);">IXON/</td><td>Pipeline status, account intelligence, deal tracking, strategy notes</td></tr>
+        <tr><td style="font-weight:600;color:var(--text-bright);">LOG/</td><td>Historical records, audit logs, change tracking</td></tr>
+        <tr><td style="font-weight:600;color:var(--text-bright);">DECISIONS/</td><td>Decision records dated by day (YYYY-MM-DD.md), architecture decisions, strategic choices</td></tr>
+        <tr><td style="font-weight:600;color:var(--text-bright);">ARCHITECTURE/</td><td>System design docs, stack overview (stack.md), infrastructure runbooks</td></tr>
+        <tr><td style="font-weight:600;color:var(--text-bright);">ARCHIVE/</td><td>Historical items, deprecated workflows, past iterations</td></tr>
+        <tr><td style="font-weight:600;color:var(--text-bright);">_private/</td><td>Sensitive notes, credentials references, access logs</td></tr>
+      </table>
+    </div>
+
+    <div class="card">
+      <h3>New Files (v1.9)</h3>
+      <table>
+        <tr><td style="width:180px;font-weight:600;color:var(--text-bright);">DECISIONS/2026-04-11.md</td><td>v1.9 audit, watchdog implementation, workflow consolidation</td></tr>
+        <tr><td style="font-weight:600;color:var(--text-bright);">ARCHITECTURE/stack.md</td><td>Complete tech stack reference, versions, API endpoints</td></tr>
+        <tr><td style="font-weight:600;color:var(--text-bright);">IXON/pipeline-status.md</td><td>Weekly pipeline intelligence output, account status tracking</td></tr>
+      </table>
+    </div>
+
+    <div class="callout-cyan callout" style="border-left-color:var(--cyan);">
+      <div class="callout-title" style="color:var(--cyan);">Publication Status</div>
+      <p>Obsidian Publish active at publish.obsidian.md/jarvis-cockpit. Internal-only access. Vault syncs to /Volumes/Jarvis/obsidian-vault/ on NVMe with auto-backup included in config snapshot.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- PHASE 2 ROADMAP -->
+<!-- ============================================================ -->
+<section id="roadmap">
+  <div class="container">
+    <h2>Phase 2 Roadmap</h2>
+    <div class="section-line"></div>
+    <p>Planned capability expansion in three priority phases. Current focus: P1 hardening (week of April 14).</p>
+
+    <div class="card">
+      <h3>P1 — Hardening (Week of April 14)</h3>
+      <table>
+        <tr><td style="width:200px;font-weight:600;color:var(--text-bright);">Healthchecks.io</td><td>Dead-man switch for critical services &middot; Monthly ping validation</td></tr>
+        <tr><td style="font-weight:600;color:var(--text-bright);">N8N_ENCRYPTION_KEY</td><td>Migrate from file to macOS Keychain &middot; Secure key storage</td></tr>
+        <tr><td style="font-weight:600;color:var(--text-bright);">Eero Plus Network</td><td>Network protection subscription &middot; Threat detection &middot; $10/mo</td></tr>
+        <tr><td style="font-weight:600;color:var(--text-bright);">Keychain Secrets</td><td>Migrate all sensitive values to macOS Keychain &middot; Zero plaintext config</td></tr>
+      </table>
+    </div>
+
+    <div class="card">
+      <h3>P2 — Intelligence Layer (April 20+)</h3>
+      <table>
+        <tr><td style="width:200px;font-weight:600;color:var(--text-bright);">Hermes Python Daemon</td><td>Background process for async skill execution &middot; Parallel task handling</td></tr>
+        <tr><td style="font-weight:600;color:var(--text-bright);">Pipeline Intel v2</td><td>Salesforce integration &middot; Direct CRM sync &middot; Real-time deal status</td></tr>
+        <tr><td style="font-weight:600;color:var(--text-bright);">Personal Morning Brief</td><td>Daily digest for personal productivity &middot; Calendar + Tasks + Weather</td></tr>
+        <tr><td style="font-weight:600;color:var(--text-bright);">Google Tasks Auto-Pop</td><td>Expanded automation &middot; Smart categorization &middot; AI-suggested buckets</td></tr>
+      </table>
+    </div>
+
+    <div class="card">
+      <h3>P3 — Capability Expansion</h3>
+      <table>
+        <tr><td style="width:200px;font-weight:600;color:var(--text-bright);">ElevenLabs TTS</td><td>Voice synthesis for Discord &middot; Audio brief delivery</td></tr>
+        <tr><td style="font-weight:600;color:var(--text-bright);">Playwright Automation</td><td>Web automation for data extraction &middot; Form filling workflows</td></tr>
+        <tr><td style="font-weight:600;color:var(--text-bright);">IXON ROI Calculator</td><td>Interactive proposal tool &middot; Web interface &middot; Customer-facing</td></tr>
+        <tr><td style="font-weight:600;color:var(--text-bright);">IXON Sales OS v2</td><td>Comprehensive sales system &middot; CRM integration &middot; AI-driven targeting</td></tr>
+      </table>
+    </div>
+
+    <div class="callout-gold callout">
+      <div class="callout-title">Roadmap Timeline</div>
+      <p>P1 is critical hardening work targeting April 14. P2 begins April 20 with new intelligence capabilities. P3 expands into external-facing tools and advanced automation. All roadmap items tracked in github.com/ixon-cody/jarvis-core (private).</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- CHANGELOG -->
+<!-- ============================================================ -->
+<section id="changelog">
+  <div class="container">
+    <h2>Changelog</h2>
+    <div class="section-line"></div>
+
+    <div class="card">
+      <h3>v1.9 — April 11, 2026</h3>
+      <ul style="list-style:none;padding:0;margin:0;">
+        <li style="padding:8px 0;border-bottom:1px solid var(--border);"><strong>New: n8n Workflows (5 &rarr; 7)</strong> &mdash; Added Jarvis: Task Inbox (webhook), IXON Pipeline Intelligence (Friday reports), consolidated workflow count</li>
+        <li style="padding:8px 0;border-bottom:1px solid var(--border);"><strong>New: Google Tasks Kanban</strong> &mdash; 4-bucket system (ON FIRE/Today/This Week/Growing) with auto-population from AM Brief, PM Recap, and Pipeline Intelligence</li>
+        <li style="padding:8px 0;border-bottom:1px solid var(--border);"><strong>New: Pipeline Intelligence</strong> &mdash; Automated Friday 4 PM reports pulling 120 days of Gmail, aggregating by domain, synthesized via Gemini 2.0 Flash, posted to #arc-reactor</li>
+        <li style="padding:8px 0;border-bottom:1px solid var(--border);"><strong>New: Mutual Watchdog System</strong> &mdash; com.jarvis.watchdog-hermes and com.jarvis.watchdog-openclaw with 120s health checks and auto-restart. Already fired 2x successfully today</li>
+        <li style="padding:8px 0;border-bottom:1px solid var(--border);"><strong>New: GitHub Repository Structure</strong> &mdash; Organized across jarvis-core (private), ixon-internal (private), ixon-customer (private), projects (public)</li>
+        <li style="padding:8px 0;border-bottom:1px solid var(--border);"><strong>Updated: Model Routing Table</strong> &mdash; Added #thinking/DMs (Sonnet), AUTOMATIONS (Flash), #local-chat (Mistral), n8n briefs (Flash), heavy builds (Opus)</li>
+        <li style="padding:8px 0;border-bottom:1px solid var(--border);"><strong>Updated: Obsidian Vault</strong> &mdash; Restructured into STATUS/IXON/LOG/DECISIONS/ARCHITECTURE/ARCHIVE/_private. New files: DECISIONS/2026-04-11.md, ARCHITECTURE/stack.md, IXON/pipeline-status.md</li>
+        <li style="padding:8px 0;border-bottom:1px solid var(--border);"><strong>Removed: Validation Pending Callout</strong> &mdash; Gemini Flash on OpenRouter validated and production-ready</li>
+        <li style="padding:8px 0;border-bottom:1px solid var(--border);"><strong>Added: Phase 2 Roadmap Section</strong> &mdash; P1 Hardening (Healthchecks.io, Keychain migration, Eero Plus), P2 Intelligence (Hermes daemon, Salesforce, Personal Brief), P3 Expansion (TTS, Playwright, ROI calc)</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h3>v1.8 — April 11, 2026</h3>
+      <p>Previous audit snapshot. Five workflows operational. Hermes at v0.8.0 with 100 commands. OpenClaw v2026.4.11 stable. All foundational systems live.</p>
+    </div>
+  </div>
+</section>
+
+</div><!-- .main-content -->
+
+<footer>
+  <strong>J.A.R.V.I.S. Infrastructure Audit — v1.9</strong><br>
+  Generated April 11, 2026 &middot; Next audit: April 18, 2026<br>
+  System is online &middot; All services operational &middot; Watchdog protecting core services
+</footer>
+
+</body>
+</html>
