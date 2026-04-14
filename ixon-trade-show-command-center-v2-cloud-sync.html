@@ -1,0 +1,2804 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>IXON Trade Show Command Center</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Roboto:wght@400;500;700&family=Roboto+Mono:wght@400&display=swap');
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{
+--ixon-blue:#1059D2;--ixon-dark:#021752;--ixon-offwhite:#F3F4FA;--ixon-yellow:#FACD00;--ixon-grey:#626262;
+--ixon-light-blue:#e8f0fd;--green:#22c55e;--red:#ef4444;--yellow:#FACD00;--orange:#F97316;--blue:#1059D2;
+--gray:#626262;--light:#F3F4FA;--white:#FFFFFF;
+--score5:#059669;--score4:#22c55e;--score3:#FACD00;--score2:#F97316;--score1:#ef4444;
+--phil:#FDE68A;--abby:#A7F3D0;--bryce:#99F6E4;--ae4:#BFDBFE;--unassigned:#E5E7EB;
+--radius:8px;--shadow:0 1px 4px rgba(0,0,0,0.06);
+--font-heading:'Poppins',sans-serif;--font-body:'Roboto',sans-serif;
+}
+body{font-family:var(--font-body);background:var(--ixon-offwhite);min-height:100vh;color:var(--ixon-dark);overflow-x:hidden;font-size:14px;line-height:1.6}
+
+/* ── HEADER ── */
+.app-header{background:var(--ixon-blue);padding:10px 16px;position:sticky;top:0;z-index:200;border-bottom:3px solid var(--ixon-yellow)}
+.header-top{display:flex;justify-content:space-between;align-items:center}
+.header-left{display:flex;align-items:center;gap:12px}
+.ixon-logo-svg{height:24px;width:auto;fill:#fff}
+.header-divider{width:1px;height:24px;background:rgba(255,255,255,0.25)}
+.header-title-group{display:flex;flex-direction:column}
+.header-title{font-family:var(--font-heading);font-size:13px;font-weight:600;color:var(--white);letter-spacing:0.5px}
+.header-show{font-family:var(--font-heading);font-size:9px;color:rgba(255,255,255,0.6);font-weight:400;letter-spacing:0.5px;text-transform:uppercase}
+.header-actions{display:flex;gap:6px}
+.header-btn{background:rgba(255,255,255,0.15);border:none;color:white;padding:6px 10px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:4px;font-family:var(--font-body);transition:background 0.15s}
+.header-btn:active{background:rgba(255,255,255,0.3)}
+.header-btn.sync-active{background:var(--green);color:white}
+.header-btn-yellow{background:var(--ixon-yellow);color:var(--ixon-dark);font-family:var(--font-heading);font-weight:600;font-size:11px;padding:6px 12px;border-radius:4px;text-transform:uppercase;letter-spacing:0.5px;border:none;cursor:pointer}
+
+/* ── SEARCH ── */
+.search-bar{padding:8px 16px;background:var(--ixon-blue);position:sticky;top:49px;z-index:190}
+.search-input{width:100%;padding:10px 14px 10px 36px;border-radius:6px;border:1px solid rgba(255,255,255,0.2);background:rgba(255,255,255,0.12);color:white;font-size:14px;font-family:var(--font-body);outline:none}
+.search-input::placeholder{color:rgba(255,255,255,0.45)}
+.search-input:focus{border-color:var(--ixon-yellow);background:rgba(255,255,255,0.18)}
+.search-icon{position:absolute;left:28px;top:50%;transform:translateY(-50%);color:rgba(255,255,255,0.5);font-size:14px;pointer-events:none}
+
+/* ── AE SELECTOR ── */
+.ae-bar{display:flex;gap:6px;padding:8px 16px;background:var(--ixon-dark);overflow-x:auto;-webkit-overflow-scrolling:touch;position:sticky;top:93px;z-index:180}
+.ae-bar::-webkit-scrollbar{display:none}
+.ae-chip{padding:6px 12px;border-radius:20px;border:1px solid rgba(255,255,255,0.15);font-size:12px;font-weight:500;cursor:pointer;white-space:nowrap;color:rgba(255,255,255,0.65);background:transparent;transition:all 0.15s;font-family:var(--font-heading)}
+.ae-chip.active{border-color:var(--ixon-yellow);background:var(--ixon-yellow);color:var(--ixon-dark);font-weight:600}
+.ae-chip .count{font-size:10px;opacity:0.7;margin-left:4px}
+
+/* ── VIEW TABS ── */
+.view-tabs{display:flex;gap:4px;padding:6px 16px;background:var(--ixon-dark);position:sticky;top:127px;z-index:170;border-bottom:1px solid rgba(255,255,255,0.08)}
+.view-tab{flex:1;padding:8px;text-align:center;border-radius:6px;font-size:11px;font-weight:600;cursor:pointer;color:rgba(255,255,255,0.45);background:transparent;text-transform:uppercase;letter-spacing:0.8px;transition:all 0.15s;font-family:var(--font-heading)}
+.view-tab.active{color:var(--ixon-dark);background:var(--ixon-yellow);font-weight:700}
+
+/* ── STATS ── */
+.stats-bar{display:flex;gap:8px;padding:8px 16px;background:white;overflow-x:auto;-webkit-overflow-scrolling:touch;box-shadow:0 1px 3px rgba(0,0,0,0.04)}
+.stats-bar::-webkit-scrollbar{display:none}
+.stat{display:flex;align-items:center;gap:5px;font-size:12px;font-weight:500;white-space:nowrap;color:var(--ixon-dark);font-family:var(--font-body)}
+.stat-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+
+/* ── FILTER PILLS ── */
+.filter-row{display:flex;gap:6px;padding:6px 16px;background:white;overflow-x:auto;border-bottom:1px solid #e2e5ef}
+.filter-row::-webkit-scrollbar{display:none}
+.filter-pill{padding:5px 10px;border-radius:4px;border:1.5px solid #d0d4e0;font-size:11px;font-weight:600;cursor:pointer;white-space:nowrap;color:var(--gray);background:white;transition:all 0.15s;font-family:var(--font-heading);letter-spacing:0.3px}
+.filter-pill.active{border-color:var(--ixon-blue);background:var(--ixon-light-blue);color:var(--ixon-blue)}
+
+/* ── CARDS ── */
+.card-list{padding:12px 12px 120px}
+.hall-section{margin-bottom:14px}
+.hall-header{padding:10px 14px;border-radius:6px;font-size:13px;font-weight:600;color:white;display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;font-family:var(--font-heading);letter-spacing:0.3px}
+.hall-a{background:var(--ixon-blue)}
+.hall-b{background:#0d7c4a}
+.hall-c{background:#6d28d9}
+
+.card{background:white;border-radius:var(--radius);padding:14px;margin-bottom:8px;box-shadow:var(--shadow);position:relative;overflow:hidden;transition:all 0.15s;border:1px solid #e8eaf0}
+.card.visited{opacity:0.55;border-left:4px solid var(--green)}
+.card.skipped{opacity:0.35;border-left:4px solid var(--red)}
+.card.maybe{border-left:4px solid var(--ixon-yellow)}
+
+.card-top{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:6px}
+.company-name{font-family:var(--font-heading);font-size:15px;font-weight:600;color:var(--ixon-dark);line-height:1.2}
+.company-meta{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px;font-size:11px;color:var(--gray)}
+.company-meta span{display:flex;align-items:center;gap:2px}
+
+.booth-badge{padding:4px 10px;border-radius:4px;font-size:13px;font-weight:700;color:white;white-space:nowrap;flex-shrink:0;font-family:var(--font-heading);letter-spacing:0.5px}
+.booth-a{background:var(--ixon-blue)}
+.booth-b{background:#0d7c4a}
+.booth-c{background:#6d28d9}
+
+.icp-badge{display:inline-flex;align-items:center;gap:3px;padding:2px 8px;border-radius:4px;font-size:10px;font-weight:700;color:white;font-family:var(--font-heading);letter-spacing:0.3px;text-transform:uppercase}
+.icp-5{background:var(--score5)}
+.icp-4{background:var(--score4)}
+.icp-3{background:var(--score3);color:var(--ixon-dark)}
+.icp-2{background:var(--score2);color:var(--ixon-dark)}
+.icp-1{background:var(--score1)}
+
+.territory-tag{padding:2px 6px;border-radius:4px;font-size:10px;font-weight:600;color:var(--ixon-dark);font-family:var(--font-heading)}
+.terr-phil{background:var(--phil)}
+.terr-abby{background:var(--abby)}
+.terr-bryce{background:var(--bryce)}
+.terr-ae4{background:var(--ae4)}
+.terr-unassigned{background:var(--unassigned)}
+
+.category-tag{padding:2px 6px;border-radius:4px;font-size:10px;font-weight:600;background:var(--ixon-light-blue);color:var(--ixon-blue);font-family:var(--font-heading);letter-spacing:0.3px;text-transform:uppercase}
+
+.card-desc{font-size:12px;color:var(--gray);line-height:1.5;margin-bottom:8px}
+.card-intel{font-size:11px;color:var(--ixon-blue);background:var(--ixon-light-blue);padding:8px 10px;border-radius:6px;margin-bottom:8px;line-height:1.4;font-weight:500;border-left:3px solid var(--ixon-blue)}
+
+/* ── ACTION BUTTONS ── */
+.actions{display:flex;gap:6px}
+.action-btn{flex:1;padding:10px 4px;border-radius:6px;border:1.5px solid #d0d4e0;background:white;cursor:pointer;text-align:center;transition:all 0.15s}
+.action-btn .icon{font-size:18px;line-height:1}
+.action-btn .label{font-size:9px;font-weight:700;text-transform:uppercase;margin-top:2px;color:var(--gray);font-family:var(--font-heading);letter-spacing:0.5px}
+.action-btn:active{transform:scale(0.95)}
+.action-btn.visit{border-color:#bbf7d0;background:#f0fdf4}.action-btn.visit .icon{color:#16a34a}.action-btn.visit .label{color:#16a34a}
+.action-btn.skip{border-color:#fecaca;background:#fef2f2}.action-btn.skip .icon{color:#dc2626}.action-btn.skip .label{color:#dc2626}
+.action-btn.maybe{border-color:#fde68a;background:#fefce8}.action-btn.maybe .icon{color:#b45309}.action-btn.maybe .label{color:#b45309}
+.action-btn.visit.selected{border-color:var(--green);background:#d1fae5;box-shadow:0 0 0 2px rgba(34,197,94,0.25)}.action-btn.visit.selected .icon{color:#fff;background:var(--green);border-radius:50%;width:24px;height:24px;display:inline-flex;align-items:center;justify-content:center;font-size:14px}.action-btn.visit.selected .label{color:var(--green);font-weight:800}
+.action-btn.skip.selected{border-color:var(--red);background:#fee2e2;box-shadow:0 0 0 2px rgba(239,68,68,0.25)}.action-btn.skip.selected .icon{color:#fff;background:var(--red);border-radius:50%;width:24px;height:24px;display:inline-flex;align-items:center;justify-content:center;font-size:14px}.action-btn.skip.selected .label{color:var(--red);font-weight:800}
+.action-btn.maybe.selected{border-color:var(--ixon-yellow);background:#fef9c3;box-shadow:0 0 0 2px rgba(250,205,0,0.3)}.action-btn.maybe.selected .icon{color:var(--ixon-dark);background:var(--ixon-yellow);border-radius:50%;width:24px;height:24px;display:inline-flex;align-items:center;justify-content:center;font-size:14px}.action-btn.maybe.selected .label{color:#92400E;font-weight:800}
+.action-btn.convo.selected{border-color:var(--ixon-blue);background:var(--ixon-light-blue)}.action-btn.convo.selected .label{color:var(--ixon-blue)}
+.wnc-badge{display:inline-flex;align-items:center;gap:3px;padding:2px 7px;border-radius:4px;font-size:10px;font-weight:700;font-family:var(--font-heading);letter-spacing:0.3px}
+.wnc-3{background:#dbeafe;color:#1e40af}.wnc-1{background:#e0e7ff;color:#4338ca}.wnc-03{background:#f3f4f6;color:#6b7280}
+.wnc-conf{font-size:8px;font-weight:500;opacity:0.7}
+
+/* ── CONVERSATION LOGGER ── */
+.convo-panel{display:none;margin-top:10px;padding:12px;background:var(--ixon-offwhite);border-radius:8px;border:1px solid #e2e5ef}
+.convo-panel.open{display:block}
+.convo-field{margin-bottom:8px}
+.convo-label{font-size:10px;font-weight:600;text-transform:uppercase;color:var(--gray);margin-bottom:4px;letter-spacing:0.8px;font-family:var(--font-heading)}
+.convo-input{width:100%;padding:8px 10px;border:1px solid #d0d4e0;border-radius:6px;font-size:13px;font-family:var(--font-body);resize:none;outline:none}
+.convo-input:focus{border-color:var(--ixon-blue)}
+.interest-btns{display:flex;gap:6px}
+.interest-btn{padding:6px 12px;border-radius:6px;border:1.5px solid #d0d4e0;font-size:12px;font-weight:600;cursor:pointer;background:white;color:var(--gray);font-family:var(--font-heading)}
+.interest-btn.hot.selected{border-color:#DC2626;background:#FEF2F2;color:#DC2626}
+.interest-btn.warm.selected{border-color:#d97706;background:#fefce8;color:#92400E}
+.interest-btn.cold.selected{border-color:var(--gray);background:var(--ixon-offwhite);color:var(--ixon-dark)}
+
+/* ── BUSINESS CARD PHOTO ── */
+.photo-capture{display:flex;gap:8px;align-items:center}
+.photo-btn{padding:8px 14px;border-radius:6px;border:1.5px dashed #d0d4e0;background:white;cursor:pointer;font-size:12px;font-weight:600;color:var(--gray);display:flex;align-items:center;gap:6px;font-family:var(--font-heading)}
+.photo-btn:active{background:var(--ixon-offwhite)}
+.photo-preview{width:60px;height:38px;border-radius:4px;object-fit:cover;border:1px solid #e2e5ef}
+.photo-input{display:none}
+
+/* ── TALKING POINTS ── */
+.tp-section{margin-top:8px;padding:10px;background:var(--ixon-light-blue);border-radius:6px;border:1px solid #c5d8f5;border-left:4px solid var(--ixon-blue)}
+.tp-title{font-size:10px;font-weight:700;text-transform:uppercase;color:var(--ixon-blue);margin-bottom:6px;letter-spacing:0.8px;display:flex;align-items:center;gap:4px;font-family:var(--font-heading)}
+.tp-item{font-size:12px;color:var(--ixon-dark);line-height:1.5;padding:2px 0;display:flex;gap:6px}
+.tp-item::before{content:">";font-weight:800;color:var(--ixon-blue);flex-shrink:0}
+.tp-toggle{font-size:11px;font-weight:600;color:var(--ixon-blue);cursor:pointer;background:none;border:none;padding:4px 0;font-family:var(--font-heading);text-decoration:underline;letter-spacing:0.3px}
+
+/* ── EMAIL DRAFTER ── */
+.email-panel{display:none;margin-top:10px;padding:12px;background:#fefce8;border-radius:8px;border:1px solid #fde68a;border-left:4px solid var(--ixon-yellow)}
+.email-panel.open{display:block}
+.email-preview{font-size:12px;color:var(--ixon-dark);line-height:1.6;white-space:pre-wrap;background:white;padding:12px;border-radius:6px;border:1px solid #e2e5ef;margin-top:8px;max-height:300px;overflow-y:auto}
+.email-actions{display:flex;gap:8px;margin-top:8px}
+.email-action-btn{padding:8px 14px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;border:1.5px solid #d0d4e0;background:white;font-family:var(--font-heading);flex:1;text-align:center;letter-spacing:0.3px}
+.email-action-btn.primary{background:var(--ixon-blue);color:white;border-color:var(--ixon-blue)}
+.email-action-btn:active{opacity:0.8}
+
+/* ── ROUTE VIEW ── */
+.route-card{display:flex;align-items:center;gap:12px;background:white;border-radius:var(--radius);padding:12px;margin-bottom:6px;box-shadow:var(--shadow);border:1px solid #e8eaf0}
+.route-num{width:28px;height:28px;border-radius:50%;background:var(--ixon-blue);color:white;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;font-family:var(--font-heading)}
+.route-info{flex:1;min-width:0}
+.route-company{font-family:var(--font-heading);font-size:14px;font-weight:600;color:var(--ixon-dark);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.route-meta{font-size:11px;color:var(--gray)}
+.route-booth{font-size:14px;font-weight:700;color:var(--ixon-blue);flex-shrink:0;font-family:var(--font-heading)}
+.route-connector{width:2px;height:12px;background:#d0d4e0;margin:0 0 0 13px}
+
+/* ── SETTINGS PANEL ── */
+.settings-overlay{display:none;position:fixed;inset:0;background:rgba(2,23,82,0.5);z-index:500}
+.settings-overlay.open{display:block}
+.settings-panel{position:fixed;bottom:0;left:0;right:0;background:white;border-radius:16px 16px 0 0;padding:24px 20px;z-index:501;max-height:80vh;overflow-y:auto;transform:translateY(100%);transition:transform 0.3s}
+.settings-overlay.open .settings-panel{transform:translateY(0)}
+.settings-title{font-family:var(--font-heading);font-size:18px;font-weight:700;margin-bottom:16px;color:var(--ixon-dark)}
+.settings-field{margin-bottom:16px}
+.settings-label{font-size:11px;font-weight:600;text-transform:uppercase;color:var(--gray);margin-bottom:6px;letter-spacing:0.8px;font-family:var(--font-heading)}
+.settings-input{width:100%;padding:10px 12px;border:1.5px solid #d0d4e0;border-radius:6px;font-size:14px;font-family:var(--font-body);outline:none}
+.settings-input:focus{border-color:var(--ixon-blue)}
+.settings-save{width:100%;padding:14px;border-radius:6px;background:var(--ixon-blue);color:white;border:none;font-size:15px;font-weight:600;cursor:pointer;font-family:var(--font-heading);letter-spacing:0.3px}
+
+/* ── EXPORT PANEL ── */
+.export-options{display:flex;flex-direction:column;gap:8px;margin-top:12px}
+.export-btn{padding:14px;border-radius:8px;border:1.5px solid #e2e5ef;background:white;cursor:pointer;text-align:left;font-family:var(--font-body)}
+.export-btn:active{background:var(--ixon-offwhite)}
+.export-btn-title{font-family:var(--font-heading);font-size:14px;font-weight:600;color:var(--ixon-dark)}
+.export-btn-desc{font-size:12px;color:var(--gray);margin-top:2px}
+
+/* ── SORT BAR ── */
+.sort-bar{display:flex;gap:6px;padding:4px 16px 6px;background:white;align-items:center;border-bottom:1px solid #e2e5ef}
+.sort-label{font-size:10px;font-weight:700;text-transform:uppercase;color:var(--gray);letter-spacing:0.8px;white-space:nowrap;font-family:var(--font-heading)}
+.sort-pill{padding:4px 10px;border-radius:4px;border:1.5px solid #d0d4e0;font-size:11px;font-weight:600;cursor:pointer;white-space:nowrap;color:var(--gray);background:white;transition:all 0.15s;font-family:var(--font-heading);letter-spacing:0.3px}
+.sort-pill.active{border-color:var(--ixon-blue);background:var(--ixon-light-blue);color:var(--ixon-blue)}
+
+/* ── ADD COMPANY FAB ── */
+.fab{position:fixed;bottom:24px;right:20px;width:56px;height:56px;border-radius:50%;background:var(--ixon-yellow);color:var(--ixon-dark);border:none;font-size:28px;font-weight:600;cursor:pointer;box-shadow:0 4px 14px rgba(250,205,0,0.4);z-index:300;display:flex;align-items:center;justify-content:center;transition:transform 0.15s;font-family:var(--font-heading)}
+.fab:active{transform:scale(0.9)}
+
+/* ── ADD FORM ── */
+.add-form-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.add-form-grid .full-width{grid-column:1/-1}
+.add-form-label{font-size:10px;font-weight:600;text-transform:uppercase;color:var(--gray);margin-bottom:4px;letter-spacing:0.8px;font-family:var(--font-heading)}
+.add-form-input{width:100%;padding:10px 12px;border:1.5px solid #d0d4e0;border-radius:6px;font-size:14px;font-family:var(--font-body);outline:none}
+.add-form-input:focus{border-color:var(--ixon-blue)}
+.add-form-select{width:100%;padding:10px 12px;border:1.5px solid #d0d4e0;border-radius:6px;font-size:14px;font-family:var(--font-body);outline:none;background:white;-webkit-appearance:none}
+.ae-group-header{padding:10px 14px;border-radius:6px;font-size:13px;font-weight:600;display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;font-family:var(--font-heading)}
+
+/* ── RESPONSIVE ── */
+@media(min-width:768px){
+.card-list{max-width:640px;margin:0 auto}
+.ae-bar,.filter-row,.stats-bar,.sort-bar{justify-content:center}
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="app-header">
+<div class="header-top">
+<div class="header-left">
+<svg class="ixon-logo-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 235.277 83.92" style="height:30px;width:auto;fill:#fff;">
+  <g transform="translate(-7440 18520)">
+    <path d="M76.5-12.667l-.173.227L57.837-35.4a10.582,10.582,0,0,1,0-13.16l5.934-7.359.173.186C67.8-51.6,71.451-47.347,74.73-43.08l.747.987c.253.319.493.652.733,1,6.147,8.786,6.267,20.212.294,28.425Zm-2.4,2.8a.369.369,0,0,1-.254.107.362.362,0,0,1-.2-.068l-.013-.013-1.16-.934-3.92-3.159L50.477-28.494A13.582,13.582,0,0,0,42-31.454a13.583,13.583,0,0,0-8.48,2.96L15.358-13.866l-4.707,3.8-.306.24a.338.338,0,0,1-.213.068.322.322,0,0,1-.24-.094l-.014-.013a.311.311,0,0,1-.026-.427v-.026l.254-.294,3.066-3.827.734-.893,14.613-18.16a13.591,13.591,0,0,0,0-16.96L12.877-69.88,10.037-73.4l-.173-.227-.013-.013a.364.364,0,0,1,.04-.453.329.329,0,0,1,.453-.015l.227.175,3.519,2.84L33.518-55.467A13.518,13.518,0,0,0,42-52.494a13.517,13.517,0,0,0,8.48-2.973L66.944-68.72l6.44-5.2.253-.188a.347.347,0,0,1,.467.015h.013a.362.362,0,0,1,.027.466c0,.013,0,.013-.013.013l-.187.254-5.2,6.44L55.491-50.453a13.571,13.571,0,0,0,0,16.947L70.037-15.413l3.16,3.919.934,1.16a.348.348,0,0,1-.027.468ZM71.317-7.48A23.131,23.131,0,0,1,57.544-3.054a25.442,25.442,0,0,1-14.68-4.72c-.333-.227-.667-.466-.987-.72L40.9-9.24c-4.307-3.32-8.573-6.946-12.667-10.786l-.187-.173,7.36-5.934A10.506,10.506,0,0,1,42-28.441a10.511,10.511,0,0,1,6.587,2.307L71.544-7.64ZM39.064-6.454a25.578,25.578,0,0,1-12.653,3.4A23.09,23.09,0,0,1,12.678-7.467l-.227-.173L25.664-18.293l.133.133c4.266,4.027,8.746,7.841,13.293,11.347l.254.186Zm-31.4-5.972-.16-.227C2.011-20.16,1.611-30.52,6.478-39.026l.173-.293.214.28c3.507,4.546,7.307,9.013,11.32,13.266l.133.134ZM7.5-71.293l.16-.24L26.158-48.56a10.545,10.545,0,0,1,0,13.173l-5.933,7.36-.173-.187c-3.813-4.079-7.454-8.333-10.8-12.667l-.733-.972c-.254-.32-.493-.641-.733-1C1.611-51.639,1.5-63.067,7.5-71.293Zm5.187-5.187a23.112,23.112,0,0,1,13.747-4.427,25.506,25.506,0,0,1,14.693,4.733c.333.227.653.467.987.72l.973.747C47.344-71.426,51.6-67.8,55.757-63.92l.187.173-7.36,5.933A10.581,10.581,0,0,1,42-55.52a10.576,10.576,0,0,1-6.586-2.293L12.451-76.319Zm32.253-1a25.267,25.267,0,0,1,12.614-3.414A23.287,23.287,0,0,1,71.317-76.48l.227.16L58.317-65.667l-.133-.133c-4.307-4.053-8.773-7.867-13.267-11.32l-.267-.2Zm31.4,5.96.16.227a24.242,24.242,0,0,1,1.014,26.36l-.187.28-.187-.267c-3.467-4.493-7.28-8.946-11.32-13.241l-.133-.133Zm2.973,29.667-.066-.107.066-.12a28.6,28.6,0,0,0,3.467-7.494,27.692,27.692,0,0,0,1.16-8.959,26.288,26.288,0,0,0-6.48-16.4c-.147-.147-.28-.307-.413-.467-.227-.253-.467-.507-.72-.773l-.173-.146c-.387-.4-.8-.773-1.2-1.121A26.21,26.21,0,0,0,57.584-83.92,28.408,28.408,0,0,0,42.1-79.293l-.12.066-.12-.066A28.519,28.519,0,0,0,26.4-83.92,26.2,26.2,0,0,0,9.064-77.453c-.414.346-.826.733-1.227,1.134l-.187.186c-.4.387-.773.8-1.12,1.2-7.973,9.026-8.706,22.226-1.866,32.84l.08.12-.08.12C-2.163-31.24-1.429-18.054,6.518-9.027c.359.413.733.812,1.106,1.186l.227.227c.387.386.786.76,1.186,1.107A26.262,26.262,0,0,0,26.424,0,28.589,28.589,0,0,0,41.877-4.64L42-4.72l.12.081A28.534,28.534,0,0,0,57.558-.014,26.224,26.224,0,0,0,74.944-6.507c.414-.359.813-.733,1.214-1.12l.186-.2c.4-.372.773-.8,1.133-1.186,7.934-9.04,8.68-22.226,1.84-32.839" transform="translate(7440 -18436.08)"/>
+    <path d="M156.584-60.92H145.09l-8.373,11.44L128.6-60.92H116.984l14.04,19-14.04,18.947h11.68l8.053-11,8.013,11h11.64L142.557-41.68,156.584-60.92" transform="translate(7440 -18436.08)"/>
+    <path d="M183.517-33.494a8.783,8.783,0,0,1-7.067,3.04,8.639,8.639,0,0,1-7.067-3.04c-1.707-2-2.547-4.826-2.547-8.426s.853-6.4,2.56-8.414a8.668,8.668,0,0,1,7.053-3.013,8.752,8.752,0,0,1,7.08,3q2.54,3,2.547,8.427c0,3.6-.853,6.426-2.56,8.426Zm7.613-22.72q-5.48-5.379-14.613-5.372-9.22,0-14.707,5.372T156.33-41.92q0,8.9,5.48,14.239t14.707,5.346q9.22,0,14.653-5.333T196.6-41.92q0-8.941-5.467-14.294" transform="translate(7440 -18436.08)"/>
+    <path d="M231.61-57.693C229.183-59.84,225.1-60.92,219.4-60.92h-18.84v37.947h10.027V-52.586h8.053c2.653,0,4.413.426,5.293,1.267s1.32,2.693,1.32,5.519v22.827h10.027V-47.026q0-7.461-3.667-10.667" transform="translate(7440 -18436.08)"/>
+    <path d="M104.172-60.922V-29.27c.042,2.156,1.547,6.031,7.561,6.29h2.955V-60.922H104.172" transform="translate(7440 -18436.08)"/>
+  </g>
+</svg>
+<div class="header-divider"></div>
+<div class="header-title-group">
+<div class="header-title">Trade Show Command Center</div>
+<div class="header-show" id="showName">MODEX 2026 — Atlanta, GA</div>
+<div id="syncIndicator" style="font-size:9px;color:rgba(255,255,255,0.55);font-family:var(--font-body);display:flex;align-items:center;margin-top:1px"></div>
+</div>
+</div>
+<div class="header-actions">
+<button class="header-btn-yellow" onclick="openSettings()" title="Settings">&#9881;</button>
+<button class="header-btn-yellow" id="syncBtn" onclick="syncToSheets()" title="Sync">&#8635;</button>
+<button class="header-btn-yellow" onclick="openExport()" title="Export">&#8681;</button>
+</div>
+</div>
+</div>
+
+<!-- SEARCH -->
+<div class="search-bar" style="position:relative">
+<span class="search-icon">&#128269;</span>
+<input class="search-input" id="searchInput" type="text" placeholder="Search companies..." oninput="render()">
+</div>
+
+<!-- AE SELECTOR -->
+<div class="ae-bar" id="aeBar"></div>
+
+<!-- VIEW TABS -->
+<div class="view-tabs">
+<div class="view-tab active" data-view="cards" onclick="setView('cards')">Cards</div>
+<div class="view-tab" data-view="route" onclick="setView('route')">Route</div>
+<div class="view-tab" data-view="summary" onclick="setView('summary')">Summary</div>
+</div>
+
+<!-- STATS -->
+<div class="stats-bar" id="statsBar"></div>
+
+<!-- FILTERS -->
+<div class="filter-row" id="filterRow"></div>
+
+<!-- SORT BAR -->
+<div class="sort-bar" id="sortBar"></div>
+
+<!-- MAIN CONTENT -->
+<div class="card-list" id="mainContent"></div>
+
+<!-- ADD COMPANY FAB -->
+<button class="fab" onclick="openAddCompany()" title="Add Company">+</button>
+
+<!-- SETTINGS OVERLAY -->
+<div class="settings-overlay" id="settingsOverlay" onclick="closeSettings(event)">
+<div class="settings-panel" onclick="event.stopPropagation()">
+<div class="settings-title" id="settingsPanelTitle">Settings</div>
+<div id="settingsPanelContent"></div>
+</div>
+</div>
+
+<script>
+// ══════════════════════════════════════════════════
+// IXON TRADE SHOW COMMAND CENTER
+// Config-driven. Google Sheets sync. Reusable.
+// ══════════════════════════════════════════════════
+
+// ── SHOW CONFIG ──
+const SHOW_CONFIG = {
+  name: "MODEX 2026",
+  location: "Atlanta, GA",
+  venue: "Georgia World Congress Center",
+  dates: "March 23-26, 2026",
+  halls: ["A", "B", "C"],
+  storageKey: "ixon_tradeshow_modex2026"
+};
+
+// ── LEAD DATA ──
+const LEADS = [
+  {
+    "id": 1,
+    "company": "Alba Manufacturing",
+    "booth": "A4913",
+    "hall": "A",
+    "description": "Heavy-duty pallet handling roller conveyor systems",
+    "location": "Fairfield, OH",
+    "employees": "~50-100",
+    "icpScore": 5,
+    "territoryOwner": "Abby Wolf",
+    "category": "OEM",
+    "website": "https://alba-mfg.com",
+    "notes_preset": "PLC-controlled conveyor OEM. Perfect ICP.",
+    "wncRange": "0.3-1pt",
+    "wncLow": 0.3,
+    "wncHigh": 1,
+    "wncConf": 80,
+    "wncEV": 0.52,
+    "wncReason": "~75 emp = smaller volume; OEM = each machine ships w/ router; complex PLC machines"
+  },
+  {
+    "id": 3,
+    "company": "AmbaFlex Inc.",
+    "booth": "B8113",
+    "hall": "B",
+    "description": "Spiral conveyors, accumulation systems",
+    "location": "Netherlands (US office)",
+    "employees": "~200-500",
+    "icpScore": 4,
+    "territoryOwner": "AE 4",
+    "category": "OEM",
+    "website": "https://ambaflex.com",
+    "notes_preset": "Dutch HQ, US office. PLC spiral conveyors.",
+    "wncRange": "0.3-1pt",
+    "wncLow": 0.3,
+    "wncHigh": 1,
+    "wncConf": 65,
+    "wncEV": 0.42,
+    "wncReason": "~350 emp = moderate volume; OEM = each machine ships w/ router; complex PLC machines"
+  },
+  {
+    "id": 4,
+    "company": "Amerden AGVS",
+    "booth": "A1127",
+    "hall": "A",
+    "description": "AGV systems",
+    "location": "St. Augustine, FL",
+    "employees": "11-50",
+    "icpScore": 3,
+    "territoryOwner": "Phil Belue",
+    "category": "OEM",
+    "website": "https://amerden.com",
+    "notes_preset": "Small AGV mfr. Good product fit but sub-scale.",
+    "wncRange": "0.3pt",
+    "wncLow": 0.3,
+    "wncHigh": 0.3,
+    "wncConf": 65,
+    "wncEV": 0.2,
+    "wncReason": "~30 emp = low volume; OEM = each machine ships w/ router"
+  },
+  {
+    "id": 5,
+    "company": "American Crane & Equipment Corp.",
+    "booth": "C15378",
+    "hall": "C",
+    "description": "Overhead cranes, hoists, lifting systems",
+    "location": "Douglassville, PA",
+    "employees": "~160",
+    "icpScore": 5,
+    "territoryOwner": "Abby Wolf",
+    "category": "OEM",
+    "website": "https://americancrane.com",
+    "notes_preset": "US crane OEM, ~160 emp. Perfect ICP.",
+    "wncRange": "0.3-1pt",
+    "wncLow": 0.3,
+    "wncHigh": 1,
+    "wncConf": 60,
+    "wncEV": 0.39,
+    "wncReason": "~160 emp = smaller volume; OEM = each machine ships w/ router; simpler machines, fewer PLCs"
+  },
+  {
+    "id": 6,
+    "company": "AMIGO MOBILITY",
+    "booth": "B7729",
+    "hall": "B",
+    "description": "Battery-powered cart tuggers, motorized carts",
+    "location": "Bridgeport, MI",
+    "employees": "~50-200",
+    "icpScore": 2,
+    "territoryOwner": "Abby Wolf",
+    "category": "OEM",
+    "website": "https://amigo.com",
+    "notes_preset": "Battery carts \u2014 minimal PLC/controls. Low priority.",
+    "wncRange": "0.3-1pt",
+    "wncLow": 0.3,
+    "wncHigh": 1,
+    "wncConf": 50,
+    "wncEV": 0.33,
+    "wncReason": "~125 emp = smaller volume; OEM = each machine ships w/ router"
+  },
+  {
+    "id": 7,
+    "company": "Automation Controls Group",
+    "booth": "B15256",
+    "hall": "B",
+    "description": "DC brushless motors, drives for conveyor OEMs",
+    "location": "North America",
+    "employees": "~50-100",
+    "icpScore": 2,
+    "territoryOwner": "Abby Wolf",
+    "category": "OEM",
+    "website": "https://acgconveyors.com",
+    "notes_preset": "Component supplier, not machine builder. Referral only.",
+    "wncRange": "0.3pt",
+    "wncLow": 0.3,
+    "wncHigh": 0.3,
+    "wncConf": 55,
+    "wncEV": 0.17,
+    "wncReason": "~75 emp = smaller volume; OEM = each machine ships w/ router"
+  },
+  {
+    "id": 8,
+    "company": "Balemaster",
+    "booth": "B15650",
+    "hall": "B",
+    "description": "Auto-tie balers, waste handling equipment",
+    "location": "USA",
+    "employees": "~56",
+    "icpScore": 4,
+    "territoryOwner": "Phil Belue",
+    "category": "OEM",
+    "website": "https://balemaster.com",
+    "notes_preset": "OEM baler mfr w/ PLC controls. Validate headcount.",
+    "wncRange": "0.3-1pt",
+    "wncLow": 0.3,
+    "wncHigh": 1,
+    "wncConf": 70,
+    "wncEV": 0.45,
+    "wncReason": "56 emp, Crown Point IN; US MFG, industrial balers with controls"
+  },
+  {
+    "id": 9,
+    "company": "BestPack Packaging Systems",
+    "booth": "C12395",
+    "hall": "C",
+    "description": "Carton sealers, erectors, shrink-wrapping",
+    "location": "Ontario, CA",
+    "employees": "~50-200",
+    "icpScore": 4,
+    "territoryOwner": "AE 4",
+    "category": "OEM",
+    "website": "https://bestpack.com",
+    "notes_preset": "US packaging OEM 35+ years.",
+    "wncRange": "0.3-1pt",
+    "wncLow": 0.3,
+    "wncHigh": 1,
+    "wncConf": 70,
+    "wncEV": 0.45,
+    "wncReason": "~125 emp = smaller volume; OEM = each machine ships w/ router; US/CA MFG confirmed"
+  },
+  {
+    "id": 10,
+    "company": "Bishamon Industries",
+    "booth": "B11314",
+    "hall": "B",
+    "description": "Lift tables, scissor lifts, pallet positioners",
+    "location": "USA",
+    "employees": "~50-200",
+    "icpScore": 3,
+    "territoryOwner": "Abby Wolf",
+    "category": "OEM",
+    "website": "https://bishamon.com",
+    "notes_preset": "Lift equipment \u2014 validate controls sophistication.",
+    "wncRange": "0.3-1pt",
+    "wncLow": 0.3,
+    "wncHigh": 1,
+    "wncConf": 65,
+    "wncEV": 0.42,
+    "wncReason": "~125 emp = smaller volume; OEM = each machine ships w/ router; simpler machines, fewer PLCs"
+  },
+  {
+    "id": 11,
+    "company": "Boston Conveyor & Automation",
+    "booth": "C16021",
+    "hall": "C",
+    "description": "Intelligent conveyor systems, robotics",
+    "location": "Newburyport, MA",
+    "employees": "~50",
+    "icpScore": 5,
+    "territoryOwner": "Bryce Yates",
+    "category": "OEM",
+    "website": "https://bostonconveyor.com",
+    "notes_preset": "US conveyor/automation OEM. Sweet spot.",
+    "wncRange": "0.3-1pt",
+    "wncLow": 0.3,
+    "wncHigh": 1,
+    "wncConf": 80,
+    "wncEV": 0.52,
+    "wncReason": "~50 emp = smaller volume; OEM = each machine ships w/ router; complex PLC machines"
+  },
+  {
+    "id": 12,
+    "company": "Caljan Inc.",
+    "booth": "A1018",
+    "hall": "A",
+    "description": "Telescopic belt conveyors",
+    "location": "Denmark (US ops)",
+    "employees": "~500-1000",
+    "icpScore": 4,
+    "territoryOwner": "Abby Wolf",
+    "category": "OEM",
+    "website": "https://caljan.com",
+    "notes_preset": "Danish HQ, US ops. PLC conveyors. Validate US decision-making.",
+    "wncRange": "1-3pt",
+    "wncLow": 1,
+    "wncHigh": 3,
+    "wncConf": 60,
+    "wncEV": 1.2,
+    "wncReason": "750+ emp = high machine volume; OEM = each machine ships w/ router; intl HQ, US MFG unconfirmed"
+  },
+  {
+    "id": 13,
+    "company": "CASSIOLI Srl",
+    "booth": "A2118",
+    "hall": "A",
+    "description": "Automated handling, conveyors, baggage",
+    "location": "Italy (US: Birmingham, AL)",
+    "employees": "201-500",
+    "icpScore": 4,
+    "territoryOwner": "Phil Belue",
+    "category": "OEM",
+    "website": "https://cassioli.com",
+    "notes_preset": "Italian HQ, US in Birmingham AL.",
+    "wncRange": "0.3-1pt",
+    "wncLow": 0.3,
+    "wncHigh": 1,
+    "wncConf": 50,
+    "wncEV": 0.33,
+    "wncReason": "~350 emp = moderate volume; OEM = each machine ships w/ router; intl HQ, US MFG unconfirmed"
+  },
+  {
+    "id": 14,
+    "company": "Cimcorp USA",
+    "booth": "B12506",
+    "hall": "B",
+    "description": "Gantry robots, shuttle systems",
+    "location": "Finland/Canada/US",
+    "employees": "~400",
+    "icpScore": 4,
+    "territoryOwner": "Abby Wolf",
+    "category": "OEM",
+    "website": "https://cimcorp.com",
+    "notes_preset": "Gantry robot OEM. Validate US decision-making.",
+    "wncRange": "1-3pt",
+    "wncLow": 1,
+    "wncHigh": 3,
+    "wncConf": 75,
+    "wncEV": 1.5,
+    "wncReason": "~400 emp = moderate volume; OEM = each machine ships w/ router; US/CA MFG confirmed"
+  },
+  {
+    "id": 16,
+    "company": "Columbia Machine, Inc.",
+    "booth": "A2805",
+    "hall": "A",
+    "description": "Palletizers, load transfer, bag fillers",
+    "location": "Vancouver, WA",
+    "employees": "~456",
+    "icpScore": 5,
+    "territoryOwner": "AE 4",
+    "category": "OEM",
+    "website": "https://columbiamachine.com",
+    "notes_preset": "Major US palletizer OEM since 1937. Excellent target.",
+    "wncRange": "1-3pt",
+    "wncLow": 1,
+    "wncHigh": 3,
+    "wncConf": 80,
+    "wncEV": 1.6,
+    "wncReason": "~456 emp = moderate volume; OEM = each machine ships w/ router; complex PLC machines"
+  },
+  {
+    "id": 17,
+    "company": "Cornerstone Automation (CASI)",
+    "booth": "C10577",
+    "hall": "C",
+    "description": "Conveyors, sortation, shipping/receiving",
+    "location": "Frisco, TX",
+    "employees": "51-100",
+    "icpScore": 5,
+    "territoryOwner": "Phil Belue",
+    "category": "OEM",
+    "website": "https://interlakemecalux.com",
+    "notes_preset": "US automation mfr. Sweet spot.",
+    "wncRange": "0.3-1pt",
+    "wncLow": 0.3,
+    "wncHigh": 1,
+    "wncConf": 80,
+    "wncEV": 0.52,
+    "wncReason": "~75 emp = smaller volume; OEM = each machine ships w/ router; complex PLC machines"
+  },
+  {
+    "id": 18,
+    "company": "EAM-Mosca Corp.",
+    "booth": "B14539",
+    "hall": "B",
+    "description": "Strapping machines & automated strapping systems",
+    "location": "Hazle Township, PA",
+    "employees": "~100-200",
+    "icpScore": 5,
+    "territoryOwner": "Abby Wolf",
+    "category": "OEM",
+    "website": "https://eammosca.com",
+    "notes_preset": "PLC strapping machines. 50+ years. Textbook ICP.",
+    "wncRange": "0.3-1pt",
+    "wncLow": 0.3,
+    "wncHigh": 1,
+    "wncConf": 75,
+    "wncEV": 0.49,
+    "wncReason": "~150 emp = smaller volume; OEM = each machine ships w/ router; complex PLC machines"
+  },
+  {
+    "id": 19,
+    "company": "EuroSort Inc.",
+    "booth": "B9904",
+    "hall": "B",
+    "description": "High-speed unit & case sortation systems",
+    "location": "Owings Mills, MD",
+    "employees": "~50-100",
+    "icpScore": 5,
+    "territoryOwner": "Abby Wolf",
+    "category": "OEM",
+    "website": "https://eurosort.com",
+    "notes_preset": "US sortation OEM with controls. Perfect fit.",
+    "wncRange": "0.3-1pt",
+    "wncLow": 0.3,
+    "wncHigh": 1,
+    "wncConf": 80,
+    "wncEV": 0.52,
+    "wncReason": "~75 emp = smaller volume; OEM = each machine ships w/ router; complex PLC machines"
+  },
+  {
+    "id": 20,
+    "company": "FAST Global Solutions",
+    "booth": "C13371",
+    "hall": "C",
+    "description": "Conveyor systems, material handling equipment",
+    "location": "Black River Falls, WI",
+    "employees": "~500",
+    "icpScore": 5,
+    "territoryOwner": "Abby Wolf",
+    "category": "OEM",
+    "website": "https://fastglobalsolutions.com",
+    "notes_preset": "Employee-owned, ISO certified. Top target.",
+    "wncRange": "1-3pt",
+    "wncLow": 1,
+    "wncHigh": 3,
+    "wncConf": 85,
+    "wncEV": 1.7,
+    "wncReason": "500+ emp = high machine volume; OEM = each machine ships w/ router; complex PLC machines"
+  },
+  {
+    "id": 21,
+    "company": "Felins, Inc.",
+    "booth": "B9625",
+    "hall": "B",
+    "description": "Automated banding/packaging machinery",
+    "location": "Richfield, WI",
+    "employees": "11-50",
+    "icpScore": 4,
+    "territoryOwner": "Abby Wolf",
+    "category": "OEM",
+    "website": "https://felins.com",
+    "notes_preset": "Small but US mfr since 1921. Automated packaging.",
+    "wncRange": "0.3pt",
+    "wncLow": 0.3,
+    "wncHigh": 0.3,
+    "wncConf": 75,
+    "wncEV": 0.22,
+    "wncReason": "~30 emp = low volume; OEM = each machine ships w/ router; complex PLC machines"
+  },
+  {
+    "id": 22,
+    "company": "Flow-Turn Inc.",
+    "booth": "B8425",
+    "hall": "B",
+    "description": "Belted curves, spirals, merges, vertical lifts",
+    "location": "Union, NJ",
+    "employees": "11-50",
+    "icpScore": 4,
+    "territoryOwner": "Abby Wolf",
+    "category": "OEM",
+    "website": "https://flow-turn.com",
+    "notes_preset": "US conveyor mfr since 1981. Specialty conveyors.",
+    "wncRange": "0.3pt",
+    "wncLow": 0.3,
+    "wncHigh": 0.3,
+    "wncConf": 65,
+    "wncEV": 0.2,
+    "wncReason": "~30 emp = low volume; OEM = each machine ships w/ router"
+  },
+  {
+    "id": 23,
+    "company": "Gorbel Inc.",
+    "booth": "C14100",
+    "hall": "C",
+    "description": "Overhead cranes, ergonomic lifting systems",
+    "location": "Fishers/Victor, NY",
+    "employees": "~455",
+    "icpScore": 5,
+    "territoryOwner": "Bryce Yates",
+    "category": "OEM",
+    "website": "https://gorbel.com",
+    "notes_preset": "Major US crane OEM. 40+ years. Excellent ICP.",
+    "wncRange": "1-3pt",
+    "wncLow": 1,
+    "wncHigh": 3,
+    "wncConf": 65,
+    "wncEV": 1.3,
+    "wncReason": "~455 emp = moderate volume; OEM = each machine ships w/ router; simpler machines, fewer PLCs"
+  },
+  {
+    "id": 24,
+    "company": "EMH, Inc.",
+    "booth": "B10800",
+    "hall": "B",
+    "description": "Overhead cranes and crane components",
+    "location": "Valley City, OH",
+    "employees": "~50-100",
+    "icpScore": 5,
+    "territoryOwner": "Abby Wolf",
+    "category": "OEM",
+    "website": "https://emhinc.com",
+    "notes_preset": "US crane mfr. Designs, manufactures, installs. Perfect.",
+    "wncRange": "0.3-1pt",
+    "wncLow": 0.3,
+    "wncHigh": 1,
+    "wncConf": 65,
+    "wncEV": 0.42,
+    "wncReason": "~75 emp = smaller volume; OEM = each machine ships w/ router; simpler machines, fewer PLCs"
+  },
+  {
+    "id": 25,
+    "company": "PFlow Industries, Inc.",
+    "booth": "B11100",
+    "hall": "B",
+    "description": "Vertical Reciprocating Conveyors (VRCs)",
+    "location": "Milwaukee, WI",
+    "employees": "~150",
+    "icpScore": 5,
+    "territoryOwner": "Abby Wolf",
+    "category": "OEM",
+    "website": "https://pfrlow.com",
+    "notes_preset": "Employee-owned VRC mfr. Founded the VRC industry. Ideal.",
+    "wncRange": "0.3-1pt",
+    "wncLow": 0.3,
+    "wncHigh": 1,
+    "wncConf": 65,
+    "wncEV": 0.42,
+    "wncReason": "~150 emp = smaller volume; OEM = each machine ships w/ router"
+  },
+  {
+    "id": 26,
+    "company": "Wildeck, Inc.",
+    "booth": "B12200",
+    "hall": "B",
+    "description": "Mezzanines, VRCs, rideable lifts, safety gates",
+    "location": "Waukesha, WI",
+    "employees": "201-500",
+    "icpScore": 5,
+    "territoryOwner": "Abby Wolf",
+    "category": "OEM",
+    "website": "https://wildeck.com",
+    "notes_preset": "Employee-owned, 330K+ sqft factory. Top tier.",
+    "wncRange": "0.3-1pt",
+    "wncLow": 0.3,
+    "wncHigh": 1,
+    "wncConf": 65,
+    "wncEV": 0.42,
+    "wncReason": "~350 emp = moderate volume; OEM = each machine ships w/ router"
+  },
+  {
+    "id": 27,
+    "company": "Lantech Inc.",
+    "booth": "B13800",
+    "hall": "B",
+    "description": "Stretch wrappers, case handling, palletizing",
+    "location": "Louisville, KY",
+    "employees": "~500-700",
+    "icpScore": 5,
+    "territoryOwner": "Abby Wolf",
+    "category": "OEM",
+    "website": "https://lantech.com",
+    "notes_preset": "Invented stretch wrapper. PLC machines. Premier target.",
+    "wncRange": "1-3pt",
+    "wncLow": 1,
+    "wncHigh": 3,
+    "wncConf": 85,
+    "wncEV": 1.7,
+    "wncReason": "600+ emp = high machine volume; OEM = each machine ships w/ router; complex PLC machines"
+  },
+  {
+    "id": 28,
+    "company": "Wulftec International Inc.",
+    "booth": "B14200",
+    "hall": "B",
+    "description": "Stretch wrappers, strapping systems, pallet handling",
+    "location": "Ayer's Cliff, Quebec",
+    "employees": "~270",
+    "icpScore": 5,
+    "territoryOwner": "Bryce Yates",
+    "category": "OEM",
+    "website": "https://wulftec.com",
+    "notes_preset": "Canadian mfr. PLCs/VFDs/HMIs. Perfect ICP.",
+    "wncRange": "0.3-1pt",
+    "wncLow": 0.3,
+    "wncHigh": 1,
+    "wncConf": 75,
+    "wncEV": 0.49,
+    "wncReason": "~270 emp = moderate volume; OEM = each machine ships w/ router; US/CA MFG confirmed"
+  },
+  {
+    "id": 29,
+    "company": "Roach Conveyors",
+    "booth": "A3200",
+    "hall": "A",
+    "description": "Conveyors & material handling equipment",
+    "location": "Trumann, AR",
+    "employees": "~60",
+    "icpScore": 5,
+    "territoryOwner": "Phil Belue",
+    "category": "OEM",
+    "website": "https://roachconveyors.com",
+    "notes_preset": "US conveyor mfr since 1953. Vertically integrated.",
+    "wncRange": "0.3-1pt",
+    "wncLow": 0.3,
+    "wncHigh": 1,
+    "wncConf": 70,
+    "wncEV": 0.45,
+    "wncReason": "~60 emp = smaller volume; OEM = each machine ships w/ router"
+  },
+  {
+    "id": 30,
+    "company": "Russell Conveyor & Equipment",
+    "booth": "A3500",
+    "hall": "A",
+    "description": "MDR conveyors, AGV, automation solutions",
+    "location": "Dawsonville, GA",
+    "employees": "~50-100",
+    "icpScore": 5,
+    "territoryOwner": "Phil Belue",
+    "category": "OEM",
+    "website": "https://russellconveyor.com",
+    "notes_preset": "Family-owned US conveyor mfr. MDR + automation.",
+    "wncRange": "0.3-1pt",
+    "wncLow": 0.3,
+    "wncHigh": 1,
+    "wncConf": 70,
+    "wncEV": 0.45,
+    "wncReason": "~75 emp = smaller volume; OEM = each machine ships w/ router"
+  },
+  {
+    "id": 31,
+    "company": "Mantissa Corporation",
+    "booth": "B9200",
+    "hall": "B",
+    "description": "Tilt-tray & cross-belt sortation systems",
+    "location": "Charlotte, NC",
+    "employees": "11-50",
+    "icpScore": 4,
+    "territoryOwner": "Abby Wolf",
+    "category": "OEM",
+    "website": "https://mantissacorporation.com",
+    "notes_preset": "US sortation OEM. 40+ years. PLC tilt-tray sorters.",
+    "wncRange": "0.3pt",
+    "wncLow": 0.3,
+    "wncHigh": 0.3,
+    "wncConf": 75,
+    "wncEV": 0.22,
+    "wncReason": "~30 emp = low volume; OEM = each machine ships w/ router; complex PLC machines"
+  },
+  {
+    "id": 32,
+    "company": "Ryson International, Inc.",
+    "booth": "B9600",
+    "hall": "B",
+    "description": "Spiral conveyors, vertical conveying",
+    "location": "Yorktown, VA",
+    "employees": "~37",
+    "icpScore": 4,
+    "territoryOwner": "Abby Wolf",
+    "category": "OEM",
+    "website": "https://ryson.com",
+    "notes_preset": "US spiral conveyor mfr. Niche PLC-controlled OEM.",
+    "wncRange": "0.3pt",
+    "wncLow": 0.3,
+    "wncHigh": 0.3,
+    "wncConf": 65,
+    "wncEV": 0.2,
+    "wncReason": "~37 emp = low volume; OEM = each machine ships w/ router"
+  },
+  {
+    "id": 33,
+    "company": "SpanTech, LLC",
+    "booth": "B10200",
+    "hall": "B",
+    "description": "Custom conveyors (sorting, merging, spirals)",
+    "location": "Glasgow, KY",
+    "employees": "~100-200",
+    "icpScore": 5,
+    "territoryOwner": "Abby Wolf",
+    "category": "OEM",
+    "website": "https://spantech.com",
+    "notes_preset": "US custom conveyor mfr. Strong.",
+    "wncRange": "0.3-1pt",
+    "wncLow": 0.3,
+    "wncHigh": 1,
+    "wncConf": 65,
+    "wncEV": 0.42,
+    "wncReason": "~150 emp = smaller volume; OEM = each machine ships w/ router"
+  },
+  {
+    "id": 34,
+    "company": "Robopac USA",
+    "booth": "A4100",
+    "hall": "A",
+    "description": "Stretch wrappers, case packers, palletizers, LGVs",
+    "location": "Duluth, GA",
+    "employees": "~63-86",
+    "icpScore": 4,
+    "territoryOwner": "Phil Belue",
+    "category": "OEM",
+    "website": "https://robopac.com",
+    "notes_preset": "US facility for packaging mfr. Validate US autonomy.",
+    "wncRange": "0.3pt",
+    "wncLow": 0.3,
+    "wncHigh": 0.3,
+    "wncConf": 75,
+    "wncEV": 0.22,
+    "wncReason": "~74 emp = smaller volume; OEM = each machine ships w/ router; complex PLC machines"
+  },
+  {
+    "id": 35,
+    "company": "Westfalia Technologies, Inc.",
+    "booth": "B14700",
+    "hall": "B",
+    "description": "Automated Storage & Retrieval Systems (AS/RS)",
+    "location": "York, PA",
+    "employees": "~200",
+    "icpScore": 5,
+    "territoryOwner": "Abby Wolf",
+    "category": "OEM",
+    "website": "https://westfaliausa.com",
+    "notes_preset": "US ASRS mfr. Designs, manufactures, installs. Excellent.",
+    "wncRange": "0.3-1pt",
+    "wncLow": 0.3,
+    "wncHigh": 1,
+    "wncConf": 75,
+    "wncEV": 0.49,
+    "wncReason": "~200 emp = moderate volume; OEM = each machine ships w/ router; complex PLC machines"
+  },
+  {
+    "id": 36,
+    "company": "PAC Machinery",
+    "booth": "C11500",
+    "hall": "C",
+    "description": "Poly bagging, shrink wrap, bag sealing machines",
+    "location": "San Rafael, CA",
+    "employees": "~150",
+    "icpScore": 5,
+    "territoryOwner": "AE 4",
+    "category": "OEM",
+    "website": "https://pacmachinery.com",
+    "notes_preset": "US mfr, 90%+ made in US, 60+ years. Strong ICP.",
+    "wncRange": "0.3-1pt",
+    "wncLow": 0.3,
+    "wncHigh": 1,
+    "wncConf": 65,
+    "wncEV": 0.42,
+    "wncReason": "~150 emp = smaller volume; OEM = each machine ships w/ router"
+  },
+  {
+    "id": 37,
+    "company": "Spanco",
+    "booth": "B10500",
+    "hall": "B",
+    "description": "Workstation bridge cranes, gantry cranes, jib cranes",
+    "location": "Morgantown, PA",
+    "employees": "~50-200",
+    "icpScore": 4,
+    "territoryOwner": "Abby Wolf",
+    "category": "OEM",
+    "website": "https://spanco.com",
+    "notes_preset": "US crane mfr. Validate controls complexity.",
+    "wncRange": "0.3-1pt",
+    "wncLow": 0.3,
+    "wncHigh": 1,
+    "wncConf": 55,
+    "wncEV": 0.36,
+    "wncReason": "~125 emp = smaller volume; OEM = each machine ships w/ router; simpler machines, fewer PLCs"
+  },
+  {
+    "id": 38,
+    "company": "The Bradbury Group",
+    "booth": "C12800",
+    "hall": "C",
+    "description": "Roll forming & coil processing equipment",
+    "location": "Moundridge, KS",
+    "employees": "~625",
+    "icpScore": 5,
+    "territoryOwner": "Abby Wolf",
+    "category": "OEM",
+    "website": "https://bradburygroup.com",
+    "notes_preset": "US industrial machine mfr. 65+ years. Strong.",
+    "wncRange": "1-3pt",
+    "wncLow": 1,
+    "wncHigh": 3,
+    "wncConf": 75,
+    "wncEV": 1.5,
+    "wncReason": "625+ emp = high machine volume; OEM = each machine ships w/ router"
+  },
+  {
+    "id": 39,
+    "company": "Landoll Company LLC",
+    "booth": "C13100",
+    "hall": "C",
+    "description": "Forklifts (specialized narrow-aisle)",
+    "location": "Marysville, KS",
+    "employees": "501-1000",
+    "icpScore": 4,
+    "territoryOwner": "Abby Wolf",
+    "category": "OEM",
+    "website": "https://landoll.com",
+    "notes_preset": "US forklift mfr. 60+ years. Larger end.",
+    "wncRange": "1-3pt",
+    "wncLow": 1,
+    "wncHigh": 3,
+    "wncConf": 70,
+    "wncEV": 1.4,
+    "wncReason": "750+ emp = high machine volume; OEM = each machine ships w/ router"
+  },
+  {
+    "id": 40,
+    "company": "Handling Systems International",
+    "booth": "B11500",
+    "hall": "B",
+    "description": "Overhead cranes, hoists, jib cranes",
+    "location": "US-based",
+    "employees": "~23",
+    "icpScore": 4,
+    "territoryOwner": "Phil Belue",
+    "category": "OEM",
+    "website": "https://hsicrane.com",
+    "notes_preset": "60+ years US crane mfr. Need specific HQ.",
+    "wncRange": "0.3-1pt",
+    "wncLow": 0.3,
+    "wncHigh": 1,
+    "wncConf": 55,
+    "wncEV": 0.36,
+    "wncReason": "~125 emp = smaller volume; OEM = each machine ships w/ router; simpler machines, fewer PLCs"
+  },
+  {
+    "id": 41,
+    "company": "FOX IV Technologies Inc.",
+    "booth": "B10900",
+    "hall": "B",
+    "description": "Automated labeling & print-apply systems",
+    "location": "Export, PA",
+    "employees": "~50-100",
+    "icpScore": 5,
+    "territoryOwner": "Abby Wolf",
+    "category": "OEM",
+    "website": "https://foxiv.com",
+    "notes_preset": "US labeling automation mfr. PLC-integrated.",
+    "wncRange": "0.3-1pt",
+    "wncLow": 0.3,
+    "wncHigh": 1,
+    "wncConf": 80,
+    "wncEV": 0.52,
+    "wncReason": "~75 emp = smaller volume; OEM = each machine ships w/ router; complex PLC machines"
+  },
+  {
+    "id": 42,
+    "company": "Rennco (ProMach brand)",
+    "booth": "B11200",
+    "hall": "B",
+    "description": "Vertical packaging machinery",
+    "location": "Homer, MI",
+    "employees": "~39-200",
+    "icpScore": 4,
+    "territoryOwner": "Abby Wolf",
+    "category": "OEM",
+    "website": "https://rennco.com",
+    "notes_preset": "ProMach brand. Validate buying autonomy.",
+    "wncRange": "0.3-1pt",
+    "wncLow": 0.3,
+    "wncHigh": 1,
+    "wncConf": 70,
+    "wncEV": 0.45,
+    "wncReason": "~119 emp = smaller volume; OEM = each machine ships w/ router; complex PLC machines"
+  },
+  {
+    "id": 43,
+    "company": "Engineering Innovation (Eii)",
+    "booth": "B11800",
+    "hall": "B",
+    "description": "Mail/parcel automation, sorting systems",
+    "location": "Lafayette, IN",
+    "employees": "~70",
+    "icpScore": 5,
+    "territoryOwner": "Abby Wolf",
+    "category": "OEM",
+    "website": "https://eii-online.com",
+    "notes_preset": "US automated sorting mfr. 20 years. Solid ICP.",
+    "wncRange": "0.3-1pt",
+    "wncLow": 0.3,
+    "wncHigh": 1,
+    "wncConf": 70,
+    "wncEV": 0.45,
+    "wncReason": "~70 emp = smaller volume; OEM = each machine ships w/ router"
+  },
+  {
+    "id": 44,
+    "company": "Kornylak Corporation",
+    "booth": "B10100",
+    "hall": "B",
+    "description": "Conveyors, storage systems",
+    "location": "Hamilton, OH",
+    "employees": "~50-100",
+    "icpScore": 5,
+    "territoryOwner": "Abby Wolf",
+    "category": "OEM",
+    "website": "https://kornylak.com",
+    "notes_preset": "US engineering-oriented mfr. Good fit.",
+    "wncRange": "0.3-1pt",
+    "wncLow": 0.3,
+    "wncHigh": 1,
+    "wncConf": 80,
+    "wncEV": 0.52,
+    "wncReason": "~75 emp = smaller volume; OEM = each machine ships w/ router; complex PLC machines"
+  },
+  {
+    "id": 45,
+    "company": "Jtec Industries, Inc.",
+    "booth": "B10400",
+    "hall": "B",
+    "description": "Material handling, AGV carts, tugger systems",
+    "location": "East Peoria, IL",
+    "employees": "~75",
+    "icpScore": 5,
+    "territoryOwner": "Abby Wolf",
+    "category": "OEM",
+    "website": "https://jtecindustries.com",
+    "notes_preset": "US MH/AGV mfr. Custom engineered. Excellent.",
+    "wncRange": "0.3-1pt",
+    "wncLow": 0.3,
+    "wncHigh": 1,
+    "wncConf": 70,
+    "wncEV": 0.45,
+    "wncReason": "~75 emp = smaller volume; OEM = each machine ships w/ router"
+  },
+  {
+    "id": 46,
+    "company": "Irwin Car & Equipment",
+    "booth": "B11600",
+    "hall": "B",
+    "description": "Custom AGVs, transfer cars, heavy-duty MH",
+    "location": "Saginaw, MI",
+    "employees": "~50-200",
+    "icpScore": 4,
+    "territoryOwner": "Abby Wolf",
+    "category": "OEM",
+    "website": "https://irwincar.com",
+    "notes_preset": "US custom AGV mfr. Controls-heavy.",
+    "wncRange": "0.3-1pt",
+    "wncLow": 0.3,
+    "wncHigh": 1,
+    "wncConf": 60,
+    "wncEV": 0.39,
+    "wncReason": "~125 emp = smaller volume; OEM = each machine ships w/ router"
+  },
+  {
+    "id": 47,
+    "company": "KEITH Mfg. Co.",
+    "booth": "A3800",
+    "hall": "A",
+    "description": "Freight Runner dock-to-trailer conveying",
+    "location": "Madras, OR",
+    "employees": "~50-250",
+    "icpScore": 5,
+    "territoryOwner": "AE 4",
+    "category": "OEM",
+    "website": "https://keithwalkingfloor.com",
+    "notes_preset": "US family-owned mfr. 250+ patents. Strong.",
+    "wncRange": "0.3-1pt",
+    "wncLow": 0.3,
+    "wncHigh": 1,
+    "wncConf": 65,
+    "wncEV": 0.42,
+    "wncReason": "~150 emp = smaller volume; OEM = each machine ships w/ router"
+  },
+  {
+    "id": 48,
+    "company": "Southworth International Group",
+    "booth": "B12900",
+    "hall": "B",
+    "description": "Lift tables, pallet positioners, tilters",
+    "location": "Portland, ME",
+    "employees": "~100-300",
+    "icpScore": 5,
+    "territoryOwner": "Bryce Yates",
+    "category": "OEM",
+    "website": "https://southworthproducts.com",
+    "notes_preset": "World's largest ergonomic lifting mfr. 125+ years.",
+    "wncRange": "0.3-1pt",
+    "wncLow": 0.3,
+    "wncHigh": 1,
+    "wncConf": 60,
+    "wncEV": 0.39,
+    "wncReason": "~200 emp = moderate volume; OEM = each machine ships w/ router; simpler machines, fewer PLCs"
+  },
+  {
+    "id": 49,
+    "company": "Noovelia",
+    "booth": "A4400",
+    "hall": "A",
+    "description": "Autonomous Mobile Robots (AMRs/AGVs)",
+    "location": "Quebec, Canada",
+    "employees": "~50-100",
+    "icpScore": 4,
+    "territoryOwner": "Bryce Yates",
+    "category": "OEM",
+    "website": "https://noovelia.com",
+    "notes_preset": "Canadian AMR mfr. Builds in-house since 2002.",
+    "wncRange": "0.3pt",
+    "wncLow": 0.3,
+    "wncHigh": 0.3,
+    "wncConf": 75,
+    "wncEV": 0.22,
+    "wncReason": "~75 emp = smaller volume; OEM = each machine ships w/ router; US/CA MFG confirmed"
+  },
+  {
+    "id": 50,
+    "company": "DFT (Durkopp Fordertechnik)",
+    "booth": "B13200",
+    "hall": "B",
+    "description": "Sorting & sequencing systems",
+    "location": "Germany (US presence)",
+    "employees": "~450",
+    "icpScore": 3,
+    "territoryOwner": "Bryce Yates",
+    "category": "OEM",
+    "website": "https://dft-online.de",
+    "notes_preset": "German mfr. Validate US ops.",
+    "wncRange": "1-3pt",
+    "wncLow": 1,
+    "wncHigh": 3,
+    "wncConf": 55,
+    "wncEV": 1.1,
+    "wncReason": "~450 emp = moderate volume; OEM = each machine ships w/ router; intl HQ, US MFG unconfirmed"
+  },
+  {
+    "id": 51,
+    "company": "ProVeyance Group",
+    "booth": "B10300",
+    "hall": "B",
+    "description": "Powered & gravity conveyor systems",
+    "location": "Holland, OH",
+    "employees": "~50-200",
+    "icpScore": 5,
+    "territoryOwner": "Abby Wolf",
+    "category": "OEM",
+    "website": "https://proveyance.com",
+    "notes_preset": "US conveyor mfr. Multiple brands. Strong.",
+    "wncRange": "0.3-1pt",
+    "wncLow": 0.3,
+    "wncHigh": 1,
+    "wncConf": 75,
+    "wncEV": 0.49,
+    "wncReason": "~125 emp = smaller volume; OEM = each machine ships w/ router; complex PLC machines"
+  },
+  {
+    "id": 52,
+    "company": "Qimarox",
+    "booth": "B13500",
+    "hall": "B",
+    "description": "Vertical conveyors, pallet dispensers, palletizers",
+    "location": "Netherlands + Chicago, IL",
+    "employees": "~65",
+    "icpScore": 4,
+    "territoryOwner": "Abby Wolf",
+    "category": "OEM",
+    "website": "https://qimarox.com",
+    "notes_preset": "Dutch mfr, Chicago office. Validate decision-making.",
+    "wncRange": "0.3pt",
+    "wncLow": 0.3,
+    "wncHigh": 0.3,
+    "wncConf": 65,
+    "wncEV": 0.2,
+    "wncReason": "~65 emp = smaller volume; OEM = each machine ships w/ router; complex PLC machines"
+  },
+  {
+    "id": 53,
+    "company": "SRS Conveyors",
+    "booth": "A4200",
+    "hall": "A",
+    "description": "GOH conveyors, e-commerce conveyors",
+    "location": "Bartow, FL + Canada",
+    "employees": "~20+",
+    "icpScore": 4,
+    "territoryOwner": "Phil Belue",
+    "category": "OEM",
+    "website": "https://srsconveyors.com",
+    "notes_preset": "Conveyor mfr, US & Canada presence.",
+    "wncRange": "0.3pt",
+    "wncLow": 0.3,
+    "wncHigh": 0.3,
+    "wncConf": 80,
+    "wncEV": 0.24,
+    "wncReason": "~20 emp = low volume; OEM = each machine ships w/ router; US/CA MFG confirmed"
+  },
+  {
+    "id": 54,
+    "company": "Pineberry Manufacturing",
+    "booth": "A4500",
+    "hall": "A",
+    "description": "Friction feeders, labelers, packaging automation",
+    "location": "Toronto, Canada",
+    "employees": "~30-50",
+    "icpScore": 4,
+    "territoryOwner": "Bryce Yates",
+    "category": "OEM",
+    "website": "https://pineberry.com",
+    "notes_preset": "Canadian packaging automation mfr. 40+ years.",
+    "wncRange": "0.3pt",
+    "wncLow": 0.3,
+    "wncHigh": 0.3,
+    "wncConf": 75,
+    "wncEV": 0.22,
+    "wncReason": "~40 emp = low volume; OEM = each machine ships w/ router; US/CA MFG confirmed"
+  },
+  {
+    "id": 55,
+    "company": "Talos Engineered Products",
+    "booth": "B13900",
+    "hall": "B",
+    "description": "Conveyors & chutes",
+    "location": "US-based",
+    "employees": "~20-50",
+    "icpScore": 3,
+    "territoryOwner": "Bryce Yates",
+    "category": "OEM",
+    "website": "https://talosproducts.com",
+    "notes_preset": "Small US mfr. Validate machine complexity.",
+    "wncRange": "0.3pt",
+    "wncLow": 0.3,
+    "wncHigh": 0.3,
+    "wncConf": 65,
+    "wncEV": 0.2,
+    "wncReason": "~35 emp = low volume; OEM = each machine ships w/ router"
+  },
+  {
+    "id": 56,
+    "company": "MasterMover, Inc.",
+    "booth": "A4700",
+    "hall": "A",
+    "description": "Electric tuggers (110-790,000 lbs)",
+    "location": "Charlotte, NC (UK parent)",
+    "employees": "~50-200",
+    "icpScore": 4,
+    "territoryOwner": "Abby Wolf",
+    "category": "OEM",
+    "website": "https://mastermover.com",
+    "notes_preset": "UK parent, NC office. AGV capability.",
+    "wncRange": "0.3-1pt",
+    "wncLow": 0.3,
+    "wncHigh": 1,
+    "wncConf": 60,
+    "wncEV": 0.39,
+    "wncReason": "~125 emp = smaller volume; OEM = each machine ships w/ router"
+  },
+  {
+    "id": 58,
+    "company": "Siempelkamp Transport Systems",
+    "booth": "B14600",
+    "hall": "B",
+    "description": "Customized transport/handling systems",
+    "location": "Germany (US at show)",
+    "employees": "~120",
+    "icpScore": 3,
+    "territoryOwner": "Bryce Yates",
+    "category": "OEM",
+    "website": "https://siempelkamp.com",
+    "notes_preset": "German mfr. Validate US footprint.",
+    "wncRange": "0.3-1pt",
+    "wncLow": 0.3,
+    "wncHigh": 1,
+    "wncConf": 50,
+    "wncEV": 0.33,
+    "wncReason": "~120 emp = smaller volume; OEM = each machine ships w/ router; intl HQ, US MFG unconfirmed"
+  },
+  {
+    "id": 59,
+    "company": "Conveyco Technologies",
+    "booth": "B12323",
+    "hall": "B",
+    "description": "Warehouse automation, conveyor, AMR",
+    "location": "USA",
+    "employees": "~37",
+    "icpScore": 4,
+    "territoryOwner": "Phil Belue",
+    "category": "SI",
+    "website": "https://conveyco.com",
+    "notes_preset": "Independent SI with controls expertise.",
+    "wncRange": "0.3-1pt",
+    "wncLow": 0.3,
+    "wncHigh": 1,
+    "wncConf": 55,
+    "wncEV": 0.36,
+    "wncReason": "~125 emp = smaller volume; SI = project-based, less predictable; US/CA MFG confirmed"
+  },
+  {
+    "id": 60,
+    "company": "AWL Automation (CUSTOMER)",
+    "booth": "A1712",
+    "hall": "A",
+    "description": "Robotic cells for depalletizing, picking",
+    "location": "Netherlands (US)",
+    "employees": "~750",
+    "icpScore": 5,
+    "territoryOwner": "Bryce Yates",
+    "category": "SI",
+    "website": "https://awl.nl",
+    "notes_preset": "EXISTING CUSTOMER. Expansion opportunity.",
+    "wncRange": "1-3pt",
+    "wncLow": 1,
+    "wncHigh": 3,
+    "wncConf": 60,
+    "wncEV": 1.2,
+    "wncReason": "750+ emp = high machine volume; SI = project-based, less predictable; complex PLC machines"
+  },
+  {
+    "id": 61,
+    "company": "Designed Conveyor Systems (DCS)",
+    "booth": "B15511",
+    "hall": "B",
+    "description": "Brand-agnostic SI for conveyors/automation",
+    "location": "Franklin, TN",
+    "employees": "~50-200",
+    "icpScore": 4,
+    "territoryOwner": "Phil Belue",
+    "category": "SI",
+    "website": "https://designedconveyor.com",
+    "notes_preset": "SI since 1982. Good referral + buyer potential.",
+    "wncRange": "0.3-1pt",
+    "wncLow": 0.3,
+    "wncHigh": 1,
+    "wncConf": 45,
+    "wncEV": 0.29,
+    "wncReason": "~125 emp = smaller volume; SI = project-based, less predictable"
+  },
+  {
+    "id": 62,
+    "company": "DMW&H",
+    "booth": "B14532",
+    "hall": "B",
+    "description": "Material handling systems integration",
+    "location": "US-based",
+    "employees": "~230",
+    "icpScore": 4,
+    "territoryOwner": "Phil Belue",
+    "category": "SI",
+    "website": "https://dmwandh.com",
+    "notes_preset": "60+ years SI. Major partnership target.",
+    "wncRange": "0.3-1pt",
+    "wncLow": 0.3,
+    "wncHigh": 1,
+    "wncConf": 60,
+    "wncEV": 0.39,
+    "wncReason": "230 emp, Fairfield NJ; material handling SI, multiple concurrent projects"
+  },
+  {
+    "id": 63,
+    "company": "Hy-Tek Intralogistics",
+    "booth": "B16306",
+    "hall": "B",
+    "description": "Warehouse automation integration",
+    "location": "US-based",
+    "employees": "~500",
+    "icpScore": 5,
+    "territoryOwner": "Phil Belue",
+    "category": "SI",
+    "website": "https://hy-tek.com",
+    "notes_preset": "Major warehouse SI. Partnership/referral target.",
+    "wncRange": "1-3pt",
+    "wncLow": 1,
+    "wncHigh": 3,
+    "wncConf": 65,
+    "wncEV": 1.3,
+    "wncReason": "500 emp, $200M rev, Columbus OH; ASRS + systems integration at scale"
+  },
+  {
+    "id": 64,
+    "company": "Spring Automation",
+    "booth": "B14119",
+    "hall": "B",
+    "description": "Controls design/programming for MH",
+    "location": "US-based",
+    "employees": "~78",
+    "icpScore": 4,
+    "territoryOwner": "Phil Belue",
+    "category": "SI",
+    "website": "https://springautomation.com",
+    "notes_preset": "Controls integrator serving MH OEMs. Customer + referral.",
+    "wncRange": "0.3-1pt",
+    "wncLow": 0.3,
+    "wncHigh": 1,
+    "wncConf": 60,
+    "wncEV": 0.39,
+    "wncReason": "78 emp, Nashville TN; explicitly PLC-focused SI"
+  },
+  {
+    "id": 65,
+    "company": "Pendant Automation",
+    "booth": "A1901",
+    "hall": "A",
+    "description": "Full-service automation & controls integrator",
+    "location": "US-based",
+    "employees": "~12",
+    "icpScore": 4,
+    "territoryOwner": "Phil Belue",
+    "category": "SI",
+    "website": "https://pendantautomation.com",
+    "notes_preset": "End-to-end controls integrator.",
+    "wncRange": "0.3-1pt",
+    "wncLow": 0.3,
+    "wncHigh": 1,
+    "wncConf": 55,
+    "wncEV": 0.36,
+    "wncReason": "12 emp, MD; 'machine builder automation' = exact ICP language"
+  },
+  {
+    "id": 66,
+    "company": "Trew",
+    "booth": "B14761",
+    "hall": "B",
+    "description": "Automated MH systems & software",
+    "location": "US-based",
+    "employees": "~470",
+    "icpScore": 5,
+    "territoryOwner": "Phil Belue",
+    "category": "SI",
+    "website": "https://trewautomation.com",
+    "notes_preset": "US mfr AND integrator. Strong dual target.",
+    "wncRange": "1-3pt",
+    "wncLow": 1,
+    "wncHigh": 3,
+    "wncConf": 65,
+    "wncEV": 1.3,
+    "wncReason": "470 emp, $367M rev, US-based SI; massive project volume; complex PLC systems"
+  },
+  {
+    "id": 67,
+    "company": "SAVOYE North America",
+    "booth": "B14127",
+    "hall": "B",
+    "description": "Integrator + US manufacturer",
+    "location": "US-based",
+    "employees": "~100-300",
+    "icpScore": 4,
+    "territoryOwner": "Bryce Yates",
+    "category": "SI",
+    "website": "https://savoye.com",
+    "notes_preset": "Both mfr and integrator. Good dual target.",
+    "wncRange": "0.3-1pt",
+    "wncLow": 0.3,
+    "wncHigh": 1,
+    "wncConf": 45,
+    "wncEV": 0.29,
+    "wncReason": "~200 emp = moderate volume; SI = project-based, less predictable"
+  },
+  {
+    "id": 68,
+    "company": "KPI Solutions",
+    "booth": "B13715",
+    "hall": "B",
+    "description": "End-to-end supply chain automation",
+    "location": "US-based",
+    "employees": "~340",
+    "icpScore": 4,
+    "territoryOwner": "Phil Belue",
+    "category": "SI",
+    "website": "https://kpisolutions.com",
+    "notes_preset": "Solid SI target.",
+    "wncRange": "1-3pt",
+    "wncLow": 1,
+    "wncHigh": 3,
+    "wncConf": 55,
+    "wncEV": 1.1,
+    "wncReason": "340 emp, Belton MO; robotics + warehouse control = PLC-heavy projects"
+  },
+  {
+    "id": 69,
+    "company": "IJ White Systems",
+    "booth": "B9319",
+    "hall": "B",
+    "description": "Automated cooling, freezing, and hydrochilling conveyor systems for food processing",
+    "location": "Farmingdale, NY",
+    "employees": "~27",
+    "icpScore": 4,
+    "territoryOwner": "Phil Belue",
+    "category": "OEM",
+    "website": "https://ijwhite.com",
+    "notes_preset": "US manufacturer. $34.7M revenue. 100+ years in business. Automated conveyor systems with PLC controls for food/dairy/bakery. Already in Apollo.",
+    "wncRange": "0.3pt",
+    "wncLow": 0.3,
+    "wncHigh": 0.3,
+    "wncConf": 80,
+    "wncEV": 0.24,
+    "wncReason": "~27 emp = low volume; OEM = each machine ships w/ router; complex PLC machines"
+  }
+];
+
+// ── STATE ──
+let state = {
+  currentAE: "All",
+  currentView: "cards",
+  statusFilter: "all",
+  categoryFilter: "all",
+  sortBy: "hall",
+  data: {},
+  syncBlobId: "",
+  userName: "",
+  customLeads: []
+};
+
+// ── INIT ──
+function init() {
+  const saved = localStorage.getItem(SHOW_CONFIG.storageKey);
+  if (saved) state.data = JSON.parse(saved);
+  const config = localStorage.getItem(SHOW_CONFIG.storageKey + "_config");
+  if (config) {
+    const c = JSON.parse(config);
+    state.syncBlobId = c.syncBlobId || "";
+    state.userName = c.userName || "";
+  }
+  const custom = localStorage.getItem(SHOW_CONFIG.storageKey + "_custom");
+  if (custom) state.customLeads = JSON.parse(custom);
+
+  // Check URL for invite link: ?sync=XXXXX
+  const urlParams = new URLSearchParams(window.location.search);
+  const inviteSync = urlParams.get("sync");
+  if (inviteSync && inviteSync !== state.syncBlobId) {
+    state.syncBlobId = inviteSync;
+    if (!state.userName) {
+      const name = prompt("Welcome to the MODEX Command Center!\\nEnter your name:");
+      if (name) state.userName = name.trim();
+    }
+    localStorage.setItem(SHOW_CONFIG.storageKey + "_config", JSON.stringify({syncBlobId: state.syncBlobId, userName: state.userName}));
+    // Clean URL without reloading
+    window.history.replaceState({}, "", window.location.pathname);
+  }
+
+  // If we have a sync ID but no name, ask once
+  if (state.syncBlobId && !state.userName) {
+    const name = prompt("Enter your name for the team sync:");
+    if (name) {
+      state.userName = name.trim();
+      localStorage.setItem(SHOW_CONFIG.storageKey + "_config", JSON.stringify({syncBlobId: state.syncBlobId, userName: state.userName}));
+    }
+  }
+
+  renderAEBar();
+  renderFilters();
+  renderSortBar();
+  render();
+  // Pull shared team data from cloud (non-blocking)
+  loadFromCloud();
+}
+
+function getAllLeads() {
+  return [...LEADS, ...state.customLeads];
+}
+
+function save() {
+  localStorage.setItem(SHOW_CONFIG.storageKey, JSON.stringify(state.data));
+  autoPush(); // auto-sync to cloud 3s after last change
+}
+
+// ── AE BAR ──
+function renderAEBar() {
+  const all = getAllLeads();
+  const aes = ["All", ...new Set(all.map(l => l.territoryOwner))];
+  const bar = document.getElementById("aeBar");
+  bar.innerHTML = aes.map(ae => {
+    const count = ae === "All" ? all.length : all.filter(l => l.territoryOwner === ae).length;
+    return `<div class="ae-chip ${state.currentAE === ae ? 'active' : ''}" onclick="setAE('${ae}')">${ae}<span class="count">${count}</span></div>`;
+  }).join("");
+}
+
+function renderSortBar() {
+  const sorts = [
+    {key:"hall", label:"By Hall"},
+    {key:"ae", label:"By AE"},
+    {key:"icp", label:"By ICP Score"},
+    {key:"booth", label:"By Booth #"},
+  ];
+  document.getElementById("sortBar").innerHTML = `
+    <div class="sort-label">Sort:</div>
+    ${sorts.map(s => `<div class="sort-pill ${state.sortBy===s.key?'active':''}" onclick="setSortBy('${s.key}')">${s.label}</div>`).join("")}
+  `;
+}
+
+function setSortBy(key) { state.sortBy = key; renderSortBar(); render(); }
+
+function setAE(ae) { state.currentAE = ae; renderAEBar(); render(); }
+
+// ── VIEW TABS ──
+function setView(view) {
+  state.currentView = view;
+  document.querySelectorAll(".view-tab").forEach(t => t.classList.toggle("active", t.dataset.view === view));
+  render();
+}
+
+// ── FILTERS ──
+function renderFilters() {
+  const row = document.getElementById("filterRow");
+  const statuses = [
+    {key:"all",label:"All",color:"#6B7280"},
+    {key:"pending",label:"Pending",color:"#6B7280"},
+    {key:"visit",label:"Visit",color:"#10B981"},
+    {key:"maybe",label:"Maybe",color:"#F59E0B"},
+    {key:"skip",label:"Skip",color:"#EF4444"},
+    {key:"visited",label:"Visited",color:"#3B82F6"}
+  ];
+  const cats = [
+    {key:"all",label:"All Types"},
+    {key:"OEM",label:"OEM"},
+    {key:"SI",label:"SI"}
+  ];
+  row.innerHTML = statuses.map(s =>
+    `<div class="filter-pill ${state.statusFilter===s.key?'active':''}" onclick="setFilter('status','${s.key}')">${s.label}</div>`
+  ).join("") + '<div style="width:1px;background:#D1D5DB;margin:4px 0"></div>' + cats.map(c =>
+    `<div class="filter-pill ${state.categoryFilter===c.key?'active':''}" onclick="setFilter('category','${c.key}')">${c.label}</div>`
+  ).join("");
+}
+
+function setFilter(type, val) {
+  if (type === "status") state.statusFilter = val;
+  if (type === "category") state.categoryFilter = val;
+  renderFilters();
+  render();
+}
+
+// ── GET FILTERED LEADS ──
+function getFilteredLeads() {
+  let list = getAllLeads();
+  if (state.currentAE !== "All") list = list.filter(l => l.territoryOwner === state.currentAE);
+  const q = document.getElementById("searchInput").value.toLowerCase();
+  if (q) list = list.filter(l => l.company.toLowerCase().includes(q) || l.description.toLowerCase().includes(q));
+  if (state.categoryFilter !== "all") list = list.filter(l => l.category === state.categoryFilter);
+  if (state.statusFilter !== "all") {
+    list = list.filter(l => {
+      const s = state.data[l.id]?.status || "pending";
+      return s === state.statusFilter;
+    });
+  }
+  return list;
+}
+
+// ── RENDER ──
+function render() {
+  const leads = getFilteredLeads();
+  updateStats(leads);
+  const main = document.getElementById("mainContent");
+  
+  if (state.currentView === "cards") renderCards(main, leads);
+  else if (state.currentView === "route") renderRoute(main, leads);
+  else if (state.currentView === "summary") renderSummary(main, leads);
+}
+
+function updateStats(leads) {
+  const allBase = getAllLeads();
+  const all = state.currentAE === "All" ? allBase : allBase.filter(l => l.territoryOwner === state.currentAE);
+  const visit = all.filter(l => state.data[l.id]?.status === "visit").length;
+  const skip = all.filter(l => state.data[l.id]?.status === "skip").length;
+  const maybe = all.filter(l => state.data[l.id]?.status === "maybe").length;
+  const visited = all.filter(l => state.data[l.id]?.status === "visited").length;
+  const pending = all.length - visit - skip - maybe - visited;
+  document.getElementById("statsBar").innerHTML = `
+    <div class="stat"><div class="stat-dot" style="background:var(--gray)"></div>${pending} Pending</div>
+    <div class="stat"><div class="stat-dot" style="background:var(--green)"></div>${visit} Visit</div>
+    <div class="stat"><div class="stat-dot" style="background:var(--yellow)"></div>${maybe} Maybe</div>
+    <div class="stat"><div class="stat-dot" style="background:var(--blue)"></div>${visited} Visited</div>
+    <div class="stat"><div class="stat-dot" style="background:var(--red)"></div>${skip} Skip</div>
+    <div class="stat" style="color:var(--ixon-blue)"><strong>${all.length} Total</strong></div>
+  `;
+}
+
+// ── CARD VIEW ──
+function renderCards(el, leads) {
+  let html = "";
+  const emptyMsg = '<div style="text-align:center;padding:40px;color:rgba(255,255,255,0.4)">No leads match your filters</div>';
+
+  if (state.sortBy === "ae") {
+    // Group by territory owner
+    const byAE = {};
+    leads.forEach(l => { const ae = l.territoryOwner; if (!byAE[ae]) byAE[ae] = []; byAE[ae].push(l); });
+    Object.values(byAE).forEach(arr => arr.sort((a,b) => b.icpScore - a.icpScore || a.booth.localeCompare(b.booth)));
+    const aeOrder = ["Phil Belue","Abby Wolf","Bryce Yates","AE 4","Unassigned"];
+    const allAEs = [...aeOrder.filter(a => byAE[a]), ...Object.keys(byAE).filter(a => !aeOrder.includes(a))];
+    allAEs.forEach(ae => {
+      const list = byAE[ae];
+      if (!list || !list.length) return;
+      const cls = getTerritoryClass(ae);
+      html += `<div class="hall-section">
+        <div class="ae-group-header" style="background:${ae.includes('Phil')?'var(--phil)':ae.includes('Abby')?'var(--abby)':ae.includes('Bryce')?'var(--bryce)':ae.includes('AE 4')?'var(--ae4)':'var(--unassigned)'};color:#1F2937"><span>${ae}</span><span>${list.length} leads</span></div>`;
+      list.forEach(l => { html += buildCard(l); });
+      html += `</div>`;
+    });
+  } else if (state.sortBy === "icp") {
+    // Group by ICP score descending
+    [5,4,3,2,1].forEach(score => {
+      const list = leads.filter(l => l.icpScore === score).sort((a,b) => a.booth.localeCompare(b.booth));
+      if (!list.length) return;
+      const colors = {5:'var(--score5)',4:'var(--score4)',3:'var(--score3)',2:'var(--score2)',1:'var(--score1)'};
+      html += `<div class="hall-section">
+        <div class="hall-header" style="background:${colors[score]}"><span>ICP Score ${score}</span><span>${list.length} leads</span></div>`;
+      list.forEach(l => { html += buildCard(l); });
+      html += `</div>`;
+    });
+  } else if (state.sortBy === "booth") {
+    // Flat list sorted by hall then booth number
+    const sorted = [...leads].sort((a,b) => {
+      if (a.hall !== b.hall) return a.hall.localeCompare(b.hall);
+      const numA = parseInt(a.booth.replace(/[A-Z]/g,"")) || 0;
+      const numB = parseInt(b.booth.replace(/[A-Z]/g,"")) || 0;
+      return numA - numB;
+    });
+    sorted.forEach(l => { html += buildCard(l); });
+  } else {
+    // Default: group by hall
+    const byHall = {};
+    leads.forEach(l => { if (!byHall[l.hall]) byHall[l.hall] = []; byHall[l.hall].push(l); });
+    Object.values(byHall).forEach(arr => arr.sort((a,b) => b.icpScore - a.icpScore || a.booth.localeCompare(b.booth)));
+    SHOW_CONFIG.halls.forEach(hall => {
+      const list = byHall[hall];
+      if (!list || !list.length) return;
+      html += `<div class="hall-section">
+        <div class="hall-header hall-${hall.toLowerCase()}"><span>Hall ${hall}</span><span>${list.length} leads</span></div>`;
+      list.forEach(l => { html += buildCard(l); });
+      html += `</div>`;
+    });
+  }
+  el.innerHTML = html || emptyMsg;
+}
+
+function buildCard(l) {
+  const d = state.data[l.id] || {};
+  const statusClass = d.status || "";
+  const terrClass = getTerritoryClass(l.territoryOwner);
+  const hasConvo = d.contactName || d.convoNotes || d.interest;
+  const tp = getTalkingPoints(l);
+
+  return `<div class="card ${statusClass}">
+    <div class="card-top">
+      <div>
+        <div class="company-name">${l.website ? '<a href="'+l.website+'" target="_blank" rel="noopener" style="color:inherit;text-decoration:none;border-bottom:1px dashed rgba(0,0,0,0.25)" title="'+l.website+'">'+l.company+'</a>' : l.company}</div>
+        <div class="company-meta">
+          <span class="icp-badge icp-${l.icpScore}">ICP ${l.icpScore}</span>
+          <span class="wnc-badge wnc-${l.wncHigh >= 3 ? '3' : l.wncHigh >= 1 ? '1' : '03'}" title="${l.wncReason || ''}">${l.wncRange || '?'} <span class="wnc-conf">${l.wncConf || 0}%</span></span>
+          <span class="territory-tag ${terrClass}">${l.territoryOwner}</span>
+          <span class="category-tag">${l.category}</span>${l.addedAt ? '<span style="background:#FEF3C7;color:#92400E;padding:2px 6px;border-radius:4px;font-size:10px;font-weight:600">+ Added</span>' : ''}
+          <span>&#128205; ${l.location}</span>
+          <span>&#128101; ${l.employees}</span>
+        </div>
+      </div>
+      <div class="booth-badge booth-${l.hall.toLowerCase()}">${l.booth}</div>
+    </div>
+    <div class="card-desc">${l.description}</div>
+    <div class="card-intel">${l.notes_preset}</div>
+    <button class="tp-toggle" onclick="document.getElementById('tp-${l.id}').classList.toggle('open');this.textContent=this.textContent.includes('Show')?'Hide Talking Points':'Show Talking Points'">Show Talking Points</button>
+    <div class="convo-panel" id="tp-${l.id}">
+      <div class="tp-section" style="margin-top:0">
+        <div class="tp-title">&#127919; ${tp.opener_label}</div>
+        <div class="tp-item">${tp.opener}</div>
+        <div class="tp-title" style="margin-top:8px">&#128172; Key Questions</div>
+        ${tp.questions.map(q => `<div class="tp-item">${q}</div>`).join("")}
+        <div class="tp-title" style="margin-top:8px">&#128161; Value Props to Lead With</div>
+        ${tp.valueProps.map(v => `<div class="tp-item">${v}</div>`).join("")}
+        ${tp.objection ? `<div class="tp-title" style="margin-top:8px">&#128737; Likely Objection</div><div class="tp-item">${tp.objection}</div>` : ''}
+      </div>
+    </div>
+    <div class="actions">
+      <button class="action-btn visit ${d.status==='visit'?'selected':''}" onclick="setStatus(${l.id},'visit')">
+        <div class="icon">&#10003;</div><div class="label">Visit</div>
+      </button>
+      <button class="action-btn skip ${d.status==='skip'?'selected':''}" onclick="setStatus(${l.id},'skip')">
+        <div class="icon">&#10007;</div><div class="label">Skip</div>
+      </button>
+      <button class="action-btn maybe ${d.status==='maybe'?'selected':''}" onclick="setStatus(${l.id},'maybe')">
+        <div class="icon">?</div><div class="label">Maybe</div>
+      </button>
+      <button class="action-btn convo ${hasConvo?'selected':''}" onclick="toggleConvo(${l.id})">
+        <div class="icon">${hasConvo?'&#128172;':'&#9998;'}</div><div class="label">${d.status==='visited'?'Logged':'Log'}</div>
+      </button>
+    </div>
+    <div class="convo-panel" id="convo-${l.id}">
+      <div class="convo-field">
+        <div class="convo-label">Business Card Photo</div>
+        <div class="photo-capture">
+          <input type="file" accept="image/*" capture="environment" class="photo-input" id="photo-input-${l.id}" onchange="capturePhoto(${l.id},this)">
+          <button class="photo-btn" onclick="document.getElementById('photo-input-${l.id}').click()">&#128247; ${d.cardPhoto ? 'Retake' : 'Snap Card'}</button>
+          ${d.cardPhoto ? `<img src="${d.cardPhoto}" class="photo-preview" onclick="viewPhoto(${l.id})">` : ''}
+        </div>
+      </div>
+      <div class="convo-field">
+        <div class="convo-label">Contact Name & Title</div>
+        <input class="convo-input" placeholder="e.g. John Smith, VP Engineering" value="${d.contactName||''}" onchange="saveConvo(${l.id},'contactName',this.value)">
+      </div>
+      <div class="convo-field">
+        <div class="convo-label">Email / Phone</div>
+        <input class="convo-input" placeholder="john@company.com / 555-1234" value="${d.contactInfo||''}" onchange="saveConvo(${l.id},'contactInfo',this.value)">
+      </div>
+      <div class="convo-field">
+        <div class="convo-label">Interest Level</div>
+        <div class="interest-btns">
+          <div class="interest-btn hot ${d.interest==='hot'?'selected':''}" onclick="saveConvo(${l.id},'interest','hot')">&#128293; Hot</div>
+          <div class="interest-btn warm ${d.interest==='warm'?'selected':''}" onclick="saveConvo(${l.id},'interest','warm')">&#9728; Warm</div>
+          <div class="interest-btn cold ${d.interest==='cold'?'selected':''}" onclick="saveConvo(${l.id},'interest','cold')">&#10052; Cold</div>
+        </div>
+      </div>
+      <div class="convo-field">
+        <div class="convo-label">Conversation Notes</div>
+        <textarea class="convo-input" rows="3" placeholder="What did you discuss? Pain points? Next steps?" onchange="saveConvo(${l.id},'convoNotes',this.value)">${d.convoNotes||''}</textarea>
+      </div>
+      <div class="convo-field">
+        <div class="convo-label">Next Step</div>
+        <input class="convo-input" placeholder="e.g. Send intro email, Schedule demo" value="${d.nextStep||''}" onchange="saveConvo(${l.id},'nextStep',this.value)">
+      </div>
+      <div style="display:flex;gap:8px;margin-top:8px">
+        <button class="email-action-btn primary" style="flex:1" onclick="markVisited(${l.id})">&#10003; Mark Visited</button>
+        <button class="email-action-btn" style="flex:1" onclick="toggleEmailDraft(${l.id})">&#9993; Draft Email</button>
+      </div>
+      <div style="margin-top:8px;text-align:center"><a href="${l.website}" target="_blank" style="color:var(--ixon-blue);font-size:12px;font-weight:600;text-decoration:none">&#128279; Open Website</a></div>
+    </div>
+    <div class="email-panel" id="email-${l.id}">
+      <div style="font-size:13px;font-weight:700;color:#92400E;margin-bottom:4px">&#9993; Follow-Up Email Draft</div>
+      <div class="email-preview" id="email-text-${l.id}"></div>
+      <div class="email-actions">
+        <button class="email-action-btn" onclick="copyEmail(${l.id})">&#128203; Copy</button>
+        <button class="email-action-btn primary" onclick="exportContactCard(${l.id})">&#128100; Export Contact</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+// ── ROUTE VIEW ──
+function renderRoute(el, leads) {
+  // Filter to visit + maybe only, sort by hall then booth number for walking efficiency
+  let routeLeads = leads.filter(l => {
+    const s = state.data[l.id]?.status;
+    return s === "visit" || s === "maybe" || !s;
+  });
+  
+  routeLeads.sort((a,b) => {
+    if (a.hall !== b.hall) return a.hall.localeCompare(b.hall);
+    const numA = parseInt(a.booth.replace(/[A-Z]/g, "")) || 0;
+    const numB = parseInt(b.booth.replace(/[A-Z]/g, "")) || 0;
+    return numA - numB;
+  });
+  
+  let html = `<div style="padding:8px 4px 12px;color:rgba(255,255,255,0.6);font-size:12px;font-weight:600">
+    &#128694; Optimized walking route: ${routeLeads.length} stops across ${new Set(routeLeads.map(l=>l.hall)).size} hall(s)
+    <br><span style="font-size:11px;opacity:0.7">Sorted by Hall &#8594; Booth position. Complete each hall before moving on.</span>
+  </div>`;
+  
+  let currentHall = "";
+  routeLeads.forEach((l, i) => {
+    const d = state.data[l.id] || {};
+    if (l.hall !== currentHall) {
+      currentHall = l.hall;
+      html += `<div class="hall-header hall-${l.hall.toLowerCase()}" style="margin:8px 0 6px"><span>Hall ${l.hall}</span></div>`;
+    }
+    const visited = d.status === "visited";
+    html += `<div class="route-card" style="${visited?'opacity:0.5':''}">
+      <div class="route-num" style="${visited?'background:var(--green)':''}"><span>${visited?'&#10003;':i+1}</span></div>
+      <div class="route-info">
+        <div class="route-company">${l.website ? '<a href="'+l.website+'" target="_blank" rel="noopener" style="color:inherit;text-decoration:none;border-bottom:1px dashed rgba(0,0,0,0.25)">'+l.company+'</a>' : l.company}</div>
+        <div class="route-meta">
+          <span class="icp-badge icp-${l.icpScore}" style="font-size:10px;padding:1px 5px">ICP ${l.icpScore}</span>
+          <span class="wnc-badge wnc-${l.wncHigh >= 3 ? '3' : l.wncHigh >= 1 ? '1' : '03'}" style="font-size:9px;padding:1px 5px">${l.wncRange || '?'}</span>
+          ${l.category} &middot; ${l.employees} emp
+        </div>
+      </div>
+      <div class="route-booth booth-badge booth-${l.hall.toLowerCase()}" style="padding:3px 8px;font-size:12px">${l.booth}</div>
+    </div>`;
+    if (i < routeLeads.length - 1 && routeLeads[i+1].hall === l.hall) {
+      html += '<div class="route-connector"></div>';
+    }
+  });
+  el.innerHTML = html || '<div style="text-align:center;padding:40px;color:rgba(255,255,255,0.4)">Mark leads as Visit or Maybe to build your route</div>';
+}
+
+// ── SUMMARY VIEW ──
+function getWncProjectionHTML(allLeads) {
+  var wncByTerr = {};
+  allLeads.forEach(function(l) {
+    var t = l.territoryOwner;
+    if (!wncByTerr[t]) wncByTerr[t] = {ev: 0, leads: 0, high: 0};
+    wncByTerr[t].ev += (l.wncEV || 0);
+    wncByTerr[t].leads++;
+    wncByTerr[t].high += (l.wncHigh || 0.3);
+  });
+  var totalEV = 0, totalHigh = 0;
+  Object.keys(wncByTerr).forEach(function(k) { totalEV += wncByTerr[k].ev; totalHigh += wncByTerr[k].high; });
+  var html = '<div style="display:flex;gap:12px;justify-content:center;margin-bottom:12px">';
+  html += '<div style="text-align:center;padding:10px 16px;background:var(--ixon-light-blue);border-radius:10px">';
+  html += '<div style="font-size:22px;font-weight:800;color:var(--ixon-blue)">' + totalEV.toFixed(1) + '</div>';
+  html += '<div style="font-size:10px;font-weight:600;color:var(--gray)">Expected WNC pts</div></div>';
+  html += '<div style="text-align:center;padding:10px 16px;background:#f0fdf4;border-radius:10px">';
+  html += '<div style="font-size:22px;font-weight:800;color:#16a34a">' + totalHigh.toFixed(1) + '</div>';
+  html += '<div style="font-size:10px;font-weight:600;color:var(--gray)">Best Case WNC pts</div></div></div>';
+  var entries = Object.keys(wncByTerr).map(function(k) { return [k, wncByTerr[k]]; });
+  entries.sort(function(a, b) { return b[1].ev - a[1].ev; });
+  entries.forEach(function(entry) {
+    var t = entry[0], v = entry[1];
+    html += '<div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid #F3F4F6">';
+    html += '<span class="territory-tag ' + getTerritoryClass(t) + '" style="font-size:12px">' + t + '</span>';
+    html += '<div style="text-align:right">';
+    html += '<span style="font-size:13px;font-weight:700;color:var(--ixon-blue)">' + v.ev.toFixed(1) + ' EV</span>';
+    html += '<span style="font-size:10px;color:var(--gray);margin-left:4px">(max ' + v.high.toFixed(1) + ')</span>';
+    html += '</div></div>';
+  });
+  html += '<div style="margin-top:8px;font-size:9px;color:var(--gray);text-align:center">v1 model — update actuals post-show to improve prediction</div>';
+  return html;
+}
+
+function renderSummary(el, leads) {
+  const allBase = getAllLeads();
+  const allLeads = state.currentAE === "All" ? allBase : allBase.filter(l => l.territoryOwner === state.currentAE);
+  
+  // Score distribution
+  const scores = [5,4,3,2,1].map(s => ({score:s, count:allLeads.filter(l=>l.icpScore===s).length}));
+  
+  // Status counts
+  const statuses = {};
+  allLeads.forEach(l => { const s = state.data[l.id]?.status || "pending"; statuses[s] = (statuses[s]||0) + 1; });
+  
+  // Conversations logged
+  const convos = allLeads.filter(l => state.data[l.id]?.convoNotes).length;
+  const hot = allLeads.filter(l => state.data[l.id]?.interest === "hot").length;
+  
+  // By territory
+  const byTerritory = {};
+  allLeads.forEach(l => { byTerritory[l.territoryOwner] = (byTerritory[l.territoryOwner]||0) + 1; });
+  
+  el.innerHTML = `
+    <div style="padding:8px 4px">
+      <div style="background:white;border-radius:var(--radius);padding:16px;margin-bottom:10px">
+        <div style="font-size:16px;font-weight:700;margin-bottom:12px">ICP Score Distribution</div>
+        ${scores.map(s => `<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+          <span class="icp-badge icp-${s.score}" style="width:50px;text-align:center">ICP ${s.score}</span>
+          <div style="flex:1;height:20px;background:#F3F4F6;border-radius:6px;overflow:hidden">
+            <div style="width:${(s.count/allLeads.length)*100}%;height:100%;background:${['','var(--score1)','var(--score2)','var(--score3)','var(--score4)','var(--score5)'][s.score]};border-radius:6px"></div>
+          </div>
+          <span style="font-size:13px;font-weight:700;width:28px;text-align:right">${s.count}</span>
+        </div>`).join("")}
+      </div>
+      
+      <div style="background:white;border-radius:var(--radius);padding:16px;margin-bottom:10px">
+        <div style="font-size:16px;font-weight:700;margin-bottom:12px">Progress</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+          <div style="background:#ECFDF5;padding:12px;border-radius:10px;text-align:center">
+            <div style="font-size:24px;font-weight:800;color:var(--green)">${statuses.visit||0}</div>
+            <div style="font-size:11px;font-weight:600;color:var(--green)">Marked Visit</div>
+          </div>
+          <div style="background:#EFF6FF;padding:12px;border-radius:10px;text-align:center">
+            <div style="font-size:24px;font-weight:800;color:var(--blue)">${statuses.visited||0}</div>
+            <div style="font-size:11px;font-weight:600;color:var(--blue)">Visited</div>
+          </div>
+          <div style="background:#FFFBEB;padding:12px;border-radius:10px;text-align:center">
+            <div style="font-size:24px;font-weight:800;color:var(--yellow)">${statuses.maybe||0}</div>
+            <div style="font-size:11px;font-weight:600;color:var(--yellow)">Maybe</div>
+          </div>
+          <div style="background:#FEF2F2;padding:12px;border-radius:10px;text-align:center">
+            <div style="font-size:24px;font-weight:800;color:var(--red)">${statuses.skip||0}</div>
+            <div style="font-size:11px;font-weight:600;color:var(--red)">Skipped</div>
+          </div>
+        </div>
+      </div>
+      
+      <div style="background:white;border-radius:var(--radius);padding:16px;margin-bottom:10px">
+        <div style="font-size:16px;font-weight:700;margin-bottom:12px">Conversations</div>
+        <div style="display:flex;gap:16px;justify-content:center">
+          <div style="text-align:center">
+            <div style="font-size:28px;font-weight:800;color:var(--ixon-blue)">${convos}</div>
+            <div style="font-size:11px;font-weight:600;color:var(--gray)">Logged</div>
+          </div>
+          <div style="text-align:center">
+            <div style="font-size:28px;font-weight:800;color:#DC2626">${hot}</div>
+            <div style="font-size:11px;font-weight:600;color:var(--gray)">Hot Leads</div>
+          </div>
+        </div>
+      </div>
+      
+      <div style="background:white;border-radius:var(--radius);padding:16px;margin-bottom:10px">
+        <div style="font-size:16px;font-weight:700;margin-bottom:12px">WNC Projection</div>
+        ${getWncProjectionHTML(allLeads)}
+      </div>
+
+      <div style="background:white;border-radius:var(--radius);padding:16px">
+        <div style="font-size:16px;font-weight:700;margin-bottom:12px">Territory Distribution</div>
+        ${Object.entries(byTerritory).sort((a,b)=>b[1]-a[1]).map(([t,c]) => `<div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid #F3F4F6">
+          <span class="territory-tag ${getTerritoryClass(t)}" style="font-size:12px">${t}</span>
+          <span style="font-size:14px;font-weight:700">${c}</span>
+        </div>`).join("")}
+      </div>
+    </div>`;
+}
+
+// ── ACTIONS ──
+function setStatus(id, status) {
+  if (!state.data[id]) state.data[id] = {};
+  state.data[id].status = state.data[id].status === status ? null : status;
+  state.data[id].updatedAt = new Date().toISOString();
+  state.data[id].updatedBy = state.userName || (state.currentAE !== "All" ? state.currentAE : "Unknown");
+  save();
+  render();
+}
+
+function toggleConvo(id) {
+  const panel = document.getElementById(`convo-${id}`);
+  if (panel) panel.classList.toggle("open");
+}
+
+function saveConvo(id, field, value) {
+  if (!state.data[id]) state.data[id] = {};
+  state.data[id][field] = value;
+  state.data[id].updatedAt = new Date().toISOString();
+  save();
+  // Update the convo button appearance without full re-render
+}
+
+function markVisited(id) {
+  if (!state.data[id]) state.data[id] = {};
+  state.data[id].status = "visited";
+  state.data[id].visitedAt = new Date().toISOString();
+  save();
+  render();
+}
+
+// ── HELPERS ──
+function getTerritoryClass(t) {
+  if (t.includes("Phil")) return "terr-phil";
+  if (t.includes("Abby")) return "terr-abby";
+  if (t.includes("Bryce")) return "terr-bryce";
+  if (t.includes("AE 4")) return "terr-ae4";
+  return "terr-unassigned";
+}
+
+// ── SETTINGS ──
+function openSettings() {
+  const overlay = document.getElementById("settingsOverlay");
+  document.getElementById("settingsPanelTitle").textContent = "Settings";
+  const inviteUrl = state.syncBlobId ? window.location.origin + window.location.pathname + "?sync=" + state.syncBlobId : "";
+  document.getElementById("settingsPanelContent").innerHTML = `
+    <div class="settings-field">
+      <div class="settings-label">Your Name</div>
+      <input class="settings-input" id="userNameInput" placeholder="e.g. Phil, Abby, Bryce..." value="${state.userName || ''}">
+      <div style="font-size:11px;color:var(--gray);margin-top:4px">Shows who made each update</div>
+    </div>
+    <div class="settings-field" style="margin-top:12px">
+      <div class="settings-label">Team Sync ID</div>
+      <input class="settings-input" id="syncBlobInput" placeholder="Auto-created when you start sync..." value="${state.syncBlobId}" style="font-size:12px;color:var(--gray)">
+    </div>
+    ${!state.syncBlobId ?
+      '<button class="settings-save" style="background:var(--ixon-blue);color:white;margin-bottom:8px" onclick="createNewSync()">&#9729; Create New Team Sync</button>' :
+      '<button class="settings-save" style="background:#059669;color:white;margin-bottom:8px" onclick="copyInviteLink()">&#128279; Copy Invite Link for Team</button>'}
+    <button class="settings-save" onclick="saveSettings()">Save Settings</button>
+    ${state.syncBlobId ? '<div style="margin-top:10px;padding:10px;background:var(--ixon-light-blue);border-radius:6px;font-size:11px;color:var(--ixon-dark);line-height:1.5"><strong>Invite link:</strong><br><span style="word-break:break-all;font-size:10px">' + inviteUrl + '</span><br><br>Text this to your team. They open it, enter their name, and they\'re synced. That\'s it.</div>' : ''}
+  `;
+  overlay.classList.add("open");
+}
+
+function saveSettings() {
+  state.syncBlobId = document.getElementById("syncBlobInput").value.trim();
+  state.userName = (document.getElementById("userNameInput") || {}).value || state.userName || "";
+  localStorage.setItem(SHOW_CONFIG.storageKey + "_config", JSON.stringify({syncBlobId: state.syncBlobId, userName: state.userName}));
+  closeSettings();
+  if (state.syncBlobId) loadFromCloud();
+}
+
+function copyInviteLink() {
+  const url = window.location.origin + window.location.pathname + "?sync=" + state.syncBlobId;
+  navigator.clipboard.writeText(url).then(() => {
+    alert("Invite link copied!\\n\\nText this to Abby & the team. They open it, enter their name, and they're synced.");
+  }).catch(() => {
+    prompt("Copy this invite link:", url);
+  });
+}
+
+function createNewSync() {
+  const btn = event.target;
+  btn.textContent = "Creating...";
+  btn.disabled = true;
+  const payload = JSON.stringify({data: state.data, customLeads: state.customLeads, updated: new Date().toISOString()});
+  fetch("https://api.npoint.io/", {
+    method: "POST",
+    headers: {"Content-Type": "application/json"},
+    body: payload
+  }).then(r => {
+    if (!r.ok) throw new Error("Server returned " + r.status);
+    return r.json();
+  }).then(result => {
+    const binId = result.id || result._id || "";
+    if (!binId) throw new Error("No sync ID in response");
+    state.syncBlobId = binId;
+    localStorage.setItem(SHOW_CONFIG.storageKey + "_config", JSON.stringify({syncBlobId: state.syncBlobId}));
+    document.getElementById("syncBlobInput").value = binId;
+    _lastSync = new Date();
+    updateSyncIndicator("ok");
+    alert("Team Sync created! Share this ID with your team:\\n\\n" + binId);
+    openSettings();
+  }).catch(e => {
+    btn.textContent = "Create New Team Sync";
+    btn.disabled = false;
+    alert("Failed to create sync: " + e.message + "\\n\\nTry again or check your internet connection.");
+  });
+}
+
+
+function closeSettings(e) {
+  if (!e || e.target.classList.contains("settings-overlay")) {
+    document.getElementById("settingsOverlay").classList.remove("open");
+  }
+}
+
+// ── EXPORT ──
+function openExport() {
+  const overlay = document.getElementById("settingsOverlay");
+  document.getElementById("settingsPanelTitle").textContent = "Export Data";
+  document.getElementById("settingsPanelContent").innerHTML = `
+    <div class="export-options">
+      <div class="export-btn" onclick="exportCSV('all')">
+        <div class="export-btn-title">&#128196; Full Export (CSV)</div>
+        <div class="export-btn-desc">All leads with status, notes, and conversation data</div>
+      </div>
+      <div class="export-btn" onclick="exportCSV('apollo')">
+        <div class="export-btn-title">&#127919; Apollo-Ready Export</div>
+        <div class="export-btn-desc">Visited/Hot leads formatted for Apollo import</div>
+      </div>
+      <div class="export-btn" onclick="exportCSV('visited')">
+        <div class="export-btn-title">&#128172; Conversation Log</div>
+        <div class="export-btn-desc">All logged conversations with contact info</div>
+      </div>
+      <div class="export-btn" onclick="copyJSON()">
+        <div class="export-btn-title">&#128203; Copy JSON to Clipboard</div>
+        <div class="export-btn-desc">Full state data for backup or transfer</div>
+      </div>
+    </div>
+  `;
+  overlay.classList.add("open");
+}
+
+function exportCSV(type) {
+  let rows, headers;
+  
+  if (type === "all") {
+    headers = ["Company","Booth","Hall","Category","ICP Score","Territory Owner","Location","Employees","Status","Interest","Contact Name","Contact Info","Conversation Notes","Next Step","Description"];
+    rows = getAllLeads().map(l => {
+      const d = state.data[l.id] || {};
+      return [l.company,l.booth,l.hall,l.category,l.icpScore,l.territoryOwner,l.location,l.employees,d.status||"pending",d.interest||"",d.contactName||"",d.contactInfo||"",d.convoNotes||"",d.nextStep||"",l.description];
+    });
+  } else if (type === "apollo") {
+    headers = ["Company","Website","Contact Name","Contact Email/Phone","Interest Level","ICP Score","Territory Owner","Next Step","Notes"];
+    rows = getAllLeads().filter(l => {
+      const d = state.data[l.id] || {};
+      return d.status === "visited" || d.interest === "hot" || d.interest === "warm";
+    }).map(l => {
+      const d = state.data[l.id] || {};
+      return [l.company,l.website,d.contactName||"",d.contactInfo||"",d.interest||"",l.icpScore,l.territoryOwner,d.nextStep||"",d.convoNotes||""];
+    });
+  } else {
+    headers = ["Company","Booth","Contact Name","Contact Info","Interest","Conversation Notes","Next Step","Visited At"];
+    rows = getAllLeads().filter(l => state.data[l.id]?.convoNotes || state.data[l.id]?.contactName).map(l => {
+      const d = state.data[l.id] || {};
+      return [l.company,l.booth,d.contactName||"",d.contactInfo||"",d.interest||"",d.convoNotes||"",d.nextStep||"",d.visitedAt||""];
+    });
+  }
+  
+  const csv = [headers, ...rows].map(r => r.map(v => `"${String(v).replace(/"/g,'""')}"`).join(",")).join("\n");
+  const blob = new Blob([csv], {type:"text/csv"});
+  const link = document.createElement("a");
+  link.href = URL.createObjectURL(blob);
+  link.download = `IXON_${SHOW_CONFIG.name.replace(/\s/g,"_")}_${type}_${new Date().toISOString().slice(0,10)}.csv`;
+  link.click();
+  closeSettings();
+}
+
+function copyJSON() {
+  navigator.clipboard.writeText(JSON.stringify(state.data, null, 2));
+  alert("Data copied to clipboard!");
+  closeSettings();
+}
+
+// ── CLOUD SYNC (jsonblob.com — zero auth, zero CORS issues) ──
+let _syncTimer = null;
+let _lastSync = null;
+const BLOB_API = "https://api.npoint.io";
+
+function buildSyncPayload() {
+  return {
+    data: state.data,
+    customLeads: state.customLeads,
+    updated: new Date().toISOString()
+  };
+}
+
+// Auto-push: debounced 3s after any save
+function autoPush() {
+  if (!state.syncBlobId) return;
+  clearTimeout(_syncTimer);
+  _syncTimer = setTimeout(() => pushToCloud(true), 3000);
+}
+
+// ── PUSH TO CLOUD ──
+function pushToCloud(quiet) {
+  if (!state.syncBlobId) return;
+  const btn = document.getElementById("syncBtn");
+  if (!quiet) { btn.classList.add("sync-active"); btn.innerHTML = "&#8987;"; }
+
+  fetch(BLOB_API + "/" + state.syncBlobId, {
+    method: "POST",
+    headers: {"Content-Type": "application/json"},
+    body: JSON.stringify(buildSyncPayload())
+  }).then(r => {
+    if (!r.ok) throw new Error("HTTP " + r.status);
+    _lastSync = new Date();
+    updateSyncIndicator("ok");
+    if (!quiet) {
+      btn.innerHTML = "&#10003;";
+      setTimeout(() => { btn.innerHTML = "&#8635;"; btn.classList.remove("sync-active"); }, 2000);
+    }
+  }).catch(e => {
+    console.warn("Push failed:", e);
+    updateSyncIndicator("error");
+    if (!quiet) {
+      btn.innerHTML = "&#10007;";
+      setTimeout(() => { btn.innerHTML = "&#8635;"; btn.classList.remove("sync-active"); }, 2000);
+      alert("Sync failed: " + e.message);
+    }
+  });
+}
+
+// Manual sync button — push then pull
+function syncToSheets() {
+  if (!state.syncBlobId) { openSettings(); return; }
+  const btn = document.getElementById("syncBtn");
+  btn.classList.add("sync-active"); btn.innerHTML = "&#8987;";
+
+  // Push local changes first, then pull remote
+  fetch(BLOB_API + "/" + state.syncBlobId, {
+    method: "POST",
+    headers: {"Content-Type": "application/json"},
+    body: JSON.stringify(buildSyncPayload())
+  }).then(() => loadFromCloud())
+    .catch(e => {
+      updateSyncIndicator("error");
+      btn.innerHTML = "&#10007;";
+      setTimeout(() => { btn.innerHTML = "&#8635;"; btn.classList.remove("sync-active"); }, 2000);
+      alert("Sync failed: " + e.message);
+    });
+}
+
+// ── LOAD FROM CLOUD ──
+function loadFromCloud() {
+  if (!state.syncBlobId) return;
+  updateSyncIndicator("loading");
+
+  fetch(BLOB_API + "/" + state.syncBlobId, {
+    headers: {"Accept": "application/json"}
+  }).then(r => {
+    if (!r.ok) throw new Error("HTTP " + r.status);
+    return r.json();
+  }).then(remote => {
+    if (!remote || !remote.data) {
+      updateSyncIndicator("ok");
+      return;
+    }
+
+    // Merge remote data — remote wins if newer timestamp
+    let merged = 0;
+    Object.keys(remote.data).forEach(id => {
+      const remoteEntry = remote.data[id];
+      const localEntry = state.data[id] || {};
+      const localTime = localEntry.updatedAt ? new Date(localEntry.updatedAt).getTime() : 0;
+      const remoteTime = remoteEntry.updatedAt ? new Date(remoteEntry.updatedAt).getTime() : 0;
+
+      if (remoteTime > localTime) {
+        if ((remoteEntry.status && remoteEntry.status !== "pending") || remoteEntry.contactName || remoteEntry.convoNotes || remoteEntry.nextStep) {
+          state.data[id] = Object.assign({}, localEntry, remoteEntry);
+          merged++;
+        }
+      }
+    });
+
+    // Merge custom leads from remote
+    if (remote.customLeads && remote.customLeads.length > 0) {
+      const existingIds = new Set(state.customLeads.map(l => l.id));
+      remote.customLeads.forEach(l => {
+        if (!existingIds.has(l.id)) {
+          state.customLeads.push(l);
+          merged++;
+        }
+      });
+      localStorage.setItem(SHOW_CONFIG.storageKey + "_custom", JSON.stringify(state.customLeads));
+    }
+
+    if (merged > 0) {
+      localStorage.setItem(SHOW_CONFIG.storageKey, JSON.stringify(state.data));
+      render();
+    }
+
+    _lastSync = new Date();
+    updateSyncIndicator("ok");
+    const btn = document.getElementById("syncBtn");
+    btn.innerHTML = "&#10003;";
+    setTimeout(() => { btn.innerHTML = "&#8635;"; btn.classList.remove("sync-active"); }, 2000);
+  }).catch(e => {
+    console.warn("Load failed:", e);
+    updateSyncIndicator("error");
+    const btn = document.getElementById("syncBtn");
+    btn.innerHTML = "&#10007;";
+    setTimeout(() => { btn.innerHTML = "&#8635;"; btn.classList.remove("sync-active"); }, 2000);
+  });
+}
+
+// Backward compat alias
+function loadFromSheets() { loadFromCloud(); }
+
+function updateSyncIndicator(status) {
+  let el = document.getElementById("syncIndicator");
+  if (!el) return;
+  const colors = { ok: "#22c55e", loading: "#FACD00", error: "#ef4444", offline: "#9ca3af" };
+  const labels = { ok: "Synced", loading: "Syncing...", error: "Sync Error", offline: "Offline" };
+  el.innerHTML = `<span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:${colors[status]||colors.offline};margin-right:4px"></span>${labels[status]||"Offline"}${_lastSync ? ' · ' + _lastSync.toLocaleTimeString([], {hour:'numeric',minute:'2-digit'}) : ''}`;
+}
+
+// ── TALKING POINTS ENGINE ──
+function getTalkingPoints(lead) {
+  const isOEM = lead.category === "OEM";
+  const isSI = lead.category === "SI";
+  const score = lead.icpScore;
+  const desc = (lead.description || "").toLowerCase();
+
+  // Detect machine type for contextual points
+  const hasConveyor = /conveyor|belt|roller|spiral/.test(desc);
+  const hasPalletizer = /palletiz|stretch wrap|packaging|strapping|banding/.test(desc);
+  const hasCrane = /crane|hoist|lift/.test(desc);
+  const hasAGV = /agv|amr|robot|autonomous|tugger/.test(desc);
+  const hasSortation = /sort|divert/.test(desc);
+  const hasASRS = /asrs|storage.*retrieval|shuttle/.test(desc);
+
+  let opener, opener_label, questions, valueProps, objection;
+
+  if (isOEM && score >= 4) {
+    opener_label = "Suitcase Opener";
+    opener = `"We're not buying — just visiting some of our customers here. But I noticed you build ${lead.description.split(',')[0].toLowerCase()} — we actually work with a lot of builders like you. How do you handle remote access to your machines once they're deployed?"`;
+    questions = [
+      `"How does your team troubleshoot machines at customer sites today?"`,
+      `"When a customer calls with a PLC fault, what's the response process — do you send a tech, VPN in, or...?"`,
+      `"Who manages the VPN or remote access setup — your controls team, or the customer's IT?"`,
+      `"How much does a typical truck roll cost you when it turns out to be a 10-minute PLC fix?"`,
+    ];
+    valueProps = [
+      `Eliminate VPN sprawl — one secure platform instead of customer-by-customer VPN configs`,
+      `OEM-controlled access: YOU decide when and how your engineers connect to your machines`,
+      `IT-friendly: outbound-only connections, no firewall changes at customer sites`,
+      `Revenue opportunity: offer "Remote Service" as a paid support tier to your end users`,
+    ];
+    objection = `"We already use TeamViewer/VPN" → "That works for HMI screens, but can you access the PLC, drive parameters, and do firmware updates through it? With IXON you get full network-level access as if you were standing at the panel."`;
+
+  } else if (isOEM && score === 3) {
+    opener_label = "Discovery Opener";
+    opener = `"Hey, we're just here visiting customers — noticed your booth. What kind of controls do you typically run on your ${lead.description.split(',')[0].toLowerCase()}?"`;
+    questions = [
+      `"Do your machines ship with PLCs? What brands — Allen-Bradley, Siemens, Beckhoff?"`,
+      `"Once a machine is deployed, how does your customer get support if something goes wrong?"`,
+      `"Is remote access something your customers have been asking about?"`,
+    ];
+    valueProps = [
+      `Works with any PLC brand — Rockwell, Siemens, Beckhoff, Omron, B&R, you name it`,
+      `Small edge device (IXrouter) mounts in the panel — cellular or Ethernet backhaul`,
+      `Cloud dashboard gives you fleet visibility across all deployed machines`,
+    ];
+    objection = null;
+
+  } else if (isSI) {
+    opener_label = "SI/Partner Opener";
+    opener = `"We work with a lot of machine builders in the material handling space. When you spec a system for a customer, how do you handle ongoing remote support and vendor access governance?"`;
+    questions = [
+      `"How do you manage remote access for the 5-10 different OEMs in a typical system?"`,
+      `"Does the end user's IT team push back on multiple vendor VPNs?"`,
+      `"Would a single platform that governs all vendor access be useful in your proposals?"`,
+    ];
+    valueProps = [
+      `Single platform for ALL vendor access — one approval workflow, one audit log`,
+      `Differentiator in your proposals: "Centralized remote access governance included"`,
+      `Your OEM partners can self-serve through the platform — less coordination overhead for you`,
+      `End users love it: IT gets one thing to approve instead of 10 different VPN requests`,
+    ];
+    objection = `"Our OEMs all have their own remote access" → "Exactly the problem — the end user's IT has to manage 10 different VPNs. IXON gives them one pane of glass with approval workflows."`;
+
+  } else {
+    opener_label = "General Opener";
+    opener = `"We're not buying — just walking the show visiting some customers. What do you build?"`;
+    questions = [
+      `"Do your machines have PLCs or controllers?"`,
+      `"How do you support machines once they're in the field?"`,
+    ];
+    valueProps = [
+      `Secure remote access to any PLC-based machine`,
+      `Cloud platform for machine fleet management`,
+    ];
+    objection = null;
+  }
+
+  // Add machine-specific hooks
+  if (hasConveyor) valueProps.push(`Conveyor OEMs use IXON to monitor drive faults, belt speed, and jam sensors remotely`);
+  if (hasPalletizer) valueProps.push(`Packaging OEMs use IXON to remotely tune recipe parameters and troubleshoot HMI faults`);
+  if (hasCrane) valueProps.push(`Crane OEMs use IXON to remotely access VFDs, check brake wear data, and diagnose pendant faults`);
+  if (hasAGV) valueProps.push(`AGV/AMR builders use IXON to push software updates and monitor fleet health across sites`);
+
+  return { opener, opener_label, questions, valueProps: valueProps.slice(0, 5), objection };
+}
+
+// ── BUSINESS CARD PHOTO ──
+function capturePhoto(id, input) {
+  const file = input.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    // Resize to save localStorage space
+    const img = new Image();
+    img.onload = function() {
+      const canvas = document.createElement('canvas');
+      const maxW = 800;
+      const scale = Math.min(maxW / img.width, 1);
+      canvas.width = img.width * scale;
+      canvas.height = img.height * scale;
+      canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+      const dataUrl = canvas.toDataURL('image/jpeg', 0.7);
+      saveConvo(id, 'cardPhoto', dataUrl);
+      render();
+    };
+    img.src = e.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+function viewPhoto(id) {
+  const d = state.data[id];
+  if (!d?.cardPhoto) return;
+  const overlay = document.getElementById("settingsOverlay");
+  document.getElementById("settingsPanelTitle").textContent = "Business Card";
+  document.getElementById("settingsPanelContent").innerHTML = `
+    <img src="${d.cardPhoto}" style="width:100%;border-radius:10px;margin-bottom:12px">
+    <button class="settings-save" onclick="closeSettings()">Close</button>
+  `;
+  overlay.classList.add("open");
+}
+
+// ── POST-SHOW EMAIL DRAFTER ──
+function toggleEmailDraft(id) {
+  const panel = document.getElementById(`email-${id}`);
+  const isOpen = panel.classList.contains("open");
+  if (isOpen) { panel.classList.remove("open"); return; }
+
+  const lead = getAllLeads().find(l => l.id === id);
+  const d = state.data[id] || {};
+  const email = generateFollowUpEmail(lead, d);
+  document.getElementById(`email-text-${id}`).textContent = email;
+  panel.classList.add("open");
+}
+
+function generateFollowUpEmail(lead, data) {
+  const contactFirst = (data.contactName || "").split(" ")[0] || "there";
+  const interest = data.interest || "warm";
+  const notes = data.convoNotes || "";
+  const nextStep = data.nextStep || "";
+  const isOEM = lead.category === "OEM";
+
+  // Extract key topics from notes
+  const notesSummary = notes.length > 20 ? notes : "our conversation about your machines and remote access needs";
+
+  let subject, body;
+
+  if (interest === "hot") {
+    subject = `Following up from MODEX — next steps for ${lead.company}`;
+    body = `Hi ${contactFirst},
+
+Great meeting you at the ${lead.company} booth at MODEX. I really enjoyed ${notesSummary.length > 80 ? 'our discussion' : 'hearing about ' + notesSummary}.
+
+${isOEM ?
+`Based on what you shared, I think IXON could be a strong fit for giving your team secure remote access to your ${lead.description.split(',')[0].toLowerCase()} once they're deployed at customer sites. The key things that stood out:
+
+- You'd be able to troubleshoot PLCs remotely instead of dispatching a tech
+- Your customers' IT teams wouldn't need to open firewall ports — IXON connects outbound only
+- You'd have a fleet dashboard showing all your machines across every customer site` :
+
+`Based on what you shared, IXON could help you standardize vendor access governance across your projects. Instead of managing separate VPNs for every OEM in a system, you'd have one platform with approval workflows and audit trails.`}
+
+${nextStep ? `As discussed, the next step would be: ${nextStep}` : `I'd love to set up a 20-minute call to walk you through the platform and discuss a pilot. What does your calendar look like next week?`}
+
+Best,
+[Your Name]
+IXON Cloud | Remote Access & IIoT Platform`;
+
+  } else if (interest === "warm") {
+    subject = `Good meeting you at MODEX — ${lead.company} + IXON`;
+    body = `Hi ${contactFirst},
+
+It was great connecting at MODEX at your booth. ${notes ? `I appreciated you sharing about ${notesSummary.substring(0, 120)}.` : `I enjoyed learning about what ${lead.company} is building.`}
+
+${isOEM ?
+`As I mentioned, IXON helps machine builders like ${lead.company} offer secure remote access to their deployed equipment. It's a small edge device (IXrouter) that mounts in the panel and connects back to a cloud platform — no VPN configs, no firewall changes at the customer site.
+
+A few of our customers in similar spaces have seen:
+- 40-60% reduction in unnecessary truck rolls
+- Faster response times (minutes vs. days)
+- A new revenue stream from remote service packages` :
+
+`IXON helps system integrators standardize how all the OEM vendors in a project access their equipment remotely — one platform, one approval workflow, one audit log instead of managing 10 different VPNs.`}
+
+Would it make sense to schedule a quick call to explore if this could work for your team? Happy to share some examples from similar ${isOEM ? 'OEMs' : 'integrators'} in the material handling space.
+
+Best,
+[Your Name]
+IXON Cloud | Remote Access & IIoT Platform`;
+
+  } else {
+    subject = `Nice meeting at MODEX — ${lead.company}`;
+    body = `Hi ${contactFirst},
+
+Good meeting you at MODEX. ${notes ? `Appreciate you taking the time to chat about ${notesSummary.substring(0, 100)}.` : `I enjoyed learning about ${lead.company}.`}
+
+I wanted to share a quick overview of what IXON does — we help ${isOEM ? 'machine builders provide secure remote access to their equipment' : 'industrial companies centralize vendor remote access'} through a cloud platform.
+
+If this ever becomes relevant for your team, I'd be happy to walk you through it. No pressure — just wanted to plant the seed.
+
+Best,
+[Your Name]
+IXON Cloud | Remote Access & IIoT Platform`;
+  }
+
+  return `Subject: ${subject}\n\n${body}`;
+}
+
+function copyEmail(id) {
+  const text = document.getElementById(`email-text-${id}`).textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = event.target;
+    btn.textContent = "Copied!";
+    setTimeout(() => { btn.innerHTML = "&#128203; Copy"; }, 1500);
+  });
+}
+
+function exportContactCard(id) {
+  const lead = getAllLeads().find(l => l.id === id);
+  const d = state.data[id] || {};
+  const parts = (d.contactName || "Contact").split(" ");
+  const firstName = parts[0] || "";
+  const lastName = parts.slice(1).join(" ") || "";
+  const email = (d.contactInfo || "").match(/[^\s,;]+@[^\s,;]+/) || [""];
+  const phone = (d.contactInfo || "").match(/[\d\-\(\)\+\s]{7,}/) || [""];
+
+  const vcard = `BEGIN:VCARD
+VERSION:3.0
+FN:${d.contactName || lead.company}
+N:${lastName};${firstName};;;
+ORG:${lead.company}
+${email[0] ? 'EMAIL:' + email[0] : ''}
+${phone[0] ? 'TEL:' + phone[0].trim() : ''}
+URL:${lead.website || ''}
+NOTE:Met at ${SHOW_CONFIG.name}. ${lead.description}. ${d.convoNotes || ''}
+END:VCARD`;
+
+  const blob = new Blob([vcard], {type: "text/vcard"});
+  const link = document.createElement("a");
+  link.href = URL.createObjectURL(blob);
+  link.download = `${lead.company.replace(/[^a-zA-Z0-9]/g, "_")}_contact.vcf`;
+  link.click();
+}
+
+// ── ADD COMPANY ──
+function openAddCompany() {
+  const overlay = document.getElementById("settingsOverlay");
+  document.getElementById("settingsPanelTitle").textContent = "Add Company";
+  const aeOptions = ["Phil Belue","Abby Wolf","Bryce Yates","AE 4","Unassigned"].map(ae =>
+    `<option value="${ae}">${ae}</option>`
+  ).join("");
+  const hallOptions = SHOW_CONFIG.halls.map(h => `<option value="${h}">${h}</option>`).join("");
+
+  document.getElementById("settingsPanelContent").innerHTML = `
+    <div class="add-form-grid">
+      <div class="full-width">
+        <div class="add-form-label">Company Name *</div>
+        <input class="add-form-input" id="addCompany" placeholder="e.g. Acme Machines Inc.">
+      </div>
+      <div>
+        <div class="add-form-label">Booth #</div>
+        <input class="add-form-input" id="addBooth" placeholder="e.g. B1234">
+      </div>
+      <div>
+        <div class="add-form-label">Hall</div>
+        <select class="add-form-select" id="addHall">${hallOptions}<option value="?">Unknown</option></select>
+      </div>
+      <div class="full-width">
+        <div class="add-form-label">What They Build / Do</div>
+        <input class="add-form-input" id="addDescription" placeholder="e.g. Custom palletizers, PLC-controlled">
+      </div>
+      <div>
+        <div class="add-form-label">Location</div>
+        <input class="add-form-input" id="addLocation" placeholder="e.g. Dallas, TX">
+      </div>
+      <div>
+        <div class="add-form-label">Employees</div>
+        <input class="add-form-input" id="addEmployees" placeholder="e.g. ~100-200">
+      </div>
+      <div>
+        <div class="add-form-label">Category</div>
+        <select class="add-form-select" id="addCategory"><option value="OEM">OEM</option><option value="SI">SI</option></select>
+      </div>
+      <div>
+        <div class="add-form-label">Territory Owner</div>
+        <select class="add-form-select" id="addTerritory">${aeOptions}</select>
+      </div>
+      <div>
+        <div class="add-form-label">ICP Score (1-5)</div>
+        <select class="add-form-select" id="addICP">
+          <option value="5">5 — Perfect ICP</option>
+          <option value="4">4 — Strong</option>
+          <option value="3" selected>3 — Moderate</option>
+          <option value="2">2 — Weak</option>
+          <option value="1">1 — Not ICP</option>
+        </select>
+      </div>
+      <div>
+        <div class="add-form-label">Website</div>
+        <input class="add-form-input" id="addWebsite" placeholder="https://...">
+      </div>
+      <div class="full-width">
+        <div class="add-form-label">Notes</div>
+        <input class="add-form-input" id="addNotes" placeholder="Why are they a good fit?">
+      </div>
+      <div class="full-width" style="margin-top:4px">
+        <button class="settings-save" onclick="saveNewCompany()">+ Add to Lead List</button>
+      </div>
+    </div>
+  `;
+  overlay.classList.add("open");
+}
+
+function saveNewCompany() {
+  const name = document.getElementById("addCompany").value.trim();
+  if (!name) { alert("Company name is required"); return; }
+
+  const maxId = Math.max(...getAllLeads().map(l => l.id), 0);
+  const booth = document.getElementById("addBooth").value.trim() || "TBD";
+  const hall = document.getElementById("addHall").value;
+
+  const newLead = {
+    id: maxId + 1,
+    company: name,
+    booth: booth,
+    hall: hall !== "?" ? hall : (booth.match(/^[A-C]/i) ? booth[0].toUpperCase() : "A"),
+    description: document.getElementById("addDescription").value.trim() || "Added at show",
+    location: document.getElementById("addLocation").value.trim() || "Unknown",
+    employees: document.getElementById("addEmployees").value.trim() || "Unknown",
+    icpScore: parseInt(document.getElementById("addICP").value),
+    territoryOwner: document.getElementById("addTerritory").value,
+    category: document.getElementById("addCategory").value,
+    website: document.getElementById("addWebsite").value.trim() || "",
+    notes_preset: document.getElementById("addNotes").value.trim() || "Added on the show floor",
+    addedAt: new Date().toISOString(),
+    addedBy: state.currentAE !== "All" ? state.currentAE : "Unknown"
+  };
+
+  state.customLeads.push(newLead);
+  localStorage.setItem(SHOW_CONFIG.storageKey + "_custom", JSON.stringify(state.customLeads));
+
+  closeSettings();
+  renderAEBar();
+  render();
+}
+
+// ── BOOT ──
+init();
+</script>
+</body>
+</html>
