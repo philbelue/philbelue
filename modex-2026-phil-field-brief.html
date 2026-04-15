@@ -1,0 +1,549 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<title>MODEX 2026 — Phil Field Brief (validated)</title>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --blue:#1059D2; --dark:#021752; --off:#F3F4FA;
+    --yellow:#FACD00; --grey:#626262; --ink:#0b1430;
+    --ok:#167C3B; --warn:#B35C00; --bad:#B3261E;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;background:var(--off);color:var(--ink);font-family:'Roboto',sans-serif;line-height:1.45}
+  .wrap{max-width:1080px;margin:0 auto;padding:24px 24px 60px}
+  h1,h2,h3,h4{font-family:'Poppins',sans-serif;color:var(--dark);margin:0 0 8px}
+  h1{font-size:26px;font-weight:600}
+  h2{font-size:19px;font-weight:600;margin-top:24px;border-bottom:2px solid var(--blue);padding-bottom:6px}
+  h3{font-size:16px;font-weight:600}
+  .hero{background:linear-gradient(135deg,var(--dark) 0%,var(--blue) 100%);color:#fff;padding:20px 22px;border-radius:10px;margin-bottom:14px}
+  .hero h1{color:#fff;margin-bottom:4px}
+  .hero p{margin:0;opacity:.92;font-size:13px}
+  .hero .urgent{margin-top:8px;display:inline-block;background:var(--yellow);color:#332500;padding:3px 10px;border-radius:4px;font-weight:700;font-size:12px;letter-spacing:.04em;text-transform:uppercase}
+  .b{display:inline-block;font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px;letter-spacing:.02em;text-transform:uppercase;margin-right:4px}
+  .b-ver{background:#E7F3EC;color:var(--ok)}
+  .b-inf{background:#FFF4DB;color:var(--warn)}
+  .b-nv{background:#FBE3E1;color:var(--bad)}
+  .b-file{background:#E8EEFB;color:var(--blue)}
+  .b-pass{background:#C7ECD6;color:var(--ok)}
+  .b-flag{background:#FFE2B3;color:var(--warn)}
+  .b-fail{background:#F7C4C0;color:var(--bad)}
+  .b-tier1{background:#E8EEFB;color:var(--dark)}
+  .b-tier2{background:#D5DEF5;color:var(--dark)}
+  .b-tier3{background:var(--dark);color:#fff}
+  .rules{background:#fff;border:1px solid #e0e4ee;border-radius:8px;padding:12px 16px;margin-bottom:14px;font-size:12.5px}
+  .rules ul{margin:5px 0 0 18px;padding:0}
+  .rules li{margin:2px 0}
+  .bucket{margin-top:18px}
+  .bucket-head{display:flex;align-items:center;gap:10px;margin-bottom:6px}
+  .bucket-tag{font-family:'Poppins',sans-serif;font-weight:600;font-size:12px;padding:4px 10px;border-radius:4px;text-transform:uppercase;letter-spacing:.04em}
+  .bk-must{background:var(--dark);color:#fff}
+  .bk-solid{background:var(--blue);color:#fff}
+  .bk-qf{background:var(--yellow);color:#332500}
+  .bk-low{background:#8a92a8;color:#fff}
+  .card{background:#fff;border:1px solid #e0e4ee;border-left:4px solid var(--blue);border-radius:8px;padding:12px 16px;margin-bottom:8px;font-size:13px}
+  .card.bk-must{border-left-color:var(--dark)}
+  .card.bk-solid{border-left-color:var(--blue)}
+  .card.bk-qf{border-left-color:var(--yellow)}
+  .card.bk-low{border-left-color:#8a92a8}
+  .card h3{margin:0 0 6px;display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:6px}
+  .name{font-size:16px;color:var(--dark)}
+  .booth{font-family:'Roboto',sans-serif;font-weight:700;color:var(--blue);font-size:14px}
+  .field{display:grid;grid-template-columns:150px 1fr;gap:4px 14px;margin-top:8px}
+  .field dt{color:var(--grey);font-size:11px;text-transform:uppercase;letter-spacing:.03em;font-weight:700;padding-top:2px}
+  .field dd{margin:0;color:var(--ink);font-size:13px}
+  .section{background:#fff;border:1px solid #e0e4ee;border-radius:8px;padding:16px 20px;margin-top:14px}
+  .route table{width:100%;border-collapse:collapse;margin-top:6px}
+  .route th,.route td{text-align:left;padding:6px 8px;border-bottom:1px solid #eceff7;font-size:12.5px}
+  .route th{background:var(--off);color:var(--dark);font-weight:600}
+  .q{background:var(--off);border-left:3px solid var(--yellow);padding:8px 12px;margin:6px 0;border-radius:4px;font-size:13px}
+  .redteam{border-left-color:var(--bad);background:#fdf4f3}
+  .changelog{background:#FFFBEB;border:1px solid var(--yellow);border-radius:8px;padding:10px 14px;margin-bottom:14px;font-size:13px}
+  .changelog h3{margin:0 0 6px;font-size:14px}
+  .footer{margin-top:24px;font-size:11px;color:var(--grey);text-align:center;border-top:1px solid #e0e4ee;padding-top:10px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<div class="hero">
+  <h1>MODEX 2026 — Phil Field Brief (validated)</h1>
+  <p>Atlanta · GWCC · For Phil Belue only · Validated against uploaded workbook + exec brief criteria</p>
+  <div class="urgent">Pre-show · zero fabrication · every booth from file</div>
+</div>
+
+<div class="changelog">
+  <h3>What changed in this validation pass</h3>
+  <b>Applied the exec brief's hard gate (confirmed US/CA manufacturing) to every account.</b> Two downgrades:
+  <ul style="margin:4px 0 0 18px">
+    <li><b>Robopac USA (C14764)</b> — moved <b>Must Hit → Qualify Fast</b>. File says "US facility" with Italian parent. Hard gate FLAGGED (ambiguous). Confirm US mfg depth on floor; if assembly/distribution only, disqualify.</li>
+    <li><b>CASSIOLI Srl (A2118)</b> — moved <b>Solid → Low Priority</b>. File explicitly says "Italy (US: Birmingham, AL)." Machines built in Italy. Hard gate likely FAILS.</li>
+  </ul>
+  Every booth number in this brief comes from <code>modex-2026-qualified-leads-17eeab1b.xlsx</code>. I did not invent any.
+</div>
+
+<div class="rules">
+  <b>Ground rules.</b>
+  <ul>
+    <li>Booth numbers: <b>VERIFIED from the uploaded workbook.</b> The workbook is the single source of truth for this brief. Cross-check at the GWCC entrance against the official show map before walking.</li>
+    <li>Hall letter: <b>INFERENCE from booth prefix</b> (A/B/C). Workbook's Hall column shows "B" for all 1,087 exhibitors — data artifact, not truth. Confirm on site.</li>
+    <li>Hard gate: Per exec brief — <b>confirmed US/CA manufacturing presence required</b>, not just a US sales office. Flagged on every account.</li>
+    <li>WNC Tier: Pre-show estimate only, per exec brief's v1 model (employee count + OEM/SI + machine complexity). Not audited.</li>
+    <li>Bucket placements = Phil's stated view <b>refined</b> by hard gate and WNC tiering. Two downgrades called out above.</li>
+  </ul>
+</div>
+
+<!-- ============== MUST HIT ============== -->
+<div class="bucket">
+  <div class="bucket-head"><span class="bucket-tag bk-must">Must Hit</span><span style="font-size:12px;color:var(--grey)">7 accounts · hard gate PASS · highest conviction</span></div>
+
+  <div class="card bk-must">
+    <h3><span class="name">The Bradbury Group</span><span class="booth">A5910</span></h3>
+    <span class="b b-ver">Booth Verified</span><span class="b b-pass">Hard Gate PASS</span><span class="b b-tier3">WNC Tier 3</span><span class="b b-inf">Hall A (inferred)</span>
+    <dl class="field">
+      <dt>Bucket</dt><dd>Must Hit</dd>
+      <dt>Verified Booth</dt><dd>A5910 · Hall A (inferred from booth prefix)</dd>
+      <dt>Why good</dt><dd>Moundridge, KS · US OEM · ~625 emp · roll forming &amp; coil processing equipment · 65+ years · PLC-controlled real industrial machines. Tier 3 candidate by exec brief criteria.</dd>
+      <dt>What must be true</dt><dd>Own the controls platform on the machine (not customer-spec). Install base is service-revenue meaningful. Someone at booth can speak to remote service model.</dd>
+      <dt>Biggest risk</dt><dd>May already have a legacy/in-house remote platform after decades in business. Displacement &gt; greenfield.</dd>
+      <dt>Opening angle</dt><dd>Remote service standardization across install base. "How are you connected back to deployed roll formers today, and is service a P&amp;L or cost center?"</dd>
+      <dt>Best next step</dt><dd>Find service/aftermarket leader. 30-min Teams call booked during or post-show. Do not pitch IXrouter at booth.</dd>
+      <dt>Data confidence</dt><dd>Identity, HQ, size, product, booth = VERIFIED. Controls platform and existing remote stack = NOT VERIFIED.</dd>
+    </dl>
+  </div>
+
+  <div class="card bk-must">
+    <h3><span class="name">Trew</span><span class="booth">B14761 · B15161</span></h3>
+    <span class="b b-ver">Booth Verified (2 booths)</span><span class="b b-pass">Hard Gate PASS</span><span class="b b-tier3">WNC Tier 2-3</span><span class="b b-inf">Hall B (inferred)</span>
+    <dl class="field">
+      <dt>Bucket</dt><dd>Must Hit · exec brief names Trew as Phil's top prospect ($367M)</dd>
+      <dt>Verified Booth</dt><dd>B14761 AND B15161 · Hall B (inferred)</dd>
+      <dt>Why good</dt><dd>US-based. Manufacturer AND integrator. WES, WCS, PLC-based machine controls. Two booths = show priority. Exec brief flags them as Phil's top $-volume prospect.</dd>
+      <dt>What must be true</dt><dd>Manufactured equipment has a standardized remote-connectivity need, not one-off per customer. Service P&amp;L owner identified.</dd>
+      <dt>Biggest risk</dt><dd>In-house platform build — they have the engineering muscle. Coopetition on the SI side.</dd>
+      <dt>Opening angle</dt><dd>"How do you service deployed conveyor/sortation post-install? Do your integration customers ask for a standardized remote-access layer or is it custom per project?"</dd>
+      <dt>Best next step</dt><dd>Identify which booth is demo vs. meeting space; hit the demo first. Map leaders at both if different. Push for a scoped follow-up.</dd>
+      <dt>Data confidence</dt><dd>Identity, role, scale, both booths = VERIFIED. In-house platform risk = INFERENCE.</dd>
+    </dl>
+  </div>
+
+  <div class="card bk-must">
+    <h3><span class="name">Hy-Tek Intralogistics</span><span class="booth">B16306</span></h3>
+    <span class="b b-ver">Booth Verified</span><span class="b b-pass">Hard Gate PASS</span><span class="b b-tier3">WNC Tier 2-3</span><span class="b b-inf">Hall B (inferred)</span>
+    <dl class="field">
+      <dt>Bucket</dt><dd>Must Hit · exec brief names Hy-Tek as Phil's top prospect ($200M)</dd>
+      <dt>Verified Booth</dt><dd>B16306 · Hall B (inferred)</dd>
+      <dt>Why good</dt><dd>US SI, ~200-500 emp. Full-stack IntraOne (WMS/WES/WCS). Top Phil prospect per exec brief.</dd>
+      <dt>What must be true</dt><dd>IntraOne does NOT already solve remote-access. Controls work is a scaled service line, not ad hoc.</dd>
+      <dt>Biggest risk</dt><dd>IntraOne scope overlap — their platform may already cover remote orchestration. IXON competes, not complements. <b>Disambiguate in first 5 minutes.</b></dd>
+      <dt>Opening angle</dt><dd>"IntraOne handles orchestration — what do you layer in for remote engineer access when a PLC throws at a customer site?"</dd>
+      <dt>Best next step</dt><dd>Controls or post-install support leader. Run the 5 DQ questions. If warm, schedule. If they own a competing layer, exit politely.</dd>
+      <dt>Data confidence</dt><dd>Identity, SI role, scale = VERIFIED. Platform overlap = INFERENCE (material risk).</dd>
+    </dl>
+  </div>
+
+  <div class="card bk-must">
+    <h3><span class="name">KEITH Mfg. Co.</span><span class="booth">C12990</span></h3>
+    <span class="b b-ver">Booth Verified</span><span class="b b-pass">Hard Gate PASS</span><span class="b b-tier2">WNC Tier 1-2</span><span class="b b-inf">Hall C (inferred)</span>
+    <dl class="field">
+      <dt>Bucket</dt><dd>Must Hit (Phil ownership override)</dd>
+      <dt>Verified Booth</dt><dd>C12990 · Hall C (inferred)</dd>
+      <dt>Why good</dt><dd>Madras, OR · US family-owned manufacturer · 250+ patents · Freight Runner dock-to-trailer. Drop-in modular product = repeatable install pattern, which is the multi-site motion IXON fits.</dd>
+      <dt>Why weak</dt><dd>Controls platform on Freight Runner is NOT stated in file. Could be light PLC / bespoke controller.</dd>
+      <dt>What must be true</dt><dd>Freight Runner ships with a PLC or controller that talks to an IXrouter. Growing install base across distribution sites. Service engineers connect remotely today.</dd>
+      <dt>Biggest risk</dt><dd>Low-automation mechanical product with minimal controls = thin remote-platform pain. Prove or disprove in 5 minutes.</dd>
+      <dt>Opening angle</dt><dd>"The Freight Runner drop-in design is interesting — when a customer deploys 4 or 5 of them, how does your team get eyes on them remotely?"</dd>
+      <dt>Best next step</dt><dd>Product manager or service lead. Confirm PLC brand and HMI. If controls-rich + install base + service motion, set follow-up.</dd>
+      <dt>Data confidence</dt><dd>Identity, HQ, product, size = VERIFIED. Controls platform + service motion = NOT VERIFIED.</dd>
+    </dl>
+  </div>
+
+  <div class="card bk-must">
+    <h3><span class="name">Cornerstone Automation Systems (CASI)</span><span class="booth">C10577</span></h3>
+    <span class="b b-ver">Booth Verified</span><span class="b b-pass">Hard Gate PASS</span><span class="b b-tier2">WNC Tier 1-2</span><span class="b b-inf">Hall C (inferred)</span>
+    <dl class="field">
+      <dt>Bucket</dt><dd>Must Hit · file flags "sweet spot"</dd>
+      <dt>Verified Booth</dt><dd>C10577 · Hall C (inferred)</dd>
+      <dt>Why good</dt><dd>Frisco, TX · US manufacturer · conveyors, sortation, shipping/receiving · ~51-100 emp · file-tagged ICP sweet spot.</dd>
+      <dt>What must be true</dt><dd>Ships their own controls. Deployed retail/ecomm/3PL base generates service volume. No lock-in.</dd>
+      <dt>Biggest risk</dt><dd>At 51-100 emp, service engineering bench may be thin — early-stage fleet scale pain.</dd>
+      <dt>Opening angle</dt><dd>"First and last 100 feet — what's your service approach when a customer calls about a sorter on Saturday?"</dd>
+      <dt>Best next step</dt><dd>Service/aftermarket owner. Scope pilot on 2-3 representative sites. SecureEdge Pro if edge apps are relevant.</dd>
+      <dt>Data confidence</dt><dd>Identity, HQ, scope, size = VERIFIED. Service P&amp;L maturity = NOT VERIFIED.</dd>
+    </dl>
+  </div>
+
+  <div class="card bk-must">
+    <h3><span class="name">Russell Conveyor &amp; Equipment</span><span class="booth">C11199</span></h3>
+    <span class="b b-ver">Booth Verified</span><span class="b b-pass">Hard Gate PASS</span><span class="b b-tier2">WNC Tier 1-2</span><span class="b b-inf">Hall C (inferred)</span>
+    <dl class="field">
+      <dt>Bucket</dt><dd>Must Hit</dd>
+      <dt>Verified Booth</dt><dd>C11199 · Hall C (inferred)</dd>
+      <dt>Why good</dt><dd>Dawsonville, GA · family-owned US OEM · ~50-100 emp · MDR conveyors, AGVs, automation. MDR+AGV = controls-rich, service-relevant.</dd>
+      <dt>What must be true</dt><dd>Install base justifies fleet-level remote standardization. No preferred partner already locked in.</dd>
+      <dt>Biggest risk</dt><dd>At ~50-100 emp, may do custom project work with low repeatability.</dd>
+      <dt>Opening angle</dt><dd>"MDR and AGV builds produce rich machine data — are you exposing that to customers, or keeping internal for service? What's the connectivity layer?"</dd>
+      <dt>Best next step</dt><dd>Engineering or aftermarket leader. Confirm repeatable-vs-custom mix. GA HQ = easy follow-up.</dd>
+      <dt>Data confidence</dt><dd>Identity, HQ, scope, size = VERIFIED. Repeatability profile = NOT VERIFIED.</dd>
+    </dl>
+  </div>
+
+  <div class="card bk-must">
+    <h3><span class="name">Roach Conveyors</span><span class="booth">B16932</span></h3>
+    <span class="b b-ver">Booth Verified</span><span class="b b-pass">Hard Gate PASS</span><span class="b b-tier1">WNC Tier 1</span><span class="b b-inf">Hall B (inferred)</span>
+    <dl class="field">
+      <dt>Bucket</dt><dd>Must Hit</dd>
+      <dt>Verified Booth</dt><dd>B16932 · Hall B (inferred)</dd>
+      <dt>Why good</dt><dd>Trumann, AR · US conveyor OEM since 1953 · vertically integrated · made in USA · ~60 emp. Tenure + vertical integration = standardized platform.</dd>
+      <dt>Why weak</dt><dd>Classic conveyor business — controls may be minimal or customer-supplied. Traditional OEMs sometimes lag on digital service motion.</dd>
+      <dt>What must be true</dt><dd>Ship their own PLC (or allow one). Run a service/parts motion. Open to a connectivity partner.</dd>
+      <dt>Biggest risk</dt><dd>Customer-specified controls = Roach isn't the buyer, the downstream integrator is.</dd>
+      <dt>Opening angle</dt><dd>"72 years of conveyors — when customers call for service, do you connect remotely or does that fall to the integrator who installed? Where does your service line end?"</dd>
+      <dt>Best next step</dt><dd>Qualify fast on controls ownership + service scope. If Roach owns post-install, push. If they hand off at delivery, deprioritize.</dd>
+      <dt>Data confidence</dt><dd>Identity, tenure, HQ, vertical integration, size = VERIFIED. Controls ownership = NOT VERIFIED.</dd>
+    </dl>
+  </div>
+</div>
+
+<!-- ============== SOLID ============== -->
+<div class="bucket">
+  <div class="bucket-head"><span class="bucket-tag bk-solid">Solid</span><span style="font-size:12px;color:var(--grey)">5 accounts · hard gate PASS · hit after Must Hit</span></div>
+
+  <div class="card bk-solid">
+    <h3><span class="name">KPI Solutions</span><span class="booth">B15111</span></h3>
+    <span class="b b-ver">Booth Verified</span><span class="b b-pass">Hard Gate PASS</span><span class="b b-tier2">WNC Tier 2</span><span class="b b-inf">Hall B (inferred)</span>
+    <dl class="field">
+      <dt>Bucket</dt><dd>Solid</dd>
+      <dt>Verified Booth</dt><dd>B15111 · Hall B (inferred)</dd>
+      <dt>Why good</dt><dd>US supply-chain automation SI · ~100-300 emp · "technology-neutral" = open to third-party connectivity. Runs Opto WES — orchestration, not remote access.</dd>
+      <dt>What must be true</dt><dd>Opto doesn't solve remote engineer access. They sell lifetime services and feel scale pain.</dd>
+      <dt>Biggest risk</dt><dd>Opto expands into remote monitoring.</dd>
+      <dt>Opening angle</dt><dd>"What do your lifetime-services engineers use when they hop onto a live customer site?"</dd>
+      <dt>Best next step</dt><dd>Qualify Opto scope vs. remote access. If disjoint, push.</dd>
+      <dt>Data confidence</dt><dd>Identity, scale, platform name = VERIFIED. Opto scope = INFERENCE.</dd>
+    </dl>
+  </div>
+
+  <div class="card bk-solid">
+    <h3><span class="name">DMW&amp;H</span><span class="booth">B14532</span></h3>
+    <span class="b b-ver">Booth Verified</span><span class="b b-pass">Hard Gate PASS</span><span class="b b-tier2">WNC Tier 2</span><span class="b b-inf">Hall B (inferred)</span>
+    <dl class="field">
+      <dt>Bucket</dt><dd>Solid</dd>
+      <dt>Verified Booth</dt><dd>B14532 · Hall B (inferred)</dd>
+      <dt>Why good</dt><dd>US-based MH SI · 60+ years · 100-500 emp. Tenure = install base.</dd>
+      <dt>What must be true</dt><dd>Own post-install service motion (not design-and-hand-off). Repeat customer pattern.</dd>
+      <dt>Biggest risk</dt><dd>Pure-SI shops often hand off at go-live; service thin.</dd>
+      <dt>Opening angle</dt><dd>"60 years of integrations is a huge install base — how much recurring service revenue do you run, and how do you connect back?"</dd>
+      <dt>Best next step</dt><dd>Service or engineering leader. Confirm recurring motion.</dd>
+      <dt>Data confidence</dt><dd>Identity, tenure, role = VERIFIED. Service P&amp;L = NOT VERIFIED.</dd>
+    </dl>
+  </div>
+
+  <div class="card bk-solid">
+    <h3><span class="name">Designed Conveyor Systems (DCS)</span><span class="booth">B15511</span></h3>
+    <span class="b b-ver">Booth Verified</span><span class="b b-pass">Hard Gate PASS</span><span class="b b-tier2">WNC Tier 1-2</span><span class="b b-inf">Hall B (inferred)</span>
+    <dl class="field">
+      <dt>Bucket</dt><dd>Solid</dd>
+      <dt>Verified Booth</dt><dd>B15511 · Hall B (inferred)</dd>
+      <dt>Why good</dt><dd>Franklin, TN · brand-agnostic US SI since 1982 · 50-200 emp. Brand-agnostic = open to third-party components.</dd>
+      <dt>What must be true</dt><dd>Post-install support exists. Not locked into a vendor's remote stack.</dd>
+      <dt>Biggest risk</dt><dd>"Let the customer pick" posture = low standardization pressure.</dd>
+      <dt>Opening angle</dt><dd>"Brand-agnostic is a good story — do your customers end up with different remote connectivity every site, or do you steer them?"</dd>
+      <dt>Best next step</dt><dd>Probe service model. Consider partner/referral play.</dd>
+      <dt>Data confidence</dt><dd>Identity, HQ, SI model = VERIFIED. Preferred-stack behavior = NOT VERIFIED.</dd>
+    </dl>
+  </div>
+
+  <div class="card bk-solid">
+    <h3><span class="name">Conveyco Technologies</span><span class="booth">B12323</span></h3>
+    <span class="b b-ver">Booth Verified</span><span class="b b-pass">Hard Gate PASS</span><span class="b b-tier2">WNC Tier 1-2</span><span class="b b-inf">Hall B (inferred)</span>
+    <dl class="field">
+      <dt>Bucket</dt><dd>Solid</dd>
+      <dt>Verified Booth</dt><dd>B12323 · Hall B (inferred)</dd>
+      <dt>Why good</dt><dd>US SI · controls expertise · 50-200 emp. Runs "New Dawn" WES — orchestration, not remote access.</dd>
+      <dt>What must be true</dt><dd>Controls team large enough to feel remote-diagnostic pain.</dd>
+      <dt>Biggest risk</dt><dd>New Dawn scope may be expanding.</dd>
+      <dt>Opening angle</dt><dd>"Your controls team is a differentiator — what do they use when jumping on a customer PLC after go-live?"</dd>
+      <dt>Best next step</dt><dd>Meet the controls lead specifically. Qualify overlap vs. complement.</dd>
+      <dt>Data confidence</dt><dd>Identity, role, platform = VERIFIED. Scope = INFERENCE.</dd>
+    </dl>
+  </div>
+
+  <div class="card bk-solid">
+    <h3><span class="name">Balemaster</span><span class="booth">B15650</span></h3>
+    <span class="b b-ver">Booth Verified</span><span class="b b-pass">Hard Gate PASS</span><span class="b b-tier3">WNC Tier 2-3</span><span class="b b-inf">Hall B (inferred)</span>
+    <dl class="field">
+      <dt>Bucket</dt><dd>Solid · file explicitly flags PLC controls</dd>
+      <dt>Verified Booth</dt><dd>B15650 · Hall B (inferred)</dd>
+      <dt>Why good</dt><dd>US OEM · ~100-1000 emp · auto-tie balers with PLC controls (file-explicit). PLC is the qualifier most OEMs lack.</dd>
+      <dt>What must be true</dt><dd>Install base across waste/recycling/mfg has recurring service demand.</dd>
+      <dt>Biggest risk</dt><dd>Baler = single-machine product. Customer sites usually have 1-2 machines, not a fleet. Per-customer rollout thin.</dd>
+      <dt>Opening angle</dt><dd>"Your baler has PLC controls — what happens when a California customer throws a fault at 2am Tuesday?"</dd>
+      <dt>Best next step</dt><dd>Confirm service model and install density. Heavy field service = push.</dd>
+      <dt>Data confidence</dt><dd>Identity, PLC, product = VERIFIED. Install density = NOT VERIFIED.</dd>
+    </dl>
+  </div>
+</div>
+
+<!-- ============== QUALIFY FAST ============== -->
+<div class="bucket">
+  <div class="bucket-head"><span class="bucket-tag bk-qf">Qualify Fast</span><span style="font-size:12px;color:var(--grey)">5 accounts · 5-min probe max · cut loose if weak signal</span></div>
+
+  <div class="card bk-qf">
+    <h3><span class="name">Robopac USA <span style="font-weight:400;color:var(--grey);font-size:12px">(downgraded from Must Hit)</span></span><span class="booth">C14764</span></h3>
+    <span class="b b-ver">Booth Verified</span><span class="b b-flag">Hard Gate FLAGGED</span><span class="b b-tier2">WNC Tier 1-2</span><span class="b b-inf">Hall C (inferred)</span>
+    <dl class="field">
+      <dt>Bucket</dt><dd>Qualify Fast (confirm US mfg depth on floor)</dd>
+      <dt>Verified Booth</dt><dd>C14764 · Hall C (inferred)</dd>
+      <dt>Why weak (hard gate)</dt><dd>Duluth, GA "US facility" — Italian parent. File language ambiguous whether this is US manufacturing or US assembly/distribution/service. Exec brief hard gate requires confirmed US/CA manufacturing presence.</dd>
+      <dt>Why good</dt><dd>Builds end-of-line packaging (stretch wrappers, case packers, palletizers) AND LGVs. LGV = controls-rich.</dd>
+      <dt>What must be true</dt><dd>Duluth actually manufactures (not just assembles). US unit has autonomy on service-tooling decisions.</dd>
+      <dt>Biggest risk</dt><dd>Group-level platform mandate out of Italy. US = service arm without decision rights.</dd>
+      <dt>Opening angle</dt><dd>"Is the LGV built here in Duluth or shipped from Italy? And does your US service team own the remote-platform decision, or is it dictated from the parent?"</dd>
+      <dt>Best next step</dt><dd><b>5 minutes max.</b> Confirm US mfg depth + US decision rights. If fails either test, move on.</dd>
+      <dt>Data confidence</dt><dd>Booth, US facility, product = VERIFIED. US mfg depth + decision authority = NOT VERIFIED (critical).</dd>
+    </dl>
+  </div>
+
+  <div class="card bk-qf">
+    <h3><span class="name">Amerden AGVS</span><span class="booth">A1127</span></h3>
+    <span class="b b-ver">Booth Verified</span><span class="b b-pass">Hard Gate PASS</span><span class="b b-tier1">WNC Tier 1</span><span class="b b-inf">Hall A (inferred)</span>
+    <dl class="field">
+      <dt>Bucket</dt><dd>Qualify Fast</dd>
+      <dt>Verified Booth</dt><dd>A1127 · Hall A (inferred)</dd>
+      <dt>Why good</dt><dd>St. Augustine, FL · US AGV mfg since 1988 · 11-50 emp. AGV = controls-heavy.</dd>
+      <dt>Why weak</dt><dd>Small headcount. Custom-engineered systems per file — low repeatability.</dd>
+      <dt>What must be true</dt><dd>Standard controls platform across customers. Service/support is a line item.</dd>
+      <dt>Biggest risk</dt><dd>Too custom, too small, no standardized remote-service motion.</dd>
+      <dt>Opening angle</dt><dd>"AGV service means tech truck rolls. Built a remote layer that keeps techs off the road?"</dd>
+      <dt>Best next step</dt><dd>5-min scale and repeatability probe.</dd>
+      <dt>Data confidence</dt><dd>Identity, HQ, product, size = VERIFIED. Standardization maturity = NOT VERIFIED.</dd>
+    </dl>
+  </div>
+
+  <div class="card bk-qf">
+    <h3><span class="name">SRS Conveyors</span><span class="booth">A1314</span></h3>
+    <span class="b b-ver">Booth Verified</span><span class="b b-pass">Hard Gate PASS</span><span class="b b-tier1">WNC Tier 1</span><span class="b b-inf">Hall A (inferred)</span>
+    <dl class="field">
+      <dt>Bucket</dt><dd>Qualify Fast</dd>
+      <dt>Verified Booth</dt><dd>A1314 · Hall A (inferred)</dd>
+      <dt>Why good</dt><dd>Bartow, FL + Markham, Canada. US &amp; Canada footprint = hard gate PASS. GOH, e-comm, assembly.</dd>
+      <dt>Why weak</dt><dd>~20+ emp. Service engineering capacity likely nascent.</dd>
+      <dt>What must be true</dt><dd>Growing US/Canada install base with real service motion.</dd>
+      <dt>Biggest risk</dt><dd>Too small, too project-oriented.</dd>
+      <dt>Opening angle</dt><dd>"GOH and e-comm = downtime is brutal. How do customers reach you when something throws?"</dd>
+      <dt>Best next step</dt><dd>Install base size probe. &gt;50 sites = pursue.</dd>
+      <dt>Data confidence</dt><dd>Identity, HQ, product = VERIFIED. Install scale = NOT VERIFIED.</dd>
+    </dl>
+  </div>
+
+  <div class="card bk-qf">
+    <h3><span class="name">Pendant Automation</span><span class="booth">A1901</span></h3>
+    <span class="b b-ver">Booth Verified</span><span class="b b-pass">Hard Gate PASS</span><span class="b b-tier1">WNC Tier 1</span><span class="b b-inf">Hall A (inferred)</span>
+    <dl class="field">
+      <dt>Bucket</dt><dd>Qualify Fast (coopetition risk)</dd>
+      <dt>Verified Booth</dt><dd>A1901 · Hall A (inferred)</dd>
+      <dt>Why weak</dt><dd>Owns software platform "Revolution Street WXS" — connects to control systems for real-time data/visualization "beyond traditional HMI and SCADA." Overlaps IXON's data/visualization layer.</dd>
+      <dt>Why good</dt><dd>Full-service automation/controls integrator. If WXS is on-prem HMI replacement, still needs remote-tunnel.</dd>
+      <dt>What must be true</dt><dd>WXS does not compete. They serve MH OEMs who need a connectivity layer WXS doesn't provide.</dd>
+      <dt>Biggest risk</dt><dd>WXS is a direct competitor in thin disguise.</dd>
+      <dt>Opening angle</dt><dd>"WXS sounds like an on-prem data/visualization play — does it handle the remote-tunnel-to-a-locked-down-customer-site problem, or is that still a gap?"</dd>
+      <dt>Best next step</dt><dd>5 minutes. Overlap → disengage.</dd>
+      <dt>Data confidence</dt><dd>Identity, WXS existence = VERIFIED. Overlap severity = INFERENCE.</dd>
+    </dl>
+  </div>
+
+  <div class="card bk-qf">
+    <h3><span class="name">Spring Automation</span><span class="booth">B14119</span></h3>
+    <span class="b b-ver">Booth Verified</span><span class="b b-pass">Hard Gate PASS</span><span class="b b-tier1">WNC Tier 1</span><span class="b b-inf">Hall B (inferred)</span>
+    <dl class="field">
+      <dt>Bucket</dt><dd>Qualify Fast (channel play, not direct-sell)</dd>
+      <dt>Verified Booth</dt><dd>B14119 · Hall B (inferred)</dd>
+      <dt>Why good</dt><dd>US design-build controls firm serving MH OEMs/integrators · 20-50 emp. PLC/HMI/panel fab/install = IXON-adjacent skillset.</dd>
+      <dt>Why weak</dt><dd>Small controls shops sometimes want to own remote-connectivity themselves as billable scope — see IXON as disintermediation.</dd>
+      <dt>What must be true</dt><dd>They want to partner/resell a connectivity standard rather than build custom.</dd>
+      <dt>Biggest risk</dt><dd>Ego/scope — they view connectivity as their job.</dd>
+      <dt>Opening angle</dt><dd>"Your OEM customers ship globally — are you standing up a one-off VPN on every panel, or have you found a repeatable connectivity spec?"</dd>
+      <dt>Best next step</dt><dd>Partner posture probe. If open, channel play.</dd>
+      <dt>Data confidence</dt><dd>Identity, role, size = VERIFIED. Partner posture = NOT VERIFIED.</dd>
+    </dl>
+  </div>
+</div>
+
+<!-- ============== LOW PRIORITY ============== -->
+<div class="bucket">
+  <div class="bucket-head"><span class="bucket-tag bk-low">Low Priority / Likely Weak</span><span style="font-size:12px;color:var(--grey)">3 accounts · skip unless route passes by · minimal time</span></div>
+
+  <div class="card bk-low">
+    <h3><span class="name">CASSIOLI Srl <span style="font-weight:400;color:var(--grey);font-size:12px">(downgraded from Solid)</span></span><span class="booth">A2118</span></h3>
+    <span class="b b-ver">Booth Verified</span><span class="b b-fail">Hard Gate likely FAILS</span><span class="b b-tier2">WNC Tier 2</span><span class="b b-inf">Hall A (inferred)</span>
+    <dl class="field">
+      <dt>Bucket</dt><dd>Low Priority</dd>
+      <dt>Verified Booth</dt><dd>A2118 · Hall A (inferred)</dd>
+      <dt>Why weak (hard gate)</dt><dd>File explicitly says <i>"Italy (US: Birmingham, AL)"</i> — Italy is HQ and manufacturing. US footprint = sales/service office. Per exec brief, that's the type of account the hard gate exists to screen out.</dd>
+      <dt>What must be true</dt><dd>Birmingham actually manufactures CASSIOLI machines in the US AND US unit has autonomy on platform decisions. Both unlikely given file description.</dd>
+      <dt>Biggest risk</dt><dd>Decision sits in Italy; US is a satellite.</dd>
+      <dt>Opening angle</dt><dd>"Does Birmingham manufacture CASSIOLI systems or primarily handle US sales and service?"</dd>
+      <dt>Best next step</dt><dd>2-minute ask at booth. If confirmed Italy-mfg, log and move on.</dd>
+      <dt>Data confidence</dt><dd>HQ in Italy, US office = VERIFIED (file explicit). US mfg = NOT VERIFIED (likely fails).</dd>
+    </dl>
+  </div>
+
+  <div class="card bk-low">
+    <h3><span class="name">Handling Systems International Inc.</span><span class="booth">B14654</span></h3>
+    <span class="b b-ver">Booth Verified</span><span class="b b-pass">Hard Gate PASS</span><span class="b b-tier1">WNC Tier 1</span><span class="b b-inf">Hall B (inferred)</span>
+    <dl class="field">
+      <dt>Bucket</dt><dd>Low Priority (product fit, not hard gate)</dd>
+      <dt>Verified Booth</dt><dd>B14654 · Hall B (inferred)</dd>
+      <dt>Why weak</dt><dd>"Overhead Cranes and Hoists." US-based 60+ years. Cranes = low automation density. Typical controls footprint is pendant + simple contactor logic — not PLC fleet motion.</dd>
+      <dt>What must be true</dt><dd>Modernized cranes with PLC + Industry 4.0 telemetry + post-install service motion. Low probability.</dd>
+      <dt>Biggest risk</dt><dd>Classic hoist/crane = no remote-service-platform pain at IXON depth.</dd>
+      <dt>Opening angle</dt><dd>"Any PLC-driven telemetry on your cranes, or mostly mechanical + pendant?"</dd>
+      <dt>Best next step</dt><dd>2-minute ask. Mechanical-only → move on.</dd>
+      <dt>Data confidence</dt><dd>Identity, product = VERIFIED. IXON fit = INFERENCE (negative).</dd>
+    </dl>
+  </div>
+
+  <div class="card bk-low">
+    <h3><span class="name">White Systems <span style="font-weight:400;color:var(--grey);font-size:12px">(Phil listed as "IJ White Systems")</span></span><span class="booth">B9319</span></h3>
+    <span class="b b-ver">Booth Verified</span><span class="b b-nv">Identity Not Verified</span><span class="b b-nv">Hard Gate UNKNOWN</span><span class="b b-inf">Hall B (inferred)</span>
+    <dl class="field">
+      <dt>Bucket</dt><dd>Low Priority / Verify ID first</dd>
+      <dt>Verified Booth</dt><dd>B9319 · Hall B (inferred)</dd>
+      <dt>Why weak</dt><dd>In "Needs Research" sheet with NO description, NO website, NO employee count. Name in file is "White Systems" — not "IJ White Systems." May or may not be same company.</dd>
+      <dt>What must be true</dt><dd>B9319 is actually IJ White Systems of Kenilworth, NJ (spiral conveyor/storage mfg). If yes, potentially ICP-relevant.</dd>
+      <dt>Biggest risk</dt><dd>Different company entirely.</dd>
+      <dt>Opening angle</dt><dd>"Are you IJ White Systems of Kenilworth, NJ?"</dd>
+      <dt>Best next step</dt><dd>60-second identity check. Then decide.</dd>
+      <dt>Data confidence</dt><dd>Booth and "White Systems" name = VERIFIED. Everything else = NOT VERIFIED.</dd>
+    </dl>
+  </div>
+</div>
+
+<!-- ============== SECTION A ============== -->
+<div class="section">
+  <h2>Section A — Top 10 Floor Attack Order</h2>
+  <p style="font-size:12.5px;color:var(--grey);margin:4px 0 8px">Priority order (hit these first, regardless of route). Post-validation: Robopac drops from the Must Hit group, Balemaster rises into top 10.</p>
+  <div class="route">
+  <table>
+    <tr><th style="width:30px">#</th><th>Account</th><th>Booth</th><th>Why first</th></tr>
+    <tr><td>1</td><td><b>The Bradbury Group</b></td><td>A5910</td><td>Tier 3 US OEM, 625 emp, real controls. Anchor the day.</td></tr>
+    <tr><td>2</td><td><b>Trew</b></td><td>B14761, B15161</td><td>Exec brief names as Phil's top prospect ($367M). Two booths.</td></tr>
+    <tr><td>3</td><td><b>Hy-Tek Intralogistics</b></td><td>B16306</td><td>Exec brief names as Phil's top prospect ($200M). IntraOne overlap — qualify fast.</td></tr>
+    <tr><td>4</td><td><b>KEITH Mfg. Co.</b></td><td>C12990</td><td>Phil ownership override. Drop-in product = scale story.</td></tr>
+    <tr><td>5</td><td><b>Cornerstone Automation (CASI)</b></td><td>C10577</td><td>File-flagged "sweet spot." Right size.</td></tr>
+    <tr><td>6</td><td><b>Russell Conveyor &amp; Equipment</b></td><td>C11199</td><td>US MDR+AGV, GA = easy follow-up.</td></tr>
+    <tr><td>7</td><td><b>Roach Conveyors</b></td><td>B16932</td><td>72-yr US mfg, standardized platform likely.</td></tr>
+    <tr><td>8</td><td><b>Balemaster</b></td><td>B15650</td><td>US OEM 100-1000 emp, file-explicit PLC controls.</td></tr>
+    <tr><td>9</td><td><b>KPI Solutions</b></td><td>B15111</td><td>Top Solid SI, technology-neutral stance.</td></tr>
+    <tr><td>10</td><td><b>DMW&amp;H</b></td><td>B14532</td><td>60-year US SI with install base.</td></tr>
+  </table>
+  </div>
+</div>
+
+<!-- ============== SECTION B ============== -->
+<div class="section">
+  <h2>Section B — Walking Route Logic</h2>
+  <p style="font-size:12.5px;color:var(--grey);margin:4px 0 8px">Route by booth-number proximity within each hall. Minimizes backtracking. Hall A = 5, Hall B = 12 rows (Trew has 2 booths), Hall C = 4.</p>
+
+  <h3 style="margin-top:10px">Hall A — ascending booth</h3>
+  <div class="route">
+  <table>
+    <tr><th>Order</th><th>Booth</th><th>Account</th><th>Bucket</th></tr>
+    <tr><td>A-1</td><td>A1127</td><td>Amerden AGVS</td><td>Qualify Fast</td></tr>
+    <tr><td>A-2</td><td>A1314</td><td>SRS Conveyors</td><td>Qualify Fast</td></tr>
+    <tr><td>A-3</td><td>A1901</td><td>Pendant Automation</td><td>Qualify Fast</td></tr>
+    <tr><td>A-4</td><td>A2118</td><td>CASSIOLI Srl (likely skip)</td><td>Low Priority</td></tr>
+    <tr><td>A-5</td><td>A5910</td><td><b>The Bradbury Group</b></td><td><b>Must Hit</b></td></tr>
+  </table>
+  </div>
+
+  <h3 style="margin-top:14px">Hall B — ascending booth</h3>
+  <div class="route">
+  <table>
+    <tr><th>Order</th><th>Booth</th><th>Account</th><th>Bucket</th></tr>
+    <tr><td>B-1</td><td>B9319</td><td>White Systems (verify ID)</td><td>Low Priority</td></tr>
+    <tr><td>B-2</td><td>B12323</td><td>Conveyco Technologies</td><td>Solid</td></tr>
+    <tr><td>B-3</td><td>B14119</td><td>Spring Automation</td><td>Qualify Fast</td></tr>
+    <tr><td>B-4</td><td>B14532</td><td>DMW&amp;H</td><td>Solid</td></tr>
+    <tr><td>B-5</td><td>B14654</td><td>Handling Systems Intl (likely skip)</td><td>Low Priority</td></tr>
+    <tr><td>B-6</td><td>B14761</td><td><b>Trew (booth 1)</b></td><td><b>Must Hit</b></td></tr>
+    <tr><td>B-7</td><td>B15111</td><td>KPI Solutions</td><td>Solid</td></tr>
+    <tr><td>B-8</td><td>B15161</td><td><b>Trew (booth 2)</b></td><td><b>Must Hit</b></td></tr>
+    <tr><td>B-9</td><td>B15511</td><td>Designed Conveyor Systems (DCS)</td><td>Solid</td></tr>
+    <tr><td>B-10</td><td>B15650</td><td>Balemaster</td><td>Solid</td></tr>
+    <tr><td>B-11</td><td>B16306</td><td><b>Hy-Tek Intralogistics</b></td><td><b>Must Hit</b></td></tr>
+    <tr><td>B-12</td><td>B16932</td><td><b>Roach Conveyors</b></td><td><b>Must Hit</b></td></tr>
+  </table>
+  </div>
+
+  <h3 style="margin-top:14px">Hall C — ascending booth</h3>
+  <div class="route">
+  <table>
+    <tr><th>Order</th><th>Booth</th><th>Account</th><th>Bucket</th></tr>
+    <tr><td>C-1</td><td>C10577</td><td><b>Cornerstone Automation (CASI)</b></td><td><b>Must Hit</b></td></tr>
+    <tr><td>C-2</td><td>C11199</td><td><b>Russell Conveyor &amp; Equipment</b></td><td><b>Must Hit</b></td></tr>
+    <tr><td>C-3</td><td>C12990</td><td><b>KEITH Mfg. Co.</b></td><td><b>Must Hit</b></td></tr>
+    <tr><td>C-4</td><td>C14764</td><td>Robopac USA (qualify fast, hard-gate flagged)</td><td>Qualify Fast</td></tr>
+  </table>
+  </div>
+
+  <p style="font-size:12.5px;color:var(--grey);margin-top:10px"><b>Tight-time sweep (6 booths, high conviction):</b> Bradbury (A5910) → Trew (B14761) → Hy-Tek (B16306) → Roach (B16932) → Russell (C11199) → KEITH (C12990).</p>
+</div>
+
+<!-- ============== SECTION C ============== -->
+<div class="section">
+  <h2>Section C — 5 Fast Disqualification Questions</h2>
+  <p style="font-size:12.5px;color:var(--grey);margin:4px 0 8px">Ask in sequence. Know in 5 minutes whether the account is real IXON potential or noise. First question is the exec brief hard gate.</p>
+
+  <div class="q"><b>1. HARD GATE — US/CA manufacturing presence.</b> "Where are your machines/systems manufactured — here in the US or at a parent facility abroad?"<br>
+  <span style="color:var(--grey);font-size:11.5px">→ US/CA = proceed. Imported = stop. This is the exec brief's hard qualifier.</span></div>
+
+  <div class="q"><b>2. Controls platform ownership.</b> "On the machines or systems you ship, who picks the PLC — you standardize on Siemens/Rockwell/B&amp;R, or is it customer-spec every project?"<br>
+  <span style="color:var(--grey);font-size:11.5px">→ Standardization = IXON fit. Customer-spec = they're not the buyer, the downstream integrator is.</span></div>
+
+  <div class="q"><b>3. Install base density.</b> "How many systems or machines do you have deployed out there that you still support today?"<br>
+  <span style="color:var(--grey);font-size:11.5px">→ &lt;50 = too early for fleet standardization. &gt;200 = real scale pain.</span></div>
+
+  <div class="q"><b>4. Remote-service method today.</b> "When a customer calls at 2am because a line is down, how does your team get eyes on the machine — truck roll, customer VPN, TeamViewer, or a platform?"<br>
+  <span style="color:var(--grey);font-size:11.5px">→ Truck roll / bespoke VPN = pure IXON pain. "A platform" = qualify which one, fast (overlap risk).</span></div>
+
+  <div class="q"><b>5. Service P&amp;L posture.</b> "Is remote service a revenue line for you today or a cost center?"<br>
+  <span style="color:var(--grey);font-size:11.5px">→ Revenue line = leadership is incented to invest. Cost center = budget battle.</span></div>
+</div>
+
+<!-- ============== SECTION D ============== -->
+<div class="section">
+  <h2>Section D — Red-Team Myself</h2>
+  <p style="font-size:12.5px;color:var(--grey);margin:4px 0 8px">Where my judgment is weak, uncertain, or heavily inferential. Read before trusting any bucket.</p>
+
+  <div class="q redteam"><b>1. Hall letters are inferred.</b> Workbook's Hall column shows "B" for all 1,087 exhibitors — data artifact. I've inferred Hall A/B/C from booth-number prefix per MODEX/GWCC convention. Confirm on the printed venue map.</div>
+
+  <div class="q redteam"><b>2. Booth numbers come from the uploaded workbook — not re-verified against the official show directory in this session.</b> Prior outputs fabricated booths. This brief does NOT. But if the workbook was wrong at assembly, it's wrong now. <b>Cross-check at the venue entrance before walking.</b></div>
+
+  <div class="q redteam"><b>3. Bucket placements mix Phil's opinion with my hard-gate/WNC-tier reasoning.</b> Divergences from Phil's original view: (a) Robopac downgraded to Qualify Fast due to Italian-parent hard-gate flag; (b) CASSIOLI downgraded to Low Priority — file language indicates machines built in Italy. If Phil wants either kept at original bucket, override me explicitly.</div>
+
+  <div class="q redteam"><b>4. Pendant Automation (WXS) may be a direct competitor.</b> Description overlaps IXON's data/visualization layer. Qualify Fast with coopetition flag; real case for Low Priority. Phil's call.</div>
+
+  <div class="q redteam"><b>5. Hy-Tek's IntraOne could already solve part of IXON's pitch.</b> Description is orchestration-heavy. Listed at #3 despite the overlap risk <b>only</b> because the exec brief names Hy-Tek as a top Phil prospect ($200M). Qualify the overlap fast — be willing to cut if IntraOne covers the same ground.</div>
+
+  <div class="q redteam"><b>6. White Systems ≠ verified IJ White Systems.</b> Name mismatch. Could be a different company. 60-second ID check before any further investment.</div>
+
+  <div class="q redteam"><b>7. Trew has TWO booths.</b> B14761 and B15161 — reason unknown (two product lines? meeting space? twin branding?). Ask the first rep.</div>
+
+  <div class="q redteam"><b>8. WNC Tier labels are pre-show estimates per the exec brief's v1 model.</b> They use employee-count ranges and OEM/SI classification. Not audited. Fine for bucketing; don't quote them as numbers.</div>
+
+  <div class="q redteam"><b>9. I did not independently research any account beyond the two uploaded files</b> (workbook + exec brief). No web search, no LinkedIn, no public filings. By design, per Phil's zero-fabrication rules.</div>
+
+  <div class="q redteam"><b>10. Hard gate calls on Robopac and CASSIOLI are based on file language, not direct confirmation.</b> If Robopac's Duluth facility is in fact a real US manufacturing site, move back to Must Hit on the floor. If CASSIOLI's Birmingham office handles US mfg assembly (unlikely from description but possible), re-qualify.</div>
+</div>
+
+<div class="footer">
+  MODEX 2026 · Phil Belue · Validated against <code>modex-2026-qualified-leads-17eeab1b.xlsx</code> + <code>modex-2026-command-center-exec-brief.html</code> · No external sources · Zero-fabrication · Cross-check booths at venue
+</div>
+
+</div>
+</body>
+</html>
