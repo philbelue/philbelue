@@ -2171,9 +2171,9 @@ function openSettings() {
       <div style="font-size:11px;color:var(--gray);margin-top:4px">Shows who made each update</div>
     </div>
     <div class="settings-field" style="margin-top:12px">
-      <div class="settings-label">Google Apps Script URL</div>
-      <input class="settings-input" id="syncUrlInput" placeholder="https://script.google.com/macros/s/.../exec" value="${state.syncUrl}" style="font-size:11px">
-      <div style="font-size:11px;color:var(--gray);margin-top:4px">Phil sets this up once. Team gets it via invite link.</div>
+      <div class="settings-label">Sync API URL (Vercel)</div>
+      <input class="settings-input" id="syncUrlInput" placeholder="https://ixon-modex-sync.vercel.app" value="${state.syncUrl}" style="font-size:11px">
+      <div style="font-size:11px;color:var(--gray);margin-top:4px">Phil pastes his Vercel URL here once. Team gets it via invite link.</div>
     </div>
     ${state.syncUrl ? '<button class="settings-save" style="background:#059669;color:white;margin-bottom:8px" onclick="copyInviteLink()">&#128279; Copy Invite Link for Team</button>' : ''}
     <button class="settings-save" onclick="saveSettings()">Save Settings</button>
@@ -2274,9 +2274,18 @@ function copyJSON() {
   closeSettings();
 }
 
-// ── GOOGLE SHEETS SYNC (iframe POST + JSONP GET — bypasses CORS) ──
+// ── VERCEL SYNC (real fetch API — no CORS hacks needed) ──
 let _syncTimer = null;
 let _lastSync = null;
+const SYNC_ROOM = "modex2026";
+
+function syncEndpoint() {
+  if (!state.syncUrl) return "";
+  // Accept either "https://host" or "https://host/api/sync" — normalize.
+  var base = state.syncUrl.replace(/\/+$/, "");
+  if (/\/api\/sync$/.test(base)) return base + "?room=" + SYNC_ROOM;
+  return base + "/api/sync?room=" + SYNC_ROOM;
+}
 
 function buildPayload() {
   return getAllLeads().map(l => {
@@ -2301,98 +2310,68 @@ function autoPush() {
   _syncTimer = setTimeout(() => pushToSheets(true), 3000);
 }
 
-// ── PUSH via hidden iframe form (bypasses CORS) ──
+// ── PUSH via fetch ──
 function pushToSheets(quiet) {
   if (!state.syncUrl) return;
   const btn = document.getElementById("syncBtn");
   if (!quiet) { btn.classList.add("sync-active"); btn.innerHTML = "&#8987;"; }
-  try {
-    var oldFrame = document.getElementById("_syncFrame");
-    if (oldFrame) oldFrame.remove();
-    var oldForm = document.getElementById("_syncForm");
-    if (oldForm) oldForm.remove();
+  updateSyncIndicator("loading");
 
-    var iframe = document.createElement("iframe");
-    iframe.id = "_syncFrame";
-    iframe.name = "_syncFrame";
-    iframe.style.display = "none";
-    document.body.appendChild(iframe);
-
-    var form = document.createElement("form");
-    form.id = "_syncForm";
-    form.method = "POST";
-    form.action = state.syncUrl;
-    form.target = "_syncFrame";
-    form.style.display = "none";
-
-    var input = document.createElement("textarea");
-    input.name = "payload";
-    input.value = JSON.stringify({action: "sync", data: buildPayload()});
-    form.appendChild(input);
-    document.body.appendChild(form);
-
-    iframe.onload = function() {
-      _lastSync = new Date();
-      updateSyncIndicator("ok");
-      if (!quiet) {
-        btn.innerHTML = "&#10003;";
-        setTimeout(function() { btn.innerHTML = "&#8635;"; btn.classList.remove("sync-active"); }, 2000);
-      }
-      setTimeout(function() {
-        var f = document.getElementById("_syncFrame"); if (f) f.remove();
-        var fm = document.getElementById("_syncForm"); if (fm) fm.remove();
-      }, 5000);
-    };
-
-    iframe.onerror = function() {
-      updateSyncIndicator("error");
-      if (!quiet) {
-        btn.innerHTML = "&#10007;";
-        setTimeout(function() { btn.innerHTML = "&#8635;"; btn.classList.remove("sync-active"); }, 2000);
-      }
-    };
-
-    form.submit();
-  } catch(e) {
+  fetch(syncEndpoint(), {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ data: buildPayload(), updatedBy: state.userName || "unknown" })
+  })
+  .then(r => r.ok ? r.json() : Promise.reject(new Error("HTTP " + r.status)))
+  .then(json => {
+    _lastSync = new Date();
+    updateSyncIndicator("ok");
+    if (!quiet) {
+      btn.innerHTML = "&#10003;";
+      setTimeout(function() { btn.innerHTML = "&#8635;"; btn.classList.remove("sync-active"); }, 2000);
+    }
+  })
+  .catch(err => {
+    console.warn("Sync push failed:", err);
     updateSyncIndicator("error");
     if (!quiet) {
       btn.innerHTML = "&#10007;";
       setTimeout(function() { btn.innerHTML = "&#8635;"; btn.classList.remove("sync-active"); }, 2000);
-      alert("Sync failed: " + e.message);
+      alert("Sync failed: " + err.message);
     }
-  }
+  });
 }
 
 // Manual sync — push then pull
 function syncToSheets() {
   if (!state.syncUrl) { openSettings(); return; }
   pushToSheets(false);
-  setTimeout(function() { loadFromSheets(); }, 2000);
+  setTimeout(function() { loadFromSheets(); }, 1500);
 }
 
-// ── LOAD via JSONP script tag (bypasses CORS) ──
+// ── LOAD via fetch ──
 function loadFromSheets() {
   if (!state.syncUrl) return;
   updateSyncIndicator("loading");
 
-  var cbName = "_sheetsCb_" + Date.now();
-
-  window[cbName] = function(json) {
-    try {
-      if (json.status === "ok" && json.data && json.data.length > 0) {
+  fetch(syncEndpoint() + "&nocache=" + Date.now(), { method: "GET" })
+    .then(r => r.ok ? r.json() : Promise.reject(new Error("HTTP " + r.status)))
+    .then(json => {
+      try {
+        var rows = (json && json.data) ? json.data : [];
         var merged = 0;
-        json.data.forEach(function(row) {
-          var id = parseInt(row.ID || row.id);
+        rows.forEach(function(row) {
+          var id = parseInt(row.id);
           if (!id) return;
           var remote = {
-            status: row.Status || row.status || "pending",
-            interest: row.Interest || row.interest || "",
-            contactName: row["Contact Name"] || row.contactName || "",
-            contactInfo: row["Contact Info"] || row.contactInfo || "",
-            convoNotes: row["Conversation Notes"] || row.convoNotes || "",
-            nextStep: row["Next Step"] || row.nextStep || "",
-            updatedBy: row["Updated By"] || row.updatedBy || "",
-            updatedAt: row["Updated At"] || row.updatedAt || "",
+            status: row.status || "pending",
+            interest: row.interest || "",
+            contactName: row.contactName || "",
+            contactInfo: row.contactInfo || "",
+            convoNotes: row.convoNotes || "",
+            nextStep: row.nextStep || "",
+            updatedBy: row.updatedBy || "",
+            updatedAt: row.updatedAt || ""
           };
           var local = state.data[id] || {};
           var localTime = local.updatedAt ? new Date(local.updatedAt).getTime() : 0;
@@ -2408,33 +2387,25 @@ function loadFromSheets() {
           localStorage.setItem(SHOW_CONFIG.storageKey, JSON.stringify(state.data));
           render();
         }
-        updateSyncIndicator("ok");
         _lastSync = new Date();
-        var btn = document.getElementById("syncBtn");
-        btn.innerHTML = "&#10003;";
-        setTimeout(function() { btn.innerHTML = "&#8635;"; btn.classList.remove("sync-active"); }, 2000);
-      } else {
         updateSyncIndicator("ok");
+      } catch(e) {
+        console.warn("Sync merge error:", e);
+        updateSyncIndicator("error");
       }
-    } catch(e) {
-      console.warn("Sheet merge error:", e);
-      updateSyncIndicator("error");
-    }
-    delete window[cbName];
-    var s = document.getElementById(cbName); if (s) s.remove();
-  };
-
-  var script = document.createElement("script");
-  script.id = cbName;
-  script.src = state.syncUrl + "?callback=" + cbName + "&nocache=" + Date.now();
-  script.onerror = function() {
-    console.warn("Sheet load failed");
-    updateSyncIndicator("offline");
-    delete window[cbName];
-    var s = document.getElementById(cbName); if (s) s.remove();
-  };
-  document.body.appendChild(script);
+    })
+    .catch(err => {
+      console.warn("Sync load failed:", err);
+      updateSyncIndicator("offline");
+    });
 }
+
+// Background auto-pull every 20s so teammate updates land without pressing sync
+setInterval(function() {
+  if (state.syncUrl && document.visibilityState !== "hidden") {
+    loadFromSheets();
+  }
+}, 20000);
 
 function updateSyncIndicator(status) {
   let el = document.getElementById("syncIndicator");
