@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Phil — MODEX 2026 Command Center (Local)</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet" />
+<style>
+:root{
+  --ixon-blue:#1059D2;
+  --ixon-dark:#021752;
+  --ixon-off:#F3F4FA;
+  --ixon-yellow:#FACD00;
+  --ixon-grey:#626262;
+  --red:#c0392b;
+  --green:#2e7d32;
+  --amber:#b26a00;
+  --ok-bg:#E8F4EA;
+  --warn-bg:#FFF4D6;
+  --fail-bg:#FDE8E6;
+  --pending-bg:#EEF2FB;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;background:var(--ixon-off);font-family:'Roboto',system-ui,sans-serif;color:#1a1a1a;font-size:14px;line-height:1.5}
+h1,h2,h3,h4{font-family:'Poppins',sans-serif;color:var(--ixon-dark);margin:0}
+a{color:var(--ixon-blue)}
+button{font-family:'Poppins',sans-serif;font-size:13px;cursor:pointer;border-radius:4px;border:1px solid transparent;padding:8px 14px}
+textarea,input,select{font-family:'Roboto',sans-serif;font-size:13px;padding:8px 10px;border:1px solid #D1D5DB;border-radius:4px;background:#fff}
+textarea{width:100%;resize:vertical;min-height:70px}
+.hidden{display:none !important}
+
+/* header */
+.topbar{position:sticky;top:0;z-index:50;background:var(--ixon-dark);color:#fff;padding:10px 18px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;box-shadow:0 2px 6px rgba(0,0,0,.15)}
+.topbar .brand{font-family:'Poppins',sans-serif;font-weight:500;font-size:17px;letter-spacing:.3px}
+.topbar .brand span.acc{color:var(--ixon-yellow)}
+.topbar .stats{font-family:'Roboto',sans-serif;font-size:12.5px;color:#cfd5e8;display:flex;gap:14px;flex-wrap:wrap}
+.topbar .stats b{color:#fff;font-weight:700}
+.topbar .actions{display:flex;gap:8px;flex-wrap:wrap}
+.topbar .actions button{background:var(--ixon-blue);color:#fff;border:none}
+.topbar .actions button.ghost{background:transparent;color:#fff;border:1px solid rgba(255,255,255,.35)}
+.topbar .actions button.warn{background:var(--ixon-yellow);color:#021752}
+.topbar .actions button:hover{filter:brightness(1.08)}
+
+.container{max-width:1200px;margin:0 auto;padding:18px}
+.note{background:#FFF7DB;border:1px solid #f2cf4a;padding:10px 12px;border-radius:4px;font-size:12.5px;color:#54410a;margin-bottom:16px}
+
+/* filters */
+.filterbar{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
+.filterbar button{background:#fff;border:1px solid #D1D5DB;color:#333;padding:6px 11px;font-size:12px}
+.filterbar button.active{background:var(--ixon-blue);color:#fff;border-color:var(--ixon-blue)}
+.filterbar .count{opacity:.75;margin-left:4px;font-size:11px}
+
+/* cards */
+.bucket-header{font-family:'Poppins',sans-serif;font-weight:500;color:var(--ixon-dark);font-size:15px;margin:22px 0 8px;border-bottom:2px solid var(--ixon-blue);padding-bottom:4px}
+.bucket-MUST{color:#021752}
+.bucket-MUST::before{content:"▲ ";color:var(--red)}
+.bucket-SOLID::before{content:"■ ";color:var(--ixon-blue)}
+.bucket-QUALIFY::before{content:"◆ ";color:var(--amber)}
+.bucket-LOW::before{content:"○ ";color:var(--ixon-grey)}
+
+.card{background:#fff;border:1px solid #e3e6ef;border-radius:6px;padding:14px 16px;margin-bottom:10px;box-shadow:0 1px 2px rgba(0,0,0,.03)}
+.card.status-visited{border-left:4px solid var(--green)}
+.card.status-skipped{border-left:4px solid var(--ixon-grey);opacity:.7}
+.card.status-followup{border-left:4px solid var(--ixon-yellow)}
+.card.status-pending{border-left:4px solid #D1D5DB}
+
+.card-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.card-head .left h3{font-size:15px;font-weight:500}
+.card-head .left .sub{font-size:12px;color:var(--ixon-grey);margin-top:2px}
+.card-head .booth{font-family:'Poppins',sans-serif;font-weight:500;font-size:18px;color:var(--ixon-blue);background:var(--ixon-off);padding:4px 10px;border-radius:4px;letter-spacing:.5px}
+
+.badges{margin-top:6px;display:flex;gap:5px;flex-wrap:wrap}
+.b{font-family:'Poppins',sans-serif;font-size:10.5px;font-weight:500;padding:2px 7px;border-radius:3px;display:inline-block;text-transform:uppercase;letter-spacing:.3px}
+.b-pass{background:var(--ok-bg);color:var(--green)}
+.b-flag{background:var(--warn-bg);color:var(--amber)}
+.b-fail{background:var(--fail-bg);color:var(--red)}
+.b-nv{background:#EFEFEF;color:#555}
+.b-tier1{background:#EEF2FB;color:var(--ixon-blue)}
+.b-tier2{background:#D9E4F7;color:var(--ixon-dark)}
+.b-tier3{background:var(--ixon-blue);color:#fff}
+
+.meta{margin-top:10px;font-size:12.5px}
+.meta dt{font-weight:700;color:var(--ixon-dark);margin-top:6px}
+.meta dd{margin:2px 0 0;color:#333}
+
+.card-body{margin-top:12px;border-top:1px dashed #e3e6ef;padding-top:12px}
+.row{display:flex;gap:12px;flex-wrap:wrap;align-items:flex-start;margin-bottom:10px}
+.row > div{flex:1;min-width:180px}
+.row label{display:block;font-size:11px;font-weight:700;color:var(--ixon-dark);text-transform:uppercase;letter-spacing:.4px;margin-bottom:4px}
+
+.status-bar{display:flex;gap:4px;flex-wrap:wrap}
+.status-bar button{background:#fff;border:1px solid #D1D5DB;color:#555;padding:5px 10px;font-size:11.5px;font-weight:500}
+.status-bar button.sel-pending.on{background:#D1D5DB;color:#111;border-color:#D1D5DB}
+.status-bar button.sel-visited.on{background:var(--green);color:#fff;border-color:var(--green)}
+.status-bar button.sel-skipped.on{background:var(--ixon-grey);color:#fff;border-color:var(--ixon-grey)}
+.status-bar button.sel-followup.on{background:var(--ixon-yellow);color:#021752;border-color:var(--ixon-yellow)}
+
+.contact-list{margin-top:6px}
+.contact{background:var(--ixon-off);border:1px solid #e3e6ef;border-radius:4px;padding:8px 10px;margin-bottom:6px;position:relative}
+.contact .row2{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:6px}
+.contact input{width:100%}
+.contact .kill{position:absolute;top:4px;right:4px;background:transparent;color:var(--red);border:none;font-size:14px;padding:2px 6px}
+.contact .bcard{margin-top:6px}
+.contact .bcard img{max-width:100%;max-height:220px;border:1px solid #D1D5DB;border-radius:4px;display:block;margin-top:4px}
+.contact .bcard-actions{display:flex;gap:6px;flex-wrap:wrap}
+.contact .bcard-actions button{background:#fff;border:1px solid var(--ixon-blue);color:var(--ixon-blue);font-size:11.5px;padding:5px 9px}
+.contact .bcard-actions button.danger{border-color:var(--red);color:var(--red)}
+.add-contact{background:var(--ixon-blue);color:#fff;border:none;font-size:12px;padding:6px 12px;margin-top:4px}
+
+.saved-indicator{font-size:11px;color:var(--ixon-grey);font-style:italic;margin-top:4px}
+
+/* camera modal */
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:200;display:flex;align-items:center;justify-content:center;padding:20px}
+.modal{background:#fff;border-radius:6px;max-width:640px;width:100%;padding:14px;max-height:90vh;overflow:auto}
+.modal h3{margin-bottom:8px}
+.modal video, .modal canvas{width:100%;max-height:420px;background:#000;border-radius:4px;display:block}
+.modal .ctrls{margin-top:10px;display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+.modal .ctrls button{background:var(--ixon-blue);color:#fff;border:none}
+.modal .ctrls button.secondary{background:#fff;color:var(--ixon-blue);border:1px solid var(--ixon-blue)}
+.modal .ctrls button.danger{background:var(--red);color:#fff}
+
+/* bucket filter pill colors */
+.pill-MUST{color:var(--red)}
+.pill-SOLID{color:var(--ixon-blue)}
+.pill-QUALIFY{color:var(--amber)}
+.pill-LOW{color:var(--ixon-grey)}
+
+/* Section helpers */
+details.card-details{margin-top:8px}
+details.card-details summary{cursor:pointer;font-size:12px;color:var(--ixon-blue);font-weight:500}
+
+@media print{
+  .topbar,.filterbar,.actions,.status-bar,button,.bcard-actions,.add-contact,.modal-bg{display:none !important}
+  .card{break-inside:avoid}
+}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="brand">IXON · MODEX 2026 <span class="acc">Command Center</span></div>
+  <div class="stats" id="stats"></div>
+  <div class="actions">
+    <button class="ghost" onclick="toggleDetails()">Toggle Brief Details</button>
+    <button onclick="exportJSON()">Export JSON</button>
+    <button onclick="exportCSV()">Export CSV</button>
+    <button class="warn" onclick="printPage()">Print Recap</button>
+    <button class="ghost" onclick="resetAll()" title="Wipe all local data">Reset</button>
+  </div>
+</div>
+
+<div class="container">
+
+<div class="note">
+  <b>Local only.</b> This file saves state to your browser (localStorage) on THIS device in THIS browser. Nothing syncs, nothing uploads. Close/reopen the file from the same browser and your notes + photos persist. Export before switching devices.
+  <br /><b>Booth numbers verified against the uploaded MODEX workbook.</b> Hall letters are inferred from booth prefix — confirm on the printed GWCC map.
+</div>
+
+<div class="filterbar" id="filterbar"></div>
+
+<div id="cards"></div>
+
+</div>
+
+<!-- Camera Modal -->
+<div class="modal-bg hidden" id="camModal">
+  <div class="modal">
+    <h3>Capture business card</h3>
+    <div id="camStep1">
+      <video id="camVideo" autoplay playsinline></video>
+    </div>
+    <div id="camStep2" class="hidden">
+      <canvas id="camCanvas"></canvas>
+    </div>
+    <div class="ctrls" id="camCtrls1">
+      <button class="secondary" onclick="closeCamera()">Cancel</button>
+      <button onclick="snap()">Snap photo</button>
+    </div>
+    <div class="ctrls hidden" id="camCtrls2">
+      <button class="danger" onclick="retakePhoto()">Retake</button>
+      <button onclick="acceptPhoto()">Use this photo</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ----- ACCOUNT DATA (from validated field brief, April 2026) -----
+const ACCOUNTS = [
+  // MUST HIT (7)
+  {id:"bradbury",name:"The Bradbury Group",bucket:"MUST",booth:"A5910",hall:"A",tier:"Tier 3",gate:"PASS",
+   why:"Roll-forming OEM, deep controls depth, decades of deployed base. Service-heavy. Highest Phil-owned ceiling on the floor.",
+   must:"Service is a P&L, not a cost center. Fleet needs modernization, not greenfield.",
+   risk:"May already have a legacy/in-house remote platform after decades in business. Displacement > greenfield.",
+   angle:"\"How are you connected back to deployed roll formers today, and is service a P&L or cost center?\"",
+   next:"Find service/aftermarket leader. 30-min Teams call booked during or post-show. Do not pitch IXrouter at booth."},
+  {id:"trew",name:"Trew",bucket:"MUST",booth:"B14761 / B15161",hall:"B",tier:"Tier 2-3",gate:"PASS",
+   why:"~$367M, conveyor/sortation SI, two booths = real presence. Phil's top prospect per exec brief.",
+   must:"They don't already have an in-house platform covering this. Service motion exists post go-live.",
+   risk:"In-house platform build — they have the engineering muscle. Coopetition on the SI side.",
+   angle:"\"How do you service deployed conveyor/sortation post-install? Do your integration customers ask for a standardized remote-access layer or is it custom per project?\"",
+   next:"Identify which booth is demo vs. meeting space; hit the demo first. Map leaders at both if different. Push for a scoped follow-up."},
+  {id:"hytek",name:"Hy-Tek Intralogistics",bucket:"MUST",booth:"B16306",hall:"B",tier:"Tier 2-3",gate:"PASS",
+   why:"~$200M, SI scale, named Phil prospect in exec brief.",
+   must:"IntraOne is orchestration, not remote-access tunneling. IXON fills a gap, not competes.",
+   risk:"IntraOne scope overlap — their platform may already cover remote orchestration. IXON competes, not complements. Disambiguate in first 5 minutes.",
+   angle:"\"IntraOne handles orchestration — what do you layer in for remote engineer access when a PLC throws at a customer site?\"",
+   next:"Controls or post-install support leader. Run the 5 DQ questions. If warm, schedule. If they own a competing layer, exit politely."},
+  {id:"keith",name:"KEITH Mfg. Co.",bucket:"MUST",booth:"C12990",hall:"C",tier:"Tier 1-2",gate:"PASS",
+   why:"Phil-owned override. US mfg. Walking floor / Freight Runner product.",
+   must:"Controls-rich product + install base + service motion (not just mechanical).",
+   risk:"Low-automation mechanical product with minimal controls = thin remote-platform pain. Prove or disprove in 5 minutes.",
+   angle:"\"The Freight Runner drop-in design is interesting — when a customer deploys 4 or 5 of them, how does your team get eyes on them remotely?\"",
+   next:"Product manager or service lead. Confirm PLC brand and HMI. If controls-rich + install base + service motion, set follow-up."},
+  {id:"casi",name:"CASI (Cornerstone Automation)",bucket:"MUST",booth:"C10577",hall:"C",tier:"Tier 1-2",gate:"PASS",
+   why:"First/last 100 ft automation, US-based, real controls. Phil-cited prospect.",
+   must:"Service/aftermarket team exists with a real remote motion, not just project delivery.",
+   risk:"At 51-100 emp, service engineering bench may be thin — early-stage fleet scale pain.",
+   angle:"\"First and last 100 feet — what's your service approach when a customer calls about a sorter on Saturday?\"",
+   next:"Service/aftermarket owner. Scope pilot on 2-3 representative sites. SecureEdge Pro if edge apps are relevant."},
+  {id:"russell",name:"Russell Conveyor & Equipment",bucket:"MUST",booth:"C11199",hall:"C",tier:"Tier 1-2",gate:"PASS",
+   why:"MDR conveyor / AGV, GA HQ, US controls, Phil-cited.",
+   must:"Repeatable product line (not pure custom). Engineering or aftermarket owns connectivity.",
+   risk:"At ~50-100 emp, may do custom project work with low repeatability.",
+   angle:"\"MDR and AGV builds produce rich machine data — are you exposing that to customers, or keeping internal for service? What's the connectivity layer?\"",
+   next:"Engineering or aftermarket leader. Confirm repeatable-vs-custom mix. GA HQ = easy follow-up."},
+  {id:"roach",name:"Roach Conveyors",bucket:"MUST",booth:"B16932",hall:"B",tier:"Tier 1",gate:"PASS",
+   why:"72 years, US conveyor OEM, strong service lineage. Phil-cited.",
+   must:"Roach (not the integrator) owns the post-install service relationship.",
+   risk:"Customer-specified controls = Roach isn't the buyer, the downstream integrator is.",
+   angle:"\"72 years of conveyors — when customers call for service, do you connect remotely or does that fall to the integrator who installed? Where does your service line end?\"",
+   next:"Qualify fast on controls ownership + service scope. If Roach owns post-install, push. If they hand off at delivery, deprioritize."},
+
+  // SOLID (5)
+  {id:"kpi",name:"KPI Solutions",bucket:"SOLID",booth:"B15111",hall:"B",tier:"Tier 2",gate:"PASS",
+   why:"Lifetime services SI. Real install base. Opto connection (services platform).",
+   must:"Opto doesn't cover the remote-connectivity layer IXON sells.",
+   risk:"Opto expands into remote monitoring.",
+   angle:"\"What do your lifetime-services engineers use when they hop onto a live customer site?\"",
+   next:"Qualify Opto scope vs. remote access. If disjoint, push."},
+  {id:"dmwh",name:"DMW&H",bucket:"SOLID",booth:"B14532",hall:"B",tier:"Tier 2",gate:"PASS",
+   why:"60-year SI, broad integrations footprint.",
+   must:"Meaningful recurring/service revenue motion beyond project-install.",
+   risk:"Pure-SI shops often hand off at go-live; service thin.",
+   angle:"\"60 years of integrations is a huge install base — how much recurring service revenue do you run, and how do you connect back?\"",
+   next:"Service or engineering leader. Confirm recurring motion."},
+  {id:"dcs",name:"Designed Conveyor Systems (DCS)",bucket:"SOLID",booth:"B15511",hall:"B",tier:"Tier 1-2",gate:"PASS",
+   why:"Brand-agnostic conveyor SI. Customer-specified gear = they still need a standard service layer.",
+   must:"They want to steer customers toward a repeatable connectivity stack vs. per-site one-offs.",
+   risk:"\"Let the customer pick\" posture = low standardization pressure.",
+   angle:"\"Brand-agnostic is a good story — do your customers end up with different remote connectivity every site, or do you steer them?\"",
+   next:"Probe service model. Consider partner/referral play."},
+  {id:"conveyco",name:"Conveyco",bucket:"SOLID",booth:"B12323",hall:"B",tier:"Tier 1-2",gate:"PASS",
+   why:"Strong controls team, New Dawn visibility play, real SI presence.",
+   must:"New Dawn is visibility-only; remote access is an open layer.",
+   risk:"New Dawn scope may be expanding.",
+   angle:"\"Your controls team is a differentiator — what do they use when jumping on a customer PLC after go-live?\"",
+   next:"Meet the controls lead specifically. Qualify overlap vs. complement."},
+  {id:"balemaster",name:"Balemaster",bucket:"SOLID",booth:"B15650",hall:"B",tier:"Tier 2-3",gate:"PASS",
+   why:"US mfg balers, PLC controls, mature service motion, heavy install base.",
+   must:"High-frequency field service or customer-escalation pattern (so remote saves truck rolls).",
+   risk:"Baler = single-machine product. Customer sites usually have 1-2 machines, not a fleet. Per-customer rollout thin.",
+   angle:"\"Your baler has PLC controls — what happens when a California customer throws a fault at 2am Tuesday?\"",
+   next:"Confirm service model and install density. Heavy field service = push."},
+
+  // QUALIFY FAST (5)
+  {id:"robopac",name:"Robopac (Aetna Group)",bucket:"QUALIFY",booth:"C14764",hall:"C",tier:"Tier 1-2",gate:"FLAG",
+   why:"US facility real. Wrapping product with controls. Downgraded from MUST HIT: Italian parent = hard-gate risk per exec brief.",
+   must:"US mfg depth (not assembly only) AND US decision authority (not Italy HQ).",
+   risk:"Group-level platform mandate out of Italy. US = service arm without decision rights.",
+   angle:"\"Is the LGV built here in Duluth or shipped from Italy? And does your US service team own the remote-platform decision, or is it dictated from the parent?\"",
+   next:"5 minutes max. Confirm US mfg depth + US decision rights. If fails either test, move on."},
+  {id:"amerden",name:"Amerden",bucket:"QUALIFY",booth:"A1127",hall:"A",tier:"Tier 1",gate:"PASS",
+   why:"AGV builder, US, controls depth. Small.",
+   must:"Repeatable install base, not one-off custom AGV builds.",
+   risk:"Too custom, too small, no standardized remote-service motion.",
+   angle:"\"AGV service means tech truck rolls. Built a remote layer that keeps techs off the road?\"",
+   next:"5-min scale and repeatability probe."},
+  {id:"srs",name:"SRS (Storage Retrieval Systems)",bucket:"QUALIFY",booth:"A1314",hall:"A",tier:"Tier 1",gate:"PASS",
+   why:"GOH + e-commerce focus. Downtime-sensitive customers.",
+   must:"50+ site install base with recurring service.",
+   risk:"Too small, too project-oriented.",
+   angle:"\"GOH and e-comm = downtime is brutal. How do customers reach you when something throws?\"",
+   next:"Install base size probe. >50 sites = pursue."},
+  {id:"pendant",name:"Pendant Systems",bucket:"QUALIFY",booth:"A1901",hall:"A",tier:"Tier 1",gate:"PASS",
+   why:"WXS platform = potential coopetition or partner. OEM-facing.",
+   must:"WXS is on-prem visibility, not remote tunnel.",
+   risk:"WXS is a direct competitor in thin disguise.",
+   angle:"\"WXS sounds like an on-prem data/visualization play — does it handle the remote-tunnel-to-a-locked-down-customer-site problem, or is that still a gap?\"",
+   next:"5 minutes. Overlap → disengage."},
+  {id:"spring",name:"Spring Systems",bucket:"QUALIFY",booth:"B14119",hall:"B",tier:"Tier 1",gate:"PASS",
+   why:"Global OEMs, US presence. Partner potential if open-posture.",
+   must:"They see connectivity as a commodity layer to buy, not build.",
+   risk:"Ego/scope — they view connectivity as their job.",
+   angle:"\"Your OEM customers ship globally — are you standing up a one-off VPN on every panel, or have you found a repeatable connectivity spec?\"",
+   next:"Partner posture probe. If open, channel play."},
+
+  // LOW PRIORITY (3)
+  {id:"cassioli",name:"CASSIOLI",bucket:"LOW",booth:"A2118",hall:"A",tier:"Tier 2",gate:"FAIL",
+   why:"Downgraded from SOLID. File explicitly marks \"Italy (US: Birmingham, AL)\" — fails hard gate.",
+   must:"Birmingham genuinely manufactures, not just sells/services.",
+   risk:"Decision sits in Italy; US is a satellite.",
+   angle:"\"Does Birmingham manufacture CASSIOLI systems or primarily handle US sales and service?\"",
+   next:"2-minute ask at booth. If confirmed Italy-mfg, log and move on."},
+  {id:"hsi",name:"HSI (Handling Systems Inc.)",bucket:"LOW",booth:"B14654",hall:"B",tier:"Tier 1",gate:"PASS",
+   why:"Hoist/crane = mechanical-dominant. Low controls depth typical for category.",
+   must:"Meaningful PLC/telemetry presence on cranes (not just pendant + relay).",
+   risk:"Classic hoist/crane = no remote-service-platform pain at IXON depth.",
+   angle:"\"Any PLC-driven telemetry on your cranes, or mostly mechanical + pendant?\"",
+   next:"2-minute ask. Mechanical-only → move on."},
+  {id:"whitesystems",name:"White Systems (IJ White?)",bucket:"LOW",booth:"B9319",hall:"B",tier:"Unknown",gate:"NV",
+   why:"Identity unverified. Workbook shows \"White Systems\" — Phil asked about \"IJ White Systems\". May be different company.",
+   must:"Identity confirmed as IJ White of Kenilworth, NJ.",
+   risk:"Different company entirely.",
+   angle:"\"Are you IJ White Systems of Kenilworth, NJ?\"",
+   next:"60-second identity check. Then decide."}
+];
+
+// ----- STORAGE -----
+const LS_KEY = "ixon_modex_2026_state_v1";
+let state = loadState();
+
+function defaultAcct(id){return {status:"pending",notes:"",contacts:[],visitedAt:null,updatedAt:null}}
+function loadState(){
+  try{
+    const raw = localStorage.getItem(LS_KEY);
+    if(!raw) return initState();
+    const parsed = JSON.parse(raw);
+    // make sure every account exists
+    ACCOUNTS.forEach(a=>{ if(!parsed.accounts[a.id]) parsed.accounts[a.id]=defaultAcct(a.id); });
+    if(!parsed.filter) parsed.filter = "all";
+    return parsed;
+  }catch(e){ return initState(); }
+}
+function initState(){
+  const s = {accounts:{},filter:"all",showDetails:true,startedAt:new Date().toISOString()};
+  ACCOUNTS.forEach(a=>{ s.accounts[a.id]=defaultAcct(a.id); });
+  return s;
+}
+function saveState(){
+  state.updatedAt = new Date().toISOString();
+  localStorage.setItem(LS_KEY, JSON.stringify(state));
+  renderStats();
+}
+
+// ----- RENDER -----
+const BUCKET_LABEL = {MUST:"Must Hit",SOLID:"Solid",QUALIFY:"Qualify Fast",LOW:"Low Priority"};
+const BUCKET_ORDER = ["MUST","SOLID","QUALIFY","LOW"];
+
+function renderFilters(){
+  const fb = document.getElementById("filterbar");
+  const filters = [
+    {id:"all",label:"All"},
+    {id:"MUST",label:"Must Hit"},
+    {id:"SOLID",label:"Solid"},
+    {id:"QUALIFY",label:"Qualify Fast"},
+    {id:"LOW",label:"Low Priority"},
+    {id:"pending",label:"Not Visited"},
+    {id:"visited",label:"Visited"},
+    {id:"followup",label:"Follow-up"},
+    {id:"skipped",label:"Skipped"},
+  ];
+  fb.innerHTML = filters.map(f=>{
+    const c = countFilter(f.id);
+    return `<button class="${state.filter===f.id?'active':''}" onclick="setFilter('${f.id}')">${f.label}<span class="count">(${c})</span></button>`;
+  }).join("");
+}
+
+function countFilter(id){
+  if(id==="all") return ACCOUNTS.length;
+  if(["MUST","SOLID","QUALIFY","LOW"].includes(id)) return ACCOUNTS.filter(a=>a.bucket===id).length;
+  return ACCOUNTS.filter(a=> state.accounts[a.id].status===id).length;
+}
+
+function setFilter(f){ state.filter=f; saveState(); renderAll(); }
+
+function matchesFilter(a){
+  if(state.filter==="all") return true;
+  if(["MUST","SOLID","QUALIFY","LOW"].includes(state.filter)) return a.bucket===state.filter;
+  return state.accounts[a.id].status===state.filter;
+}
+
+function gateBadge(g){
+  if(g==="PASS") return '<span class="b b-pass">Gate PASS</span>';
+  if(g==="FLAG") return '<span class="b b-flag">Gate FLAG</span>';
+  if(g==="FAIL") return '<span class="b b-fail">Gate FAIL</span>';
+  return '<span class="b b-nv">Gate UNK</span>';
+}
+function tierBadge(t){
+  if(t.includes("3")) return `<span class="b b-tier3">${t}</span>`;
+  if(t.includes("2")) return `<span class="b b-tier2">${t}</span>`;
+  if(t.includes("1")) return `<span class="b b-tier1">${t}</span>`;
+  return `<span class="b b-nv">${t}</span>`;
+}
+
+function renderCards(){
+  const root = document.getElementById("cards");
+  const shown = ACCOUNTS.filter(matchesFilter);
+  let html = "";
+  // group by bucket
+  BUCKET_ORDER.forEach(bk=>{
+    const group = shown.filter(a=>a.bucket===bk);
+    if(!group.length) return;
+    html += `<h2 class="bucket-header bucket-${bk}">${BUCKET_LABEL[bk]} (${group.length})</h2>`;
+    group.forEach(a=>{ html += cardHTML(a); });
+  });
+  if(!html) html = `<div class="note">No accounts match the current filter.</div>`;
+  root.innerHTML = html;
+}
+
+function cardHTML(a){
+  const s = state.accounts[a.id];
+  const showD = state.showDetails ? "" : "hidden";
+  const contactsHTML = s.contacts.map((c,i)=>contactHTML(a.id,c,i)).join("");
+  return `
+  <div class="card status-${s.status}" id="card-${a.id}">
+    <div class="card-head">
+      <div class="left">
+        <h3>${escapeHTML(a.name)}</h3>
+        <div class="sub">${BUCKET_LABEL[a.bucket]} · Hall ${a.hall} (inferred) · ${a.tier}</div>
+        <div class="badges">${gateBadge(a.gate)}${tierBadge(a.tier)}<span class="b b-nv">Booth verified</span></div>
+      </div>
+      <div class="booth">${escapeHTML(a.booth)}</div>
+    </div>
+
+    <div class="card-details ${showD}">
+      <dl class="meta">
+        <dt>Why</dt><dd>${escapeHTML(a.why)}</dd>
+        <dt>What must be true</dt><dd>${escapeHTML(a.must)}</dd>
+        <dt>Biggest risk</dt><dd>${escapeHTML(a.risk)}</dd>
+        <dt>Opening angle</dt><dd>${escapeHTML(a.angle)}</dd>
+        <dt>Best next step</dt><dd>${escapeHTML(a.next)}</dd>
+      </dl>
+    </div>
+
+    <div class="card-body">
+      <div class="row">
+        <div>
+          <label>Status</label>
+          <div class="status-bar">
+            <button class="sel-pending ${s.status==='pending'?'on':''}" onclick="setStatus('${a.id}','pending')">Pending</button>
+            <button class="sel-visited ${s.status==='visited'?'on':''}" onclick="setStatus('${a.id}','visited')">✓ Visited</button>
+            <button class="sel-followup ${s.status==='followup'?'on':''}" onclick="setStatus('${a.id}','followup')">★ Follow-up</button>
+            <button class="sel-skipped ${s.status==='skipped'?'on':''}" onclick="setStatus('${a.id}','skipped')">Skipped</button>
+          </div>
+          ${s.visitedAt?`<div class="saved-indicator">Visited ${formatTime(s.visitedAt)}</div>`:""}
+        </div>
+      </div>
+
+      <div class="row">
+        <div>
+          <label>Booth notes</label>
+          <textarea placeholder="What they said. Pain. Fit. Red flags. Quotes." oninput="setNotes('${a.id}', this.value)">${escapeHTML(s.notes||"")}</textarea>
+        </div>
+      </div>
+
+      <div class="row">
+        <div>
+          <label>Contacts met (${s.contacts.length})</label>
+          <div class="contact-list" id="contacts-${a.id}">${contactsHTML}</div>
+          <button class="add-contact" onclick="addContact('${a.id}')">+ Add contact</button>
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+
+function contactHTML(accId, c, i){
+  return `
+  <div class="contact" id="contact-${accId}-${i}">
+    <button class="kill" title="Remove contact" onclick="removeContact('${accId}',${i})">×</button>
+    <div class="row2">
+      <input placeholder="Name" value="${escapeHTML(c.name||"")}" oninput="setContactField('${accId}',${i},'name',this.value)" />
+      <input placeholder="Title" value="${escapeHTML(c.title||"")}" oninput="setContactField('${accId}',${i},'title',this.value)" />
+      <input placeholder="Email" value="${escapeHTML(c.email||"")}" oninput="setContactField('${accId}',${i},'email',this.value)" />
+      <input placeholder="Phone" value="${escapeHTML(c.phone||"")}" oninput="setContactField('${accId}',${i},'phone',this.value)" />
+    </div>
+    <div style="margin-top:6px">
+      <textarea placeholder="Conversation notes, next step, fit rating..." oninput="setContactField('${accId}',${i},'notes',this.value)">${escapeHTML(c.notes||"")}</textarea>
+    </div>
+    <div class="bcard">
+      <div class="bcard-actions">
+        <button onclick="openCamera('${accId}',${i})">📷 Snap business card</button>
+        <button onclick="document.getElementById('file-${accId}-${i}').click()">Upload card image</button>
+        ${c.cardImage?`<button class="danger" onclick="clearCard('${accId}',${i})">Remove card</button>`:""}
+      </div>
+      <input type="file" accept="image/*" capture="environment" id="file-${accId}-${i}" style="display:none" onchange="handleFile('${accId}',${i},this)" />
+      ${c.cardImage?`<img src="${c.cardImage}" alt="Business card" />`:""}
+    </div>
+  </div>`;
+}
+
+function renderStats(){
+  const s = state.accounts;
+  const tot = ACCOUNTS.length;
+  const v = Object.values(s).filter(x=>x.status==="visited").length;
+  const fu = Object.values(s).filter(x=>x.status==="followup").length;
+  const sk = Object.values(s).filter(x=>x.status==="skipped").length;
+  const pe = Object.values(s).filter(x=>x.status==="pending").length;
+  const contacts = Object.values(s).reduce((acc,x)=>acc+x.contacts.length,0);
+  const cards = Object.values(s).reduce((acc,x)=>acc+x.contacts.filter(c=>c.cardImage).length,0);
+  document.getElementById("stats").innerHTML =
+    `<span><b>${v}</b>/${tot} visited</span>
+     <span><b>${fu}</b> follow-up</span>
+     <span><b>${sk}</b> skipped</span>
+     <span><b>${pe}</b> pending</span>
+     <span><b>${contacts}</b> contacts</span>
+     <span><b>${cards}</b> cards</span>`;
+}
+
+function renderAll(){ renderFilters(); renderCards(); renderStats(); }
+
+// ----- HANDLERS -----
+function setStatus(id,st){
+  state.accounts[id].status = st;
+  if(st==="visited" && !state.accounts[id].visitedAt) state.accounts[id].visitedAt = new Date().toISOString();
+  if(st==="pending") state.accounts[id].visitedAt = null;
+  state.accounts[id].updatedAt = new Date().toISOString();
+  saveState(); renderAll();
+}
+function setNotes(id,v){
+  state.accounts[id].notes = v;
+  state.accounts[id].updatedAt = new Date().toISOString();
+  saveState();
+}
+function addContact(id){
+  state.accounts[id].contacts.push({name:"",title:"",email:"",phone:"",notes:"",cardImage:null});
+  saveState(); renderAll();
+}
+function removeContact(id,i){
+  if(!confirm("Remove this contact (including any captured card photo)?")) return;
+  state.accounts[id].contacts.splice(i,1);
+  saveState(); renderAll();
+}
+function setContactField(id,i,f,v){
+  state.accounts[id].contacts[i][f] = v;
+  saveState();
+}
+function clearCard(id,i){
+  if(!confirm("Remove business card photo?")) return;
+  state.accounts[id].contacts[i].cardImage = null;
+  saveState(); renderAll();
+}
+
+function toggleDetails(){ state.showDetails = !state.showDetails; saveState(); renderAll(); }
+
+function resetAll(){
+  if(!confirm("WIPE all your local MODEX data (notes, status, contacts, photos)? This cannot be undone. Export first if you want a backup.")) return;
+  localStorage.removeItem(LS_KEY);
+  state = initState(); saveState(); renderAll();
+}
+
+// ----- CAMERA -----
+let camStream=null, camTarget=null;
+async function openCamera(accId, i){
+  camTarget = {accId, i};
+  document.getElementById("camModal").classList.remove("hidden");
+  document.getElementById("camStep1").classList.remove("hidden");
+  document.getElementById("camStep2").classList.add("hidden");
+  document.getElementById("camCtrls1").classList.remove("hidden");
+  document.getElementById("camCtrls2").classList.add("hidden");
+  try{
+    camStream = await navigator.mediaDevices.getUserMedia({video:{facingMode:"environment"},audio:false});
+    document.getElementById("camVideo").srcObject = camStream;
+  }catch(e){
+    alert("Camera not available in this browser. Use the 'Upload card image' button instead — it works with the phone camera on mobile or a file on desktop.\n\n"+e.message);
+    closeCamera();
+  }
+}
+function snap(){
+  const v = document.getElementById("camVideo");
+  const c = document.getElementById("camCanvas");
+  c.width = v.videoWidth; c.height = v.videoHeight;
+  c.getContext("2d").drawImage(v,0,0,c.width,c.height);
+  document.getElementById("camStep1").classList.add("hidden");
+  document.getElementById("camStep2").classList.remove("hidden");
+  document.getElementById("camCtrls1").classList.add("hidden");
+  document.getElementById("camCtrls2").classList.remove("hidden");
+}
+function retakePhoto(){
+  document.getElementById("camStep1").classList.remove("hidden");
+  document.getElementById("camStep2").classList.add("hidden");
+  document.getElementById("camCtrls1").classList.remove("hidden");
+  document.getElementById("camCtrls2").classList.add("hidden");
+}
+function acceptPhoto(){
+  const c = document.getElementById("camCanvas");
+  // downscale to keep localStorage usage sane (~800px wide)
+  const maxW = 1000;
+  let out = c;
+  if(c.width > maxW){
+    const scale = maxW/c.width;
+    const tmp = document.createElement("canvas");
+    tmp.width = maxW; tmp.height = c.height*scale;
+    tmp.getContext("2d").drawImage(c,0,0,tmp.width,tmp.height);
+    out = tmp;
+  }
+  const data = out.toDataURL("image/jpeg",0.82);
+  state.accounts[camTarget.accId].contacts[camTarget.i].cardImage = data;
+  saveState();
+  closeCamera();
+  renderAll();
+}
+function closeCamera(){
+  if(camStream){ camStream.getTracks().forEach(t=>t.stop()); camStream=null; }
+  document.getElementById("camModal").classList.add("hidden");
+}
+
+function handleFile(accId,i,inp){
+  const f = inp.files && inp.files[0];
+  if(!f) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    // downscale
+    const img = new Image();
+    img.onload = ()=>{
+      const maxW = 1000;
+      const scale = Math.min(1, maxW/img.width);
+      const c = document.createElement("canvas");
+      c.width = img.width*scale; c.height = img.height*scale;
+      c.getContext("2d").drawImage(img,0,0,c.width,c.height);
+      const data = c.toDataURL("image/jpeg",0.82);
+      state.accounts[accId].contacts[i].cardImage = data;
+      saveState(); renderAll();
+    };
+    img.src = e.target.result;
+  };
+  reader.readAsDataURL(f);
+  inp.value="";
+}
+
+// ----- EXPORT -----
+function buildExport(){
+  return ACCOUNTS.map(a=>{
+    const s = state.accounts[a.id];
+    return {
+      id:a.id, name:a.name, bucket:BUCKET_LABEL[a.bucket], booth:a.booth, hall:a.hall,
+      tier:a.tier, hardGate:a.gate,
+      status:s.status, visitedAt:s.visitedAt, updatedAt:s.updatedAt,
+      notes:s.notes, contacts:s.contacts.map(c=>({
+        name:c.name,title:c.title,email:c.email,phone:c.phone,notes:c.notes,
+        hasCardImage: !!c.cardImage
+      }))
+    };
+  });
+}
+
+function exportJSON(){
+  // full export including images
+  const out = {
+    exportedAt:new Date().toISOString(),
+    event:"MODEX 2026",
+    owner:"Phil Belue (IXON)",
+    accounts: ACCOUNTS.map(a=>{
+      const s = state.accounts[a.id];
+      return {...a, ...s};
+    })
+  };
+  const blob = new Blob([JSON.stringify(out,null,2)],{type:"application/json"});
+  downloadBlob(blob, `modex-2026-phil-${stamp()}.json`);
+}
+
+function exportCSV(){
+  const rows = [["Account","Bucket","Booth","Hall","Tier","HardGate","Status","VisitedAt","Notes","ContactName","ContactTitle","ContactEmail","ContactPhone","ContactNotes","HasCardImage"]];
+  ACCOUNTS.forEach(a=>{
+    const s = state.accounts[a.id];
+    if(!s.contacts.length){
+      rows.push([a.name,BUCKET_LABEL[a.bucket],a.booth,a.hall,a.tier,a.gate,s.status,s.visitedAt||"",s.notes||"","","","","","",""]);
+    } else {
+      s.contacts.forEach(c=>{
+        rows.push([a.name,BUCKET_LABEL[a.bucket],a.booth,a.hall,a.tier,a.gate,s.status,s.visitedAt||"",s.notes||"",c.name||"",c.title||"",c.email||"",c.phone||"",c.notes||"", c.cardImage?"YES":"NO"]);
+      });
+    }
+  });
+  const csv = rows.map(r=>r.map(csvCell).join(",")).join("\n");
+  const blob = new Blob([csv],{type:"text/csv"});
+  downloadBlob(blob, `modex-2026-phil-${stamp()}.csv`);
+}
+
+function csvCell(v){
+  if(v===null||v===undefined) return "";
+  const s = String(v);
+  if(/[",\n]/.test(s)) return '"'+s.replace(/"/g,'""')+'"';
+  return s;
+}
+
+function downloadBlob(blob, name){
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = name;
+  document.body.appendChild(a); a.click();
+  setTimeout(()=>{ URL.revokeObjectURL(a.href); a.remove(); },500);
+}
+
+function stamp(){
+  const d=new Date(); const p=n=>String(n).padStart(2,"0");
+  return `${d.getFullYear()}${p(d.getMonth()+1)}${p(d.getDate())}-${p(d.getHours())}${p(d.getMinutes())}`;
+}
+
+function printPage(){ window.print(); }
+
+// ----- UTIL -----
+function escapeHTML(s){
+  if(s===null||s===undefined) return "";
+  return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+}
+function formatTime(iso){
+  try{
+    const d=new Date(iso);
+    return d.toLocaleString([], {month:"short",day:"numeric",hour:"2-digit",minute:"2-digit"});
+  }catch(e){ return iso; }
+}
+
+// ----- INIT -----
+renderAll();
+window.addEventListener("beforeunload", e=>{
+  // passive save of any in-flight edits (textarea/input already call setXxx)
+});
+</script>
+</body>
+</html>
