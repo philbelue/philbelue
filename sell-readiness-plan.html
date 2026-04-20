@@ -1,0 +1,1084 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sell Readiness · Tower Listing Path · Jarvis Operations</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Rajdhani:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #08090d;
+    --bg-card: #0c0e14;
+    --bg-card-hover: #11131a;
+    --bg-elevated: #0f1117;
+    --bg-code: #060810;
+    --gold: #ffb86a;
+    --gold-soft: #ffc978;
+    --gold-dim: rgba(255,184,106,0.10);
+    --gold-glow: rgba(255,184,106,0.15);
+    --gold-strong: rgba(255,184,106,0.28);
+    --core-white: #fff4db;
+    --core-warm: #ffd7a3;
+    --blue-ghost: #3d5060;
+    --blue-ghost-dim: rgba(61,80,96,0.08);
+    --blue-faint: rgba(80,110,130,0.06);
+    --green: #5ce0a0;
+    --green-dim: rgba(92,224,160,0.08);
+    --red: #f06060;
+    --red-dim: rgba(240,96,96,0.06);
+    --yellow: #f0d060;
+    --yellow-dim: rgba(240,208,96,0.08);
+    --text: #b8bfc8;
+    --text-bright: #dce0e6;
+    --text-dim: #5a6370;
+    --text-faint: #3a4250;
+    --border: rgba(255,255,255,0.05);
+    --border-gold: rgba(255,184,106,0.10);
+    --border-subtle: rgba(255,255,255,0.03);
+    --radius: 8px;
+    --shadow: 0 2px 20px rgba(0,0,0,0.3);
+    --shadow-glow: 0 0 30px rgba(255,184,106,0.04);
+    --font-display: 'Orbitron', monospace;
+    --font-body: 'Rajdhani', sans-serif;
+    --font-code: 'JetBrains Mono', monospace;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: var(--font-body);
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.65;
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+    position: relative;
+  }
+  body::before {
+    content: '';
+    position: fixed;
+    top: -200px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 1200px;
+    height: 800px;
+    background: radial-gradient(ellipse 900px 600px at center, rgba(255,184,106,0.08) 0%, rgba(255,184,106,0.02) 40%, transparent 70%);
+    pointer-events: none;
+    z-index: 1;
+  }
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--blue-ghost-dim); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--blue-ghost); }
+
+  /* SIDEBAR */
+  .sidebar {
+    position: fixed;
+    top: 0; left: 0;
+    width: 260px;
+    height: 100vh;
+    background: rgba(8,9,13,0.97);
+    backdrop-filter: blur(10px);
+    border-right: 1px solid var(--border);
+    padding: 28px 20px;
+    overflow-y: auto;
+    z-index: 10;
+  }
+  .sidebar-brand {
+    font-family: var(--font-display);
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--core-warm);
+    text-transform: uppercase;
+    letter-spacing: 2.5px;
+    margin-bottom: 6px;
+  }
+  .sidebar-sub {
+    font-family: var(--font-body);
+    font-size: 11px;
+    color: var(--text-faint);
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    margin-bottom: 28px;
+    padding-bottom: 18px;
+    border-bottom: 1px solid var(--border);
+  }
+  .nav-group-label {
+    font-family: var(--font-body);
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--text-faint);
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    margin: 18px 8px 8px;
+  }
+  .nav-link {
+    display: block;
+    padding: 9px 12px;
+    font-size: 13px;
+    color: var(--text-dim);
+    text-decoration: none;
+    border-left: 3px solid transparent;
+    transition: all 0.2s ease;
+    border-radius: 0 4px 4px 0;
+  }
+  .nav-link:hover {
+    color: var(--core-warm);
+    background: var(--gold-dim);
+    border-left-color: var(--gold-glow);
+  }
+  .nav-link.active {
+    color: var(--core-warm);
+    background: var(--gold-dim);
+    border-left-color: var(--gold);
+  }
+  .nav-num {
+    font-family: var(--font-code);
+    color: var(--gold);
+    font-size: 11px;
+    margin-right: 8px;
+    opacity: 0.7;
+  }
+
+  /* MAIN */
+  .main {
+    margin-left: 260px;
+    padding: 0;
+    position: relative;
+    z-index: 2;
+  }
+
+  /* HERO */
+  .hero {
+    background: linear-gradient(135deg, var(--bg-card) 0%, var(--bg) 100%);
+    border-bottom: 2px solid var(--border-gold);
+    padding: 56px 56px 48px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero-label {
+    font-family: var(--font-body);
+    font-size: 11px;
+    color: var(--gold);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    font-weight: 600;
+    margin-bottom: 12px;
+  }
+  .hero h1 {
+    font-family: var(--font-display);
+    font-size: 44px;
+    font-weight: 900;
+    color: var(--core-white);
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    line-height: 1.1;
+    margin-bottom: 14px;
+    text-shadow: 0 0 20px rgba(255,184,106,0.15);
+  }
+  .hero h1 .accent { color: var(--gold); }
+  .hero-sub {
+    font-size: 16px;
+    color: var(--core-warm);
+    letter-spacing: 1.5px;
+    font-weight: 400;
+    margin-bottom: 28px;
+    max-width: 780px;
+    line-height: 1.55;
+  }
+  .hero-meta {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    max-width: 880px;
+  }
+  .hero-meta > div {
+    background: var(--bg-card);
+    padding: 14px 18px;
+  }
+  .meta-label {
+    font-size: 10px;
+    color: var(--text-faint);
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+  .meta-value {
+    font-family: var(--font-code);
+    font-size: 14px;
+    color: var(--core-warm);
+    font-weight: 500;
+  }
+  .meta-value.status-go { color: var(--green); }
+  .meta-value.status-warn { color: var(--yellow); }
+
+  /* FLOW DIAGRAM */
+  .flow {
+    padding: 48px 56px 16px;
+  }
+  .flow-label {
+    font-family: var(--font-display);
+    font-size: 11px;
+    color: var(--gold-soft);
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+    font-weight: 600;
+  }
+  .flow-chart {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr) auto;
+    gap: 0;
+    align-items: stretch;
+  }
+  .flow-node {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--gold);
+    border-radius: var(--radius);
+    padding: 18px 20px;
+    position: relative;
+    margin-right: 12px;
+  }
+  .flow-node:last-child { margin-right: 0; }
+  .flow-node::after {
+    content: '→';
+    position: absolute;
+    right: -14px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--gold);
+    font-family: var(--font-code);
+    font-size: 20px;
+    font-weight: 700;
+    z-index: 2;
+  }
+  .flow-node.terminal::after { display: none; }
+  .flow-node-phase {
+    font-family: var(--font-code);
+    font-size: 10px;
+    color: var(--text-faint);
+    letter-spacing: 1.5px;
+    margin-bottom: 4px;
+    text-transform: uppercase;
+  }
+  .flow-node-title {
+    font-family: var(--font-display);
+    font-size: 13px;
+    color: var(--core-warm);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+  }
+  .flow-node-time {
+    font-family: var(--font-code);
+    font-size: 11px;
+    color: var(--gold);
+    letter-spacing: 0.5px;
+  }
+  .flow-terminal {
+    background: var(--green-dim);
+    border: 1px solid rgba(92,224,160,0.2);
+    border-radius: var(--radius);
+    padding: 18px 24px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-width: 140px;
+  }
+  .flow-terminal-label {
+    font-family: var(--font-display);
+    font-size: 12px;
+    color: var(--green);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+  }
+  .flow-terminal-sub {
+    font-family: var(--font-body);
+    font-size: 11px;
+    color: var(--text-dim);
+    margin-top: 4px;
+    letter-spacing: 0.5px;
+  }
+
+  /* CONTENT SECTIONS */
+  .content {
+    padding: 24px 56px 72px;
+  }
+  section {
+    margin-bottom: 48px;
+    scroll-margin-top: 24px;
+  }
+  h2 {
+    font-family: var(--font-display);
+    font-size: 26px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    color: var(--core-warm);
+    text-transform: uppercase;
+    margin-bottom: 24px;
+    padding-bottom: 14px;
+    border-bottom: 2px solid;
+    border-image: linear-gradient(90deg, var(--gold), transparent) 1;
+    display: flex;
+    align-items: baseline;
+    gap: 14px;
+  }
+  h2 .phase-num {
+    font-family: var(--font-code);
+    color: var(--gold);
+    font-size: 18px;
+    font-weight: 600;
+  }
+  h2 .phase-time {
+    margin-left: auto;
+    font-family: var(--font-code);
+    font-size: 12px;
+    color: var(--text-dim);
+    letter-spacing: 1px;
+    font-weight: 400;
+    text-transform: none;
+  }
+
+  /* TASK CARDS */
+  .task-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+    gap: 18px;
+  }
+  .task-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 22px 24px;
+    transition: all 0.2s ease;
+  }
+  .task-card:hover {
+    background: var(--bg-card-hover);
+    border-color: var(--border-gold);
+    box-shadow: var(--shadow-glow);
+  }
+  .task-head {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    margin-bottom: 10px;
+  }
+  .task-num {
+    font-family: var(--font-code);
+    font-size: 14px;
+    color: var(--gold);
+    font-weight: 600;
+    flex-shrink: 0;
+  }
+  .task-title {
+    font-family: var(--font-body);
+    font-size: 15px;
+    color: var(--core-white);
+    font-weight: 600;
+    line-height: 1.35;
+    flex: 1;
+  }
+  .task-time {
+    font-family: var(--font-code);
+    font-size: 10px;
+    color: var(--gold-soft);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    background: var(--gold-dim);
+    padding: 3px 7px;
+    border-radius: 3px;
+    white-space: nowrap;
+  }
+  .task-body {
+    font-size: 13.5px;
+    color: var(--text);
+    line-height: 1.7;
+    margin-bottom: 12px;
+  }
+  .task-body strong { color: var(--core-warm); font-weight: 600; }
+  .task-body code {
+    font-family: var(--font-code);
+    font-size: 0.88em;
+    color: var(--core-warm);
+    background: var(--bg-code);
+    padding: 2px 6px;
+    border-radius: 3px;
+    border: 1px solid var(--border);
+  }
+  .task-done {
+    font-family: var(--font-body);
+    font-size: 11px;
+    color: var(--green);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    font-weight: 600;
+    padding-top: 10px;
+    border-top: 1px solid var(--border);
+  }
+  .task-done::before { content: '✓  '; color: var(--green); }
+  .task-done.pending { color: var(--yellow); }
+  .task-done.pending::before { content: '◇  '; color: var(--yellow); }
+  .task-done.blocked { color: var(--red); }
+  .task-done.blocked::before { content: '!  '; color: var(--red); }
+
+  /* CALLOUTS */
+  .callout {
+    border-radius: var(--radius);
+    padding: 18px 22px;
+    margin: 16px 0;
+    font-size: 13.5px;
+    line-height: 1.65;
+  }
+  .callout.warn {
+    background: rgba(255,184,106,0.03);
+    border-left: 4px solid var(--gold);
+    color: var(--text);
+  }
+  .callout.success {
+    background: rgba(92,224,160,0.02);
+    border-left: 4px solid var(--green);
+    color: var(--text);
+  }
+  .callout.danger {
+    background: rgba(240,96,96,0.02);
+    border-left: 4px solid var(--red);
+    color: var(--text);
+  }
+  .callout-label {
+    font-family: var(--font-display);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-weight: 700;
+    margin-bottom: 6px;
+    display: block;
+  }
+  .callout.warn .callout-label { color: var(--gold); }
+  .callout.success .callout-label { color: var(--green); }
+  .callout.danger .callout-label { color: var(--red); }
+  .callout strong { color: var(--core-warm); font-weight: 600; }
+
+  /* STATUS STRIP */
+  .status-strip {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 24px 28px;
+    margin-top: 20px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+  }
+  .status-cell-label {
+    font-family: var(--font-body);
+    font-size: 10px;
+    color: var(--text-faint);
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    font-weight: 600;
+    margin-bottom: 6px;
+  }
+  .status-cell-val {
+    font-family: var(--font-display);
+    font-size: 17px;
+    color: var(--core-warm);
+    font-weight: 700;
+    letter-spacing: 1px;
+  }
+  .status-cell-val.go { color: var(--green); }
+  .status-cell-val.hold { color: var(--yellow); }
+  .status-cell-val.block { color: var(--red); }
+  .status-cell-sub {
+    font-size: 11.5px;
+    color: var(--text-dim);
+    margin-top: 4px;
+  }
+
+  /* LIST */
+  ul.tight {
+    list-style: none;
+    padding: 0;
+    margin: 6px 0;
+  }
+  ul.tight li {
+    padding: 4px 0 4px 16px;
+    position: relative;
+    font-size: 13px;
+    color: var(--text);
+    line-height: 1.55;
+  }
+  ul.tight li::before {
+    content: '›';
+    position: absolute;
+    left: 0;
+    color: var(--gold);
+    font-weight: 700;
+  }
+  ul.tight li strong { color: var(--core-warm); }
+
+  /* FOOTER */
+  footer {
+    padding: 32px 56px;
+    border-top: 1px solid var(--border);
+    text-align: center;
+    color: var(--text-faint);
+    font-size: 11px;
+    letter-spacing: 1.2px;
+  }
+  footer p { margin: 4px 0; }
+
+  @media (max-width: 1080px) {
+    .flow-chart { grid-template-columns: 1fr; gap: 12px; }
+    .flow-node { margin-right: 0; }
+    .flow-node::after { display: none; }
+    .flow-terminal { min-width: 0; }
+  }
+  @media (max-width: 880px) {
+    .sidebar { display: none; }
+    .main { margin-left: 0; }
+    .hero, .flow, .content, footer { padding-left: 24px; padding-right: 24px; }
+    .hero h1 { font-size: 32px; letter-spacing: 2px; }
+  }
+</style>
+</head>
+<body>
+
+<aside class="sidebar">
+  <div class="sidebar-brand">Jarvis Ops</div>
+  <div class="sidebar-sub">Tower Listing · Sell Readiness</div>
+
+  <div class="nav-group-label">Overview</div>
+  <a class="nav-link" href="#flow"><span class="nav-num">00</span>Critical Path</a>
+  <a class="nav-link" href="#status"><span class="nav-num">--</span>Current Status</a>
+
+  <div class="nav-group-label">Phases</div>
+  <a class="nav-link" href="#p1"><span class="nav-num">01</span>Physical Prep</a>
+  <a class="nav-link" href="#p2"><span class="nav-num">02</span>Evidence Capture</a>
+  <a class="nav-link" href="#p3"><span class="nav-num">03</span>Digital Assets</a>
+  <a class="nav-link" href="#p4"><span class="nav-num">04</span>Launch</a>
+
+  <div class="nav-group-label">Reference</div>
+  <a class="nav-link" href="#meet"><span class="nav-num">##</span>Meet Protocol</a>
+  <a class="nav-link" href="#screen"><span class="nav-num">##</span>Buyer Screening</a>
+  <a class="nav-link" href="#risks"><span class="nav-num">!!</span>Risk Register</a>
+</aside>
+
+<main class="main">
+
+  <section class="hero">
+    <div class="hero-label">Sell Readiness Plan · Jarvis Ops · April 19 2026</div>
+    <h1>Path to <span class="accent">Listed.</span></h1>
+    <div class="hero-sub">
+      Four phases from wherever-you-are-now to a tower that's physically clean, photographically documented, digitally buttoned up, and live on Marketplace with inbox filtering in place. Estimated total focused work: 2.5–3.5 hours.
+    </div>
+    <div class="hero-meta">
+      <div>
+        <div class="meta-label">Dossier Status</div>
+        <div class="meta-value status-go">v15 · Locked</div>
+      </div>
+      <div>
+        <div class="meta-label">Listing Ask</div>
+        <div class="meta-value">$2,000 firm</div>
+      </div>
+      <div>
+        <div class="meta-label">Hard Floor</div>
+        <div class="meta-value">$1,700 · patient</div>
+      </div>
+      <div>
+        <div class="meta-label">Time to Listed</div>
+        <div class="meta-value status-warn">~3 hrs focused</div>
+      </div>
+      <div>
+        <div class="meta-label">Blockers</div>
+        <div class="meta-value status-warn">Photos · Desk</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="flow" id="flow">
+    <div class="flow-label">Critical Path</div>
+    <div class="flow-chart">
+      <div class="flow-node">
+        <div class="flow-node-phase">Phase 01</div>
+        <div class="flow-node-title">Physical Prep</div>
+        <div class="flow-node-time">~60–90 min</div>
+      </div>
+      <div class="flow-node">
+        <div class="flow-node-phase">Phase 02</div>
+        <div class="flow-node-title">Evidence Capture</div>
+        <div class="flow-node-time">~30–45 min</div>
+      </div>
+      <div class="flow-node">
+        <div class="flow-node-phase">Phase 03</div>
+        <div class="flow-node-title">Digital Lock</div>
+        <div class="flow-node-time">~30 min</div>
+      </div>
+      <div class="flow-node terminal">
+        <div class="flow-node-phase">Phase 04</div>
+        <div class="flow-node-title">Launch</div>
+        <div class="flow-node-time">~15 min + monitor</div>
+      </div>
+      <div class="flow-terminal">
+        <div class="flow-terminal-label">Listed</div>
+        <div class="flow-terminal-sub">$2,000 firm</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="content">
+
+    <section id="status">
+      <h2><span class="phase-num">--</span> Current Status<span class="phase-time">What's done · what's left</span></h2>
+      <div class="status-strip">
+        <div>
+          <div class="status-cell-label">Dossier v15</div>
+          <div class="status-cell-val go">Locked</div>
+          <div class="status-cell-sub">Palette · copy · structure all approved</div>
+        </div>
+        <div>
+          <div class="status-cell-label">Marketplace Copy</div>
+          <div class="status-cell-val go">Drafted</div>
+          <div class="status-cell-sub">Needs final pass for v15 alignment</div>
+        </div>
+        <div>
+          <div class="status-cell-label">Photos</div>
+          <div class="status-cell-val block">Blocked</div>
+          <div class="status-cell-sub">Desk cleanup required first</div>
+        </div>
+        <div>
+          <div class="status-cell-label">Payment Rails</div>
+          <div class="status-cell-val hold">Verify</div>
+          <div class="status-cell-sub">Test Apple Pay + Zelle before going live</div>
+        </div>
+        <div>
+          <div class="status-cell-label">SafeTrade Zone</div>
+          <div class="status-cell-val hold">Pick</div>
+          <div class="status-cell-sub">Pin closest QuikTrip Safe Exchange</div>
+        </div>
+        <div>
+          <div class="status-cell-label">Inside the Guts v2</div>
+          <div class="status-cell-val hold">In progress</div>
+          <div class="status-cell-sub">Canvas of all Apr 19 screenshots pending</div>
+        </div>
+      </div>
+    </section>
+
+    <section id="p1">
+      <h2><span class="phase-num">01</span> Physical Prep<span class="phase-time">60–90 min</span></h2>
+
+      <div class="callout warn">
+        <span class="callout-label">The Why</span>
+        Buyer shows up → apartment + tower + you all confirm the dossier's story. Any single mismatch resets their trust model. The tower has to look as clean on arrival as the dossier says it is.
+      </div>
+
+      <div class="task-grid">
+        <div class="task-card">
+          <div class="task-head">
+            <div class="task-num">1.1</div>
+            <div class="task-title">Desk area staging + cable cleanup</div>
+            <div class="task-time">30 min</div>
+          </div>
+          <div class="task-body">
+            Clear everything from buyer's eye-line. <strong>The tower is the product, not the desk.</strong> Re-zip any loose visible runs (front I/O, GPU power, front panel). Wipe the desktop surface. This is the #1 trust-setter on arrival.
+          </div>
+          <div class="task-done pending">Not started — blocking Phase 02</div>
+        </div>
+
+        <div class="task-card">
+          <div class="task-head">
+            <div class="task-num">1.2</div>
+            <div class="task-title">Tempered glass panel clean (inside + outside)</div>
+            <div class="task-time">10 min</div>
+          </div>
+          <div class="task-body">
+            Pull the glass panel, microfiber + isopropyl (70%+) on both sides. Smudges and dust are what buyers fixate on through glass. <strong>This single step disproportionately moves the "babied" claim.</strong>
+          </div>
+          <div class="task-done pending">Not started</div>
+        </div>
+
+        <div class="task-card">
+          <div class="task-head">
+            <div class="task-num">1.3</div>
+            <div class="task-title">Dust filter pull + rinse</div>
+            <div class="task-time">10 min</div>
+          </div>
+          <div class="task-body">
+            Top, front, bottom filters → pull → rinse with cold water → air-dry while you do other steps → reinstall. Dusty filters visible through glass tank the magazine-ready read.
+          </div>
+          <div class="task-done pending">Not started</div>
+        </div>
+
+        <div class="task-card">
+          <div class="task-head">
+            <div class="task-num">1.4</div>
+            <div class="task-title">Fan blade + RGB trim wipe</div>
+            <div class="task-time">10 min</div>
+          </div>
+          <div class="task-body">
+            Damp microfiber across all Aer RGB 2 blades + radiator fans. No compressed-air spray inside (it scatters dust onto RGB strips and the LCD — wipe, don't blow).
+          </div>
+          <div class="task-done pending">Not started</div>
+        </div>
+
+        <div class="task-card">
+          <div class="task-head">
+            <div class="task-num">1.5</div>
+            <div class="task-title">Final boot-clean check</div>
+            <div class="task-time">10 min</div>
+          </div>
+          <div class="task-body">
+            Confirm the tower still boots clean with no GPU installed (UHD 770 headless). Log into the "Buyer" admin account you'll use at the meet. Validate CPU-Z / HWiNFO64 / CrystalDiskInfo open without errors. <strong>Don't skip this — a dirty boot at the meet kills the deal.</strong>
+          </div>
+          <div class="task-done pending">Not started</div>
+        </div>
+
+        <div class="task-card">
+          <div class="task-head">
+            <div class="task-num">1.6</div>
+            <div class="task-title">Print the dossier</div>
+            <div class="task-time">5 min</div>
+          </div>
+          <div class="task-body">
+            Print <code>elite-workstation-dossier-v15.html</code> to PDF → print hard copy. <strong>Hand it to the buyer when they arrive.</strong> Physical doc = authority anchor. Even if they don't read it cover-to-cover, they hold it and mentally price it higher.
+          </div>
+          <div class="task-done pending">Not started</div>
+        </div>
+      </div>
+    </section>
+
+    <section id="p2">
+      <h2><span class="phase-num">02</span> Evidence Capture<span class="phase-time">30–45 min</span></h2>
+
+      <div class="callout success">
+        <span class="callout-label">The Bar</span>
+        Every major dossier claim needs a photo that backs it. If a buyer questions a claim, your reply is <strong>"see photo 4"</strong> — not a paragraph.
+      </div>
+
+      <div class="task-grid">
+        <div class="task-card">
+          <div class="task-head">
+            <div class="task-num">2.1</div>
+            <div class="task-title">Tower photos (5–7 shots)</div>
+            <div class="task-time">20 min</div>
+          </div>
+          <div class="task-body">
+            Shoot in daylight or with a single directional lamp — never overhead fluorescent. Required angles:
+            <ul class="tight">
+              <li><strong>Hero:</strong> 3/4 front angle, RGB on, black background</li>
+              <li><strong>Top-down:</strong> AIO + radiator + cable bar visible</li>
+              <li><strong>Side profile through glass:</strong> all internals visible</li>
+              <li><strong>Rear I/O:</strong> motherboard I/O + PSU cables</li>
+              <li><strong>Cable management:</strong> back-panel zip-tied run</li>
+              <li><strong>Z63 LCD close-up:</strong> showing the 2.36" display alive</li>
+              <li><strong>Receipt stack:</strong> NZXT BLD + component receipts fanned out on desk</li>
+            </ul>
+          </div>
+          <div class="task-done pending">Blocked on 1.1</div>
+        </div>
+
+        <div class="task-card">
+          <div class="task-head">
+            <div class="task-num">2.2</div>
+            <div class="task-title">Boot video (30–45 sec)</div>
+            <div class="task-time">10 min</div>
+          </div>
+          <div class="task-body">
+            Phone vertical. Start with power button press → show POST → Windows login → desktop with CPU-Z already open showing 5.486 GHz boost. <strong>Demonstrates headless boot (no GPU) — worth $200 of trust on its own.</strong> Upload to unlisted YouTube, paste link in listing.
+          </div>
+          <div class="task-done pending">Blocked on 1.1 + 1.5</div>
+        </div>
+
+        <div class="task-card">
+          <div class="task-head">
+            <div class="task-num">2.3</div>
+            <div class="task-title">Receipt scan stack</div>
+            <div class="task-time">10 min</div>
+          </div>
+          <div class="task-body">
+            If any receipts are still paper-only, phone-scan them (CamScanner or Notes). You need digital copies of: <strong>NZXT BLD Order #328903</strong>, Best Buy CPU receipt, Best Buy mobo receipt, Amazon receipts (RAM / 980 PROs / 870 EVO / PSU), MSI warranty reg, <strong>ItsWorthMore Offer #2679784</strong>. Park them in one folder — "Sale Receipts 2026."
+          </div>
+          <div class="task-done pending">Partial</div>
+        </div>
+      </div>
+    </section>
+
+    <section id="p3">
+      <h2><span class="phase-num">03</span> Digital Lock<span class="phase-time">~30 min</span></h2>
+
+      <div class="task-grid">
+        <div class="task-card">
+          <div class="task-head">
+            <div class="task-num">3.1</div>
+            <div class="task-title">Dossier v15 final integrity audit</div>
+            <div class="task-time">15 min</div>
+          </div>
+          <div class="task-body">
+            Line-by-line pass: every dollar figure sources to a receipt or live listing. Every warranty date matches. No leftover "Apex / Elite / AI-ML-lab" language. No identity leaks. <strong>Run this ONCE before you post — not after.</strong>
+          </div>
+          <div class="task-done pending">Outstanding — task #14</div>
+        </div>
+
+        <div class="task-card">
+          <div class="task-head">
+            <div class="task-num">3.2</div>
+            <div class="task-title">Inside the Guts v2 canvas</div>
+            <div class="task-time">Parked</div>
+          </div>
+          <div class="task-body">
+            Comprehensive screenshot canvas for qualified buyers who want deep evidence. <strong>Not required to list</strong> — gate it behind "serious inquiries only." Keeps the main listing clean.
+          </div>
+          <div class="task-done pending">Parked — ship post-launch if demand</div>
+        </div>
+
+        <div class="task-card">
+          <div class="task-head">
+            <div class="task-num">3.3</div>
+            <div class="task-title">Marketplace copy final sync</div>
+            <div class="task-time">10 min</div>
+          </div>
+          <div class="task-body">
+            Update existing FB Marketplace draft with the v15 headline ("Custom-built i9-13900K desktop"), 7TB storage breakdown, Apple Pay/Zelle only, and dossier link. <strong>Paste the dossier as a Google Drive PDF link</strong> — don't expect buyers to load an HTML file.
+          </div>
+          <div class="task-done pending">Draft exists — needs v15 pass</div>
+        </div>
+
+        <div class="task-card">
+          <div class="task-head">
+            <div class="task-num">3.4</div>
+            <div class="task-title">Response templates (saved replies)</div>
+            <div class="task-time">10 min</div>
+          </div>
+          <div class="task-body">
+            Save 4 canned responses in FB Messenger / Phone Notes:
+            <ul class="tight">
+              <li><strong>"Is this still available"</strong> → "Yes. Dossier link here. Apple Pay or Zelle at a QuikTrip Safe Exchange Zone."</li>
+              <li><strong>Lowball deflector</strong> → "$2,000 firm. Parts alone rebuild at $4,300+. Dossier has the math. No rush on my end."</li>
+              <li><strong>Inspection invite</strong> → "Verified buyers (ID + phone) welcome to inspect running. No GPU needed to boot — UHD 770 drives a 1080p monitor for validation."</li>
+              <li><strong>Bundle pitch</strong> → "Corsair Xeneon Flex 45 OLED also available. Bundle both at $3,150 (save $250)."</li>
+            </ul>
+          </div>
+          <div class="task-done pending">Not drafted</div>
+        </div>
+      </div>
+    </section>
+
+    <section id="p4">
+      <h2><span class="phase-num">04</span> Launch<span class="phase-time">15 min active · ongoing monitor</span></h2>
+
+      <div class="task-grid">
+        <div class="task-card">
+          <div class="task-head">
+            <div class="task-num">4.1</div>
+            <div class="task-title">Verify payment rails</div>
+            <div class="task-time">5 min</div>
+          </div>
+          <div class="task-body">
+            Before you go live: send yourself $1 Apple Pay to confirm your Apple ID + account link works. Send yourself $1 Zelle (via your bank app) and confirm instant confirmation flow. <strong>Don't discover a broken rail at the meet.</strong>
+          </div>
+          <div class="task-done pending">Not done</div>
+        </div>
+
+        <div class="task-card">
+          <div class="task-head">
+            <div class="task-num">4.2</div>
+            <div class="task-title">Pin default SafeTrade zone</div>
+            <div class="task-time">5 min</div>
+          </div>
+          <div class="task-body">
+            Google "QuikTrip Safe Exchange Charlotte" → pin the closest to your apartment. This is your default meet unless a verified buyer requests inspection at your place. <strong>CMPD-monitored red zone, 24/7 camera.</strong>
+          </div>
+          <div class="task-done pending">Not done</div>
+        </div>
+
+        <div class="task-card">
+          <div class="task-head">
+            <div class="task-num">4.3</div>
+            <div class="task-title">Publish on Facebook Marketplace</div>
+            <div class="task-time">10 min</div>
+          </div>
+          <div class="task-body">
+            Upload 5–7 photos from 2.1. Paste Marketplace copy. Dossier Google Drive link in description. Category: Electronics → Computers. Price: <strong>$2,000</strong>. Mark "Firm." Local pickup only — Charlotte area.
+          </div>
+          <div class="task-done pending">Blocked on 2.1 + 3.3</div>
+        </div>
+
+        <div class="task-card">
+          <div class="task-head">
+            <div class="task-num">4.4</div>
+            <div class="task-title">Crosspost (optional multiplier)</div>
+            <div class="task-time">15 min</div>
+          </div>
+          <div class="task-body">
+            If FB traction is slow after 48 hrs, crosspost to:
+            <ul class="tight">
+              <li><strong>r/hardwareswap</strong> — follow their format rigorously (timestamped photos with handwritten note)</li>
+              <li><strong>OfferUp</strong> — identical photos + copy</li>
+              <li><strong>Craigslist Charlotte</strong> — same but less traffic</li>
+              <li><strong>Charlotte Facebook buy/sell groups</strong> — 2–3 local groups</li>
+            </ul>
+          </div>
+          <div class="task-done">Post-launch optional</div>
+        </div>
+      </div>
+    </section>
+
+    <section id="meet">
+      <h2><span class="phase-num">##</span> Meet Protocol<span class="phase-time">When a qualified buyer shows</span></h2>
+
+      <div class="callout warn">
+        <span class="callout-label">Default Flow</span>
+        Qualified buyer confirms → you propose QuikTrip Safe Exchange Zone OR offer inspection at your apartment (only if they provide ID + phone first) → meet, they inspect, they pay via Apple Pay or Zelle with instant confirmation visible on your phone, you hand over tower + printed dossier + receipt stack → done.
+      </div>
+
+      <div class="task-grid">
+        <div class="task-card">
+          <div class="task-head">
+            <div class="task-title">Bring to the meet</div>
+          </div>
+          <div class="task-body">
+            <ul class="tight">
+              <li>Tower + power cable (both IEC C13 and any peripherals you're including)</li>
+              <li>Printed dossier v15 PDF</li>
+              <li>Receipt binder (NZXT BLD + component receipts)</li>
+              <li>ItsWorthMore "Flawless" email (printed or phone-screen ready)</li>
+              <li>Your phone with Apple Pay + Zelle both open and signed in</li>
+              <li>Small monitor + HDMI cable if inspection requires boot (for QuikTrip meets)</li>
+              <li>Valid NC driver's license for ID exchange</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="task-card">
+          <div class="task-head">
+            <div class="task-title">Hard rules at the meet</div>
+          </div>
+          <div class="task-body">
+            <ul class="tight">
+              <li><strong>Payment lands before the tower leaves your hands.</strong> Show the confirmation on your phone, then hand over.</li>
+              <li>No "I'll Zelle you when I get home" — ever.</li>
+              <li>No partial payment + "I'll pay the rest Friday" — ever.</li>
+              <li>No cash. Say it out loud if they pull it out: <em>"Apple Pay or Zelle only, as the listing stated."</em></li>
+              <li>If they walk for any reason — let them walk. Don't negotiate down from firm at the table.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="screen">
+      <h2><span class="phase-num">##</span> Buyer Screening<span class="phase-time">Inbox management</span></h2>
+
+      <div class="callout success">
+        <span class="callout-label">The Filter</span>
+        <strong>Anyone who doesn't reference the dossier isn't qualified.</strong> If they ask a question already answered in the dossier, reply with the saved template. Don't retype the dossier in DMs.
+      </div>
+
+      <div class="task-grid">
+        <div class="task-card">
+          <div class="task-head">
+            <div class="task-title">Green lights</div>
+          </div>
+          <div class="task-body">
+            <ul class="tight">
+              <li>Asks specific question about the <strong>13900K 0x12F microcode</strong></li>
+              <li>Asks about the <strong>mobo warranty transfer</strong></li>
+              <li>Asks if they can bring their own GPU for inspection boot</li>
+              <li>Asks for the <strong>Inside the Guts</strong> companion doc</li>
+              <li>Proposes SafeTrade meet without being prompted</li>
+            </ul>
+            These are builders and champions. Respond within the hour.
+          </div>
+        </div>
+
+        <div class="task-card">
+          <div class="task-head">
+            <div class="task-title">Red flags</div>
+          </div>
+          <div class="task-body">
+            <ul class="tight">
+              <li>Any offer below $1,700 — decline, don't counter. Saved template, move on.</li>
+              <li>"Can you ship it?" — no</li>
+              <li>"I can only meet at my house" — no</li>
+              <li>Asks if you accept PayPal G&amp;S, Venmo, Cash App, crypto — decline</li>
+              <li>Generic "still available?" with no other context 48 hrs later with no reply to your template — mark as flake</li>
+              <li>Profile under 6 months old, no photos, no friends — flake</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="risks">
+      <h2><span class="phase-num">!!</span> Risk Register<span class="phase-time">Pre-mortem</span></h2>
+
+      <div class="task-grid">
+        <div class="task-card">
+          <div class="task-head">
+            <div class="task-title">Dead inbox (first 72 hrs)</div>
+          </div>
+          <div class="task-body">
+            <strong>Mitigation:</strong> execute 4.4 crosspost multiplier. The dossier is stronger than the typical Marketplace listing — traction will come from multiple channels, not Facebook alone.
+          </div>
+        </div>
+
+        <div class="task-card">
+          <div class="task-head">
+            <div class="task-title">Lowball barrage</div>
+          </div>
+          <div class="task-body">
+            <strong>Mitigation:</strong> don't respond. Saved template "$2,000 firm — dossier has the math" and move on. Every minute spent negotiating with a $1,200 offer is a minute not responding to a qualified buyer.
+          </div>
+        </div>
+
+        <div class="task-card">
+          <div class="task-head">
+            <div class="task-title">Tech-savvy buyer challenges a claim at the meet</div>
+          </div>
+          <div class="task-body">
+            <strong>Most likely:</strong> the <code>6.37 TB vs 7 TB</code> nameplate question. <strong>Your reply:</strong> "Nameplate is 7 TB (drives are advertised in decimal). Windows reports 6.37 in binary TiB. Same drives, same math every PC does." Move on.
+          </div>
+        </div>
+
+        <div class="task-card">
+          <div class="task-head">
+            <div class="task-title">Buyer backs out at the meet</div>
+          </div>
+          <div class="task-body">
+            <strong>Mitigation:</strong> don't negotiate down from firm in person. If they walk, they walk — the next qualified reply is already in the queue if Phase 04.4 is executed. The dossier is an asset; it doesn't expire.
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </section>
+
+</main>
+
+<footer>
+  <p>JARVIS AI Infrastructure — Built by Philip Belue</p>
+  <p>Midnight Design System v2 — Sell Readiness Plan — April 19, 2026</p>
+</footer>
+
+<script>
+  // Sidebar scroll tracking
+  const links = document.querySelectorAll('.nav-link');
+  const sections = Array.from(document.querySelectorAll('section[id]'));
+  function updateActive() {
+    const y = window.scrollY + 80;
+    let current = '';
+    for (const s of sections) { if (s.offsetTop <= y) current = s.id; }
+    links.forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#' + current));
+  }
+  window.addEventListener('scroll', updateActive, { passive: true });
+  updateActive();
+</script>
+</body>
+</html>
